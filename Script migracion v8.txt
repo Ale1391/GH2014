@@ -1,0 +1,845 @@
+	
+-- Borrado de datos ------------------------------------------------------------
+/*
+-- Tablas base
+DROP Table CIRQUE_DU_SORETTE.BonosDeFarmacia
+DROP Table cirque_du_sorette.medicoEspecialidad
+DROP Table CIRQUE_DU_SORETTE.especialidades
+DROP Table CIRQUE_DU_SORETTE.tiposDeEspecialidad
+DROP Table CIRQUE_DU_SORETTE.ConsultaMedica
+DROP Table CIRQUE_DU_SORETTE.Turnos
+DROP Table CIRQUE_DU_SORETTE.BonosDeConsulta
+DROP Table CIRQUE_DU_SORETTE.Afiliados
+DROP Table CIRQUE_DU_SORETTE.Profesionales
+DROP Table CIRQUE_DU_SORETTE.planesMedicos
+
+-- Tablas Aplicacion
+DROP Table CIRQUE_DU_SORETTE.RolFuncionalidad
+DROP Table CIRQUE_DU_SORETTE.Roles
+DROP Table CIRQUE_DU_SORETTE.Funcionalidades
+
+-- Procedimientos almacenados
+DROP Procedure CIRQUE_DU_SORETTE.AltaRol
+
+-- Esquema
+DROP Schema CIRQUE_DU_SORETTE
+
+*/
+--------------------------------------------------------------------------------
+
+
+
+--------------------------------------------------------------------------------
+-- Creacion del esquema --------------------------------------------------------
+--------------------------------------------------------------------------------
+
+USE GD2C2013
+go
+create schema CIRQUE_DU_SORETTE --authorization gd
+go
+
+--------------------------------------------------------------------------------
+-- Creacion de tablas ----------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+--//////////////////////////////////
+-- Tabla tiposDeEspecialidad ///////
+--//////////////////////////////////
+
+
+go
+select distinct Tipo_Especialidad_Codigo Codigo_de_tipo_de_especialidad,
+                Tipo_Especialidad_Descripcion Descripcion
+
+into cirque_du_sorette.tiposDeEspecialidad
+
+from gd_esquema.Maestra
+where Tipo_Especialidad_Codigo is not null
+go
+
+
+
+--//////////////////////////////////
+-- Tabla planesMedicos /////////////
+--//////////////////////////////////
+
+
+go
+select distinct Plan_Med_Codigo Codigo_de_plan,
+                Plan_Med_Descripcion Descripcion,
+                Plan_Med_Precio_Bono_Consulta Precio_bono_consulta,
+                Plan_Med_Precio_Bono_Farmacia Precio_bono_farmacia
+
+into cirque_du_sorette.planesMedicos
+
+from gd_esquema.Maestra
+go
+
+
+--///////////////////////////////////
+-- Tabla Afiliados //////////////////
+--///////////////////////////////////
+
+
+go
+select distinct Paciente_Nombre Nombre,
+                Paciente_Apellido Apellido,
+                Paciente_Dni Numero_de_documento,
+                Paciente_Direccion Direccion,
+                Paciente_Telefono Telefono,
+                Paciente_Mail Mail,
+                Paciente_Fecha_Nac Fecha_de_nacimiento,
+                Plan_Med_Codigo Codigo_Plan_medico
+
+into cirque_du_sorette.Afiliados
+
+from gd_esquema.Maestra
+go
+
+GO
+-- ////Se agregan los campos faltantes////
+ALTER Table CIRQUE_DU_SORETTE.Afiliados
+    ADD Tipo_de_documento char(5) NOT NULL DEFAULT 'DNI';
+
+ALTER Table CIRQUE_DU_SORETTE.Afiliados
+    ADD Sexo char(1);
+
+ALTER Table CIRQUE_DU_SORETTE.Afiliados
+    ADD Estado_civil char(12);
+
+ALTER Table CIRQUE_DU_SORETTE.Afiliados
+    ADD Cantidad_Hijos_o_Familiares_a_cargo tinyint;
+
+ALTER Table CIRQUE_DU_SORETTE.Afiliados
+    ADD Numero_de_afiliado int identity;
+
+ALTER Table CIRQUE_DU_SORETTE.Afiliados		-- se agrega fecha de baja para la tabla afiliados de modo de tener una forma de dar la baja lógica, es decir si el campo es null el afiliado está activo, sino está dado de baja en la fecha que figura
+    ADD fh_baja smalldatetime null;
+
+
+go
+
+--///////////////////////////////////
+-- Tabla Profesionales //////////////
+--///////////////////////////////////
+
+go
+select distinct Medico_Nombre Nombre,
+                Medico_Apellido Apellido,
+                Medico_Dni Numero_de_documento,
+                Medico_Direccion Direccion,
+                Medico_Telefono Telefono,
+                Medico_Mail Mail,
+                Medico_Fecha_Nac Fecha_de_nacimiento
+
+into cirque_du_sorette.Profesionales
+
+from gd_esquema.Maestra
+where Medico_Dni is not null
+
+GO
+
+-- ////Se agregan los campos faltantes////
+ALTER Table CIRQUE_DU_SORETTE.Profesionales
+    ADD Tipo_de_documento char(5) NOT NULL DEFAULT 'DNI';
+
+ALTER Table CIRQUE_DU_SORETTE.Profesionales
+    ADD Sexo char(1)
+
+ALTER Table CIRQUE_DU_SORETTE.Profesionales
+    ADD Matricula numeric(18,0)
+go
+
+--//////////////////////////////////////////////
+-- Tabla especialidades/////////////////////////
+--//////////////////////////////////////////////
+go
+select distinct Especialidad_Codigo Codigo_de_especialidad,
+                Especialidad_Descripcion Descripcion,
+                Tipo_Especialidad_Codigo Codigo_tipo_de_especialidad
+
+into cirque_du_sorette.especialidades
+
+from gd_esquema.Maestra
+where Especialidad_Codigo is not null
+go
+
+
+
+--//////////////////////////////////////////////
+-- Tabla medicoEspecialidad/////////////////////
+--//////////////////////////////////////////////
+
+go
+select distinct Medico_Dni Numero_de_documento,
+                Especialidad_Codigo Codigo_de_especialidad
+
+into cirque_du_sorette.medicoEspecialidad
+
+from gd_esquema.Maestra
+where Medico_Dni is not null
+
+GO
+
+-- ////Se agrega el campo Tipo_de_documento////
+ALTER Table CIRQUE_DU_SORETTE.medicoEspecialidad
+    ADD Tipo_de_documento char(5) NOT NULL DEFAULT 'DNI';
+go
+
+
+--//////////////////////////////////
+-- Tabla Turnos ////////////////////
+--//////////////////////////////////
+go
+SELECT DISTINCT Turno_Numero Numero_de_turno,
+                Turno_Fecha Fecha,
+               (SELECT Numero_de_afiliado FROM CIRQUE_DU_SORETTE.Afiliados WHERE M.Paciente_Dni = Numero_de_documento) Numero_de_afiliado,
+                Medico_Dni Numero_de_documento_Medico
+
+
+INTO CIRQUE_DU_SORETTE.Turnos
+
+FROM gd_esquema.Maestra M
+
+WHERE Turno_Numero IS NOT NULL
+
+ORDER BY Turno_Numero
+
+GO
+
+-- ////Se agrega el campo Tipo_de_documento_Medico////
+ALTER Table CIRQUE_DU_SORETTE.Turnos
+    ADD Tipo_de_documento_Medico char(5) NOT NULL DEFAULT 'DNI';
+
+go
+
+--//////////////////////////////////
+-- Tabla BonosDeConsulta ///////////
+--//////////////////////////////////
+go
+SELECT Bono_Consulta_Numero Numero_de_bono,
+       Compra_Bono_Fecha Fedcha_de_compra,
+       Bono_Consulta_Fecha_Impresion Fecha_de_impresion,
+      (SELECT Numero_de_afiliado FROM CIRQUE_DU_SORETTE.Afiliados WHERE M.Paciente_Dni = Numero_de_documento) Numero_de_afiliado
+
+INTO CIRQUE_DU_SORETTE.BonosDeConsulta
+
+FROM gd_esquema.Maestra M
+
+WHERE Bono_Consulta_Numero IS NOT NULL AND Compra_Bono_Fecha IS NOT NULL AND Bono_Consulta_Fecha_Impresion IS NOT NULL
+
+ORDER BY Bono_Consulta_Numero
+
+GO
+
+
+
+--//////////////////////////////////
+-- Tabla BonosDeFarmacia ///////////
+--//////////////////////////////////
+go
+SELECT Bono_Farmacia_Numero Numero_de_bono,
+       Compra_Bono_Fecha Fecha_de_compra,
+       Bono_Farmacia_Fecha_Impresion Fecha_de_impresion,
+       Bono_Farmacia_Fecha_Vencimiento,
+--Se considera una lista de medicamentos (con un máximo de 5 por bono) separados por comas "," para el campo Medicamentos_recetados de la tabla BonosDeFarmacia
+      (SELECT Bono_Farmacia_Medicamento FROM gd_esquema.Maestra M2 WHERE Bono_Farmacia_Numero IS NOT NULL AND Compra_Bono_Fecha IS NULL AND M1.Bono_Farmacia_Numero = M2.Bono_Farmacia_Numero) Medicamentos_recetados,
+      (SELECT Numero_de_afiliado FROM CIRQUE_DU_SORETTE.Afiliados WHERE M1.Paciente_Dni = Numero_de_documento) Numero_de_afiliado
+
+
+INTO CIRQUE_DU_SORETTE.BonosDeFarmacia
+
+FROM gd_esquema.Maestra M1
+
+WHERE Bono_Farmacia_Numero IS NOT NULL AND Compra_Bono_Fecha IS NOT NULL
+
+ORDER BY Bono_Farmacia_Numero
+
+GO
+
+
+
+--//////////////////////////////////
+-- Tabla ConsultaMedica ////////////
+--//////////////////////////////////
+
+GO
+SELECT Bono_Consulta_Numero Numero_Bono_de_consulta,
+       Turno_Numero Numero_de_turno,
+       Medico_Dni Numero_de_documento_Medico,
+       Consulta_Sintomas Sintomas,
+       Consulta_Enfermedades Diagnostico
+       --FALTA Id_consulta, Tipo_documento_Medico, Hora_Llegada_Paciente, Numero_de_receta
+
+
+INTO CIRQUE_DU_SORETTE.ConsultaMedica
+
+FROM gd_esquema.Maestra
+
+WHERE Bono_Consulta_Numero IS NOT NULL AND Turno_Numero IS NOT NULL
+
+ORDER BY Bono_Consulta_Numero ASC
+
+GO
+
+-- Se agregan los campos faltantes
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ADD Id_consulta int identity;
+
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ADD Tipo_de_documento_Medico char(5) NOT NULL default 'DNI';
+
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ADD Hora_de_llegada_Paciente datetime;
+
+go
+
+--------------------------------------------------------------------------------
+-- Creacion de primary key------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+--//////////////////////////////////
+-- Tabla tiposDeEspecialidad ///////
+--//////////////////////////////////
+
+go
+-- ////Se agrega la restriccion de No NULL al campo Codigo_de_tipo_de_especialidad para poder usarlo como clave primaria////
+ALTER Table CIRQUE_DU_SORETTE.tiposDeEspecialidad
+    ALTER Column Codigo_de_tipo_de_especialidad numeric(18,0) NOT NULL;
+
+GO
+
+-- ////Se agrega la restriccion de clave primaria al campo Codigo_de_tipo_de_especialidad////
+ALTER Table CIRQUE_DU_SORETTE.tiposDeEspecialidad
+    ADD Constraint PK_tiposDeEspecialidad_Codigo_de_tipo_de_especialidad
+        primary key (Codigo_de_tipo_de_especialidad);
+
+GO
+
+
+--//////////////////////////////////
+-- Tabla planesMedicos /////////////
+--//////////////////////////////////
+
+
+GO
+-- ////Se agrega la restriccion de No NULL al campo Codigo_de_plan////
+ALTER Table CIRQUE_DU_SORETTE.planesMedicos
+    ALTER Column Codigo_de_plan NUMERIC(18,0) NOT NULL;
+go
+-- ////Se agrega la restriccion de clave primaria al campo Codigo_de_plan////
+ALTER Table CIRQUE_DU_SORETTE.planesMedicos
+    ADD Constraint PK_planesMedicos_Codigo_de_plan
+        primary key (Codigo_de_plan);
+
+GO
+
+--///////////////////////////////////
+-- Tabla Afiliados //////////////////
+--///////////////////////////////////
+
+go
+-- ////Se agrega la restriccion de No NULL al campo Numero_de_documento////
+ALTER Table CIRQUE_DU_SORETTE.Afiliados
+    ALTER Column Numero_de_documento numeric(18,0) NOT NULL;
+
+GO
+
+-- ////Se agrega la restriccion de clave primaria al campo Numero_de_afiliado////
+ALTER Table CIRQUE_DU_SORETTE.Afiliados
+    ADD Constraint PK_Afiliados_Numero_de_afiliado
+        primary key (Numero_de_afiliado);
+
+go
+
+--///////////////////////////////////
+-- Tabla Profesionales //////////////
+--///////////////////////////////////
+
+go
+-- ////Se agrega la restriccion de No NULL al campo Numero_de_documento////
+ALTER Table CIRQUE_DU_SORETTE.Profesionales
+    ALTER Column Numero_de_documento numeric(18,0) NOT NULL;
+
+GO
+
+--////Se agrega la restriccion de clave primaria a los campos Tipo_de_documento y Numero_de_documento
+ALTER Table CIRQUE_DU_SORETTE.Profesionales
+    ADD Constraint PK_Profesionales_Tipo_de_documento_Numero_de_documento
+        primary key (Tipo_de_documento, Numero_de_documento);
+GO
+--//////////////////////////////////////////////
+-- Tabla especialidades/////////////////////////
+--//////////////////////////////////////////////
+
+go
+-- ////Se agrega la restriccion de No NULL a los campos correspondientes para poder ser usados como clave primaria y foranea////
+ALTER Table CIRQUE_DU_SORETTE.especialidades
+    ALTER Column Codigo_de_especialidad numeric(18,0) NOT NULL;
+go
+ALTER Table CIRQUE_DU_SORETTE.especialidades
+    ALTER Column Codigo_tipo_de_especialidad numeric(18,0) NOT NULL;
+
+GO
+
+-- ////Se agrega la restriccion de clave primaria al campo Codigo_de_especialidad////
+ALTER Table CIRQUE_DU_SORETTE.especialidades
+    ADD Constraint PK_especialidades_Codigo_de_especialidad
+        primary key (Codigo_de_especialidad);
+go
+
+
+--//////////////////////////////////////////////
+-- Tabla medicoEspecialidad/////////////////////
+--//////////////////////////////////////////////
+
+go
+-- ////Se agrega la restriccion de No NULL al campo Numero_de_documento y al campo Codigo_de_especialidad////
+ALTER Table CIRQUE_DU_SORETTE.medicoEspecialidad
+    ALTER Column Numero_de_documento numeric(18,0) NOT NULL;
+go
+ALTER Table CIRQUE_DU_SORETTE.medicoEspecialidad
+    ALTER Column Codigo_de_especialidad numeric(18,0) NOT NULL;
+
+GO
+
+--////Se agrega la restriccion de clave primaria a los campos Codigo_de_especialidad, Tipo_de_documento y Numero_de_documento
+ALTER Table CIRQUE_DU_SORETTE.medicoEspecialidad
+    ADD Constraint PK_medicoEspecialidad_Codigo_de_especialidad_Tipo_de_documento_Numero_de_documento
+        primary key (Codigo_de_especialidad, Tipo_de_documento, Numero_de_documento);
+
+go
+
+
+--//////////////////////////////////
+-- Tabla Turnos ////////////////////
+--//////////////////////////////////
+
+go
+-- ////Se agrega la restriccion de No NULL a los campos correspondientes////
+ALTER Table CIRQUE_DU_SORETTE.Turnos
+    ALTER Column Numero_de_documento_Medico numeric(18,0) NOT NULL;
+go
+ALTER Table CIRQUE_DU_SORETTE.Turnos
+    ALTER Column Numero_de_afiliado int NOT NULL;
+go
+ALTER Table CIRQUE_DU_SORETTE.Turnos
+    ALTER Column Numero_de_turno numeric(18,0) NOT NULL;
+
+GO
+
+--////Se agrega la restriccion de clave primaria al campo Numero_de_turno
+ALTER Table CIRQUE_DU_SORETTE.Turnos
+    ADD Constraint PK_Turnos_Numero_de_turno
+        primary key (Numero_de_turno);
+go
+
+
+--//////////////////////////////////
+-- Tabla BonosDeConsulta ///////////
+--//////////////////////////////////
+
+go
+-- Se agrega restriccion de No NULL a los campos Numero_de_bono y Numero_de_afiliado
+ALTER Table CIRQUE_DU_SORETTE.BonosDeConsulta
+    ALTER Column Numero_de_bono numeric(18,0) NOT NULL;
+go
+ALTER Table CIRQUE_DU_SORETTE.BonosDeConsulta
+    ALTER Column Numero_de_afiliado int NOT NULL;
+
+GO
+
+-- Se agrega la restriccion de clave primaria al campo Numero_de_bono
+ALTER Table CIRQUE_DU_SORETTE.BonosDeConsulta
+    ADD Constraint PK_BonosDeConsulta_Numero_de_bono
+        primary key (Numero_de_bono);
+go
+
+
+
+--//////////////////////////////////
+-- Tabla BonosDeFarmacia ///////////
+--//////////////////////////////////
+
+go
+-- Se agrega restriccion de No NULL a los campos Numero_de_bono y Numero_de_afiliado
+ALTER Table CIRQUE_DU_SORETTE.BonosDeFarmacia
+    ALTER Column Numero_de_bono numeric(18,0) NOT NULL;
+go
+ALTER Table CIRQUE_DU_SORETTE.BonosDeFarmacia
+    ALTER Column Numero_de_afiliado int NOT NULL;
+
+GO
+
+-- Se agrega la restriccion de clave primaria al campo Numero_de_bono
+ALTER Table CIRQUE_DU_SORETTE.BonosDeFarmacia
+    ADD Constraint PK_BonosDeFarmacia_Numero_de_bono
+        primary key (Numero_de_bono);
+
+go
+
+--//////////////////////////////////
+-- Tabla ConsultaMedica ////////////
+--//////////////////////////////////
+
+go
+-- Se agrega la restriccion de No NULL a los campos correspondientes
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ALTER Column Numero_Bono_de_consulta numeric(18,0) NOT NULL;
+go
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ALTER Column Numero_de_turno numeric(18,0) NOT NULL;
+go
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ALTER Column Numero_de_documento_Medico numeric(18,0) NOT NULL;
+
+GO
+
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ADD Constraint PK_ConsultaMedica_Id_consulta
+        primary key (Id_consulta);
+go
+
+
+--------------------------------------------------------------------------------
+-- Creacion del foreign key ----------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+--//////////////////////////////////
+-- Tabla tiposDeEspecialidad ///////
+--//////////////////////////////////
+
+
+
+-- no tiene claves foraneas asociadas
+
+
+
+
+--//////////////////////////////////
+-- Tabla planesMedicos /////////////
+--//////////////////////////////////
+
+-- no tiene claves foraneas asociadas
+
+--///////////////////////////////////
+-- Tabla Afiliados //////////////////
+--///////////////////////////////////
+
+go
+
+-- ////Se agrega la restriccion de clave foranea al campo Codigo_Plan_medico////
+ALTER Table CIRQUE_DU_SORETTE.Afiliados
+    ADD Constraint FK_Afiliados_Codigo_Plan_medico
+        foreign key (Codigo_Plan_medico)
+        references CIRQUE_DU_SORETTE.planesMedicos (Codigo_de_plan);
+GO
+
+
+--///////////////////////////////////
+-- Tabla Profesionales //////////////
+--///////////////////////////////////
+
+
+-- no tiene clave foranea asociada
+
+
+--//////////////////////////////////////////////
+-- Tabla especialidades/////////////////////////
+--//////////////////////////////////////////////
+
+go
+
+-- ////Se agrega la restriccion de clave foranea al campo Codigo_tipo_de_especialidad////
+ALTER Table CIRQUE_DU_SORETTE.especialidades
+    ADD Constraint FK_especialidades_Codigo_tipo_de_especialidad
+        foreign key (Codigo_tipo_de_especialidad)
+        references CIRQUE_DU_SORETTE.tiposDeEspecialidad (Codigo_de_tipo_de_especialidad);
+
+GO
+
+
+--//////////////////////////////////////////////
+-- Tabla medicoEspecialidad/////////////////////
+--//////////////////////////////////////////////
+
+
+go
+
+--////Se agrega la restriccion de clave foranea al campo Codigo_de_especialidad
+ALTER Table CIRQUE_DU_SORETTE.medicoEspecialidad
+    ADD Constraint FK_medicoEspecialidad_Codigo_de_especialidad
+        foreign key (Codigo_de_especialidad)
+        references CIRQUE_DU_SORETTE.especialidades (Codigo_de_especialidad);
+go
+--////Se agrega la restriccion de clave foranea a los campos Tipo_de_documento y Numero_de_documento
+ALTER Table CIRQUE_DU_SORETTE.medicoEspecialidad
+    ADD Constraint FK_medicoEspecialidad_Tipo_de_documento_Numero_de_documento
+        foreign key (Tipo_de_documento, Numero_de_documento)
+        references CIRQUE_DU_SORETTE.Profesionales (Tipo_de_documento, Numero_de_documento);
+
+GO
+
+
+--//////////////////////////////////
+-- Tabla Turnos ////////////////////
+--//////////////////////////////////
+
+
+go
+--////Se agrega la restriccion de clave foranea al campo Numero_de_afiliado
+ALTER Table CIRQUE_DU_SORETTE.Turnos
+    ADD Constraint FK_Turnos_Codigo_de_especialidad
+        foreign key (Numero_de_afiliado)
+        references CIRQUE_DU_SORETTE.Afiliados (Numero_de_afiliado);
+go
+--////Se agrega la restriccion de clave foranea a los campos Tipo_de_documento y Numero_de_documento
+ALTER Table CIRQUE_DU_SORETTE.Turnos
+    ADD Constraint FK_Turnos_Tipo_de_documento_Medico_Numero_de_documento_Medico
+        foreign key (Tipo_de_documento_Medico, Numero_de_documento_Medico)
+        references CIRQUE_DU_SORETTE.Profesionales (Tipo_de_documento, Numero_de_documento);
+
+GO
+
+--//////////////////////////////////
+-- Tabla BonosDeConsulta ///////////
+--//////////////////////////////////
+
+
+
+go
+-- Se agrega la restriccion de clave foranea al campo Numero_de_afiliado
+ALTER Table CIRQUE_DU_SORETTE.BonosDeConsulta
+    ADD Constraint FK_BonosDeConsulta_Numero_de_afiliado
+        foreign key (Numero_de_afiliado)
+        references CIRQUE_DU_SORETTE.Afiliados (Numero_de_afiliado);
+
+GO
+
+
+--//////////////////////////////////
+-- Tabla BonosDeFarmacia ///////////
+--//////////////////////////////////
+
+
+go
+
+-- Se agrega la restriccion de clave foranea al campo Numero_de_afiliado
+ALTER Table CIRQUE_DU_SORETTE.BonosDeFarmacia
+    ADD Constraint FK_BonosDeFarmacia_Numero_de_afiliado
+        foreign key (Numero_de_afiliado)
+        references CIRQUE_DU_SORETTE.Afiliados (Numero_de_afiliado);
+
+GO
+
+
+--//////////////////////////////////
+-- Tabla ConsultaMedica ////////////
+--//////////////////////////////////
+
+go
+
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ADD Constraint FK_ConsultaMedica_Numero_Bono_de_consulta
+        foreign key (Numero_Bono_de_consulta)
+        references CIRQUE_DU_SORETTE.BonosDeConsulta (Numero_de_bono)
+go
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ADD Constraint FK_ConsultaMedica_Numero_de_turno
+        foreign key (Numero_de_turno)
+        references CIRQUE_DU_SORETTE.Turnos (Numero_de_turno)
+go
+ALTER Table CIRQUE_DU_SORETTE.ConsultaMedica
+    ADD Constraint FK_ConsultaMedica_Tipo_de_documento_Medico_Numero_de_documento_Medico
+        foreign key (Tipo_de_documento_Medico, Numero_de_documento_Medico)
+        references CIRQUE_DU_SORETTE.Profesionales (Tipo_de_documento, Numero_de_documento)
+
+GO
+
+
+--------------------------------------------------------------------------------
+-- Creacion de tablas requeridas para la aplicacion
+--------------------------------------------------------------------------------
+
+--//////////////////////////////////
+-- Tabla Roles /////////////////////
+--//////////////////////////////////
+
+CREATE Table CIRQUE_DU_SORETTE.Roles
+	  (Codigo_Rol int identity NOT NULL,			-- Se establece el campo como clave primaria
+	   Nombre_Rol varchar(20),
+	   Estado bit DEFAULT 1) 									-- 1: "Habilitado"; 0: "Inhabilitado"
+
+GO
+
+
+
+--//////////////////////////////////
+-- Tabla Funcionalidades ///////////
+--//////////////////////////////////
+
+CREATE Table CIRQUE_DU_SORETTE.Funcionalidades
+	  (Codigo_Funcionalidad int identity NOT NULL,		-- Se establece el campo como clave primaria
+	   Descripcion varchar(70))
+
+GO
+
+
+--//////////////////////////////////
+-- Tabla RolFuncionalidad //////////
+--//////////////////////////////////
+
+CREATE Table CIRQUE_DU_SORETTE.RolFuncionalidad
+	  (Codigo_Rol int NOT NULL,
+	   Codigo_Funcionalidad int NOT NULL)
+
+GO
+
+
+--------------------------------------------------------------------------------
+-- Creacion de Claves Primarias para las tablas de la aplicacion ---------------
+--------------------------------------------------------------------------------
+
+--//////////////////////////////////
+-- Tabla Roles /////////////////////
+--//////////////////////////////////
+
+ALTER Table CIRQUE_DU_SORETTE.Roles
+	  ADD CONSTRAINT PK_Roles_Codigo_Rol 
+		  Primary Key (Codigo_Rol);
+
+GO
+
+--//////////////////////////////////
+-- Tabla Funcionalidades ///////////
+--//////////////////////////////////
+
+ALTER Table CIRQUE_DU_SORETTE.Funcionalidades
+	  ADD CONSTRAINT PK_Funcionalidades_Codigo_Funcionalidad 
+		  Primary Key (Codigo_Funcionalidad);
+
+GO
+
+--//////////////////////////////////
+-- Tabla RolFuncionalidad //////////
+--//////////////////////////////////
+
+ALTER Table CIRQUE_DU_SORETTE.RolFuncionalidad
+	  ADD CONSTRAINT PK_RolFuncionalidad_Codigo_Rol_Codigo_Funcionalidad 
+		  Primary Key (Codigo_Rol, Codigo_Funcionalidad);
+
+GO
+
+--------------------------------------------------------------------------------
+-- Creacion de Claves Foraneas para las tablas de la aplicacion ----------------
+--------------------------------------------------------------------------------
+
+--//////////////////////////////////
+-- Tabla RolFuncionalidad //////////
+--//////////////////////////////////
+
+ALTER Table	CIRQUE_DU_SORETTE.RolFuncionalidad
+	  ADD CONSTRAINT FK_RolFuncionalidad_Codigo_Rol 
+		  Foreign Key (Codigo_Rol) 
+		  REFERENCES CIRQUE_DU_SORETTE.Roles (Codigo_Rol);
+
+GO
+
+ALTER Table	CIRQUE_DU_SORETTE.RolFuncionalidad
+	  ADD CONSTRAINT FK_RolFuncionalidad_Codigo_Funcionalidad 
+		  Foreign Key (Codigo_Funcionalidad) 
+		  REFERENCES CIRQUE_DU_SORETTE.Funcionalidades (Codigo_Funcionalidad);
+
+GO
+
+--------------------------------------------------------------------------------
+-- Carga de datos base para las tablas de la aplicacion ------------------------
+--------------------------------------------------------------------------------
+
+--//////////////////////////////////
+-- Tabla Roles /////////////////////
+--//////////////////////////////////
+
+INSERT INTO CIRQUE_DU_SORETTE.Roles (Nombre_Rol, Estado)
+VALUES ('Afiliado',1)
+
+INSERT INTO CIRQUE_DU_SORETTE.Roles (Nombre_Rol, Estado)
+VALUES ('Administrativo',1)
+
+INSERT INTO CIRQUE_DU_SORETTE.Roles (Nombre_Rol, Estado)
+VALUES ('Profesional',1)
+
+GO
+
+
+--//////////////////////////////////
+-- Tabla Funcionalidades ///////////
+--//////////////////////////////////
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('ABM de Roles')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('ABM de Afiliados')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('ABM de Profesionales')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('ABM de Especialidades Medicas')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('ABM de Plan')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('Registrar Agenda Profesional')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('Compra de bonos')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('Pedido de Turno')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('Registo de llegada para atencion medica')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('Cancelar atencion medica')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('Confeccion de Receta medica')
+
+INSERT INTO CIRQUE_DU_SORETTE.Funcionalidades (Descripcion)
+VALUES ('Obtencion de Listado Estadistico')
+
+GO
+
+
+
+-----------------------------------------------------------------------------------------------
+-- Procedimientos almacenados  ----------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+------------------------------------
+-- AltaRol -------------------------
+------------------------------------
+
+-- Inserta un nuevo rol en la tabla Roles si no existe otro del mismo nombre y queda habilitado por defecto
+
+CREATE Procedure CIRQUE_DU_SORETTE.AltaRol (@Nombre_rol varchar(20))
+AS
+	BEGIN
+		IF (@Nombre_rol NOT IN (SELECT Nombre_Rol FROM CIRQUE_DU_SORETTE.Roles))
+			INSERT INTO CIRQUE_DU_SORETTE.Roles(Nombre_Rol)
+			VALUES (@Nombre_rol)
+		ELSE
+			RAISERROR ('ERROR: El rol que se intenta dar de alta ya existe.',10, 1)
+		
+	END
+
+GO
+
+
