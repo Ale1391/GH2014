@@ -34,7 +34,7 @@ AS
 	-- //////////////////// TIPODOCUMENTO ////////////////////
 
 		CREATE Table GITAR_HEROES.TipoDocumento
-			(codigo int IDENTITY PRIMARY KEY,
+			(codigo smallint IDENTITY PRIMARY KEY,
 			descripcion varchar(20) NOT NULL)
 
 		
@@ -69,20 +69,26 @@ AS
 			telefono bigint,
 			estado smallint,
 			estado_sistema smallint,
-			PRIMARY KEY (username, password))
+			PRIMARY KEY (username, password),
 			FOREIGN KEY (tipo_doc) REFERENCES GITAR_HEROES.TipoDocumento)
 		
-/*
 	-- /////////////// ROL ///////////////
 
 		CREATE Table GITAR_HEROES.Rol
-			(codigo int IDENTITY PRIMARY KEY,
+			(codigo smallint IDENTITY PRIMARY KEY,
 			descripcion varchar(60) NOT NULL,
-			estado smaillint)
+			estado smallint)
 
-		--INSERT INTO
+		INSERT INTO	GITAR_HEROES.Rol (descripcion, estado)
+		VALUES ('Administrador', 1)
 
-			
+		INSERT INTO	GITAR_HEROES.Rol (descripcion, estado)
+		VALUES ('Recepcionista', 1)
+		
+		INSERT INTO	GITAR_HEROES.Rol (descripcion, estado)
+		VALUES ('Guest', 1)	
+
+/*			
 
 	-- /////////////// FUNCIONALIDAD ///////////////
 
