@@ -88,17 +88,48 @@ AS
 		INSERT INTO	GITAR_HEROES.Rol (descripcion, estado)
 		VALUES ('Guest', 1)	
 
-/*			
 
 	-- /////////////// FUNCIONALIDAD ///////////////
 
-		CREATE Table GITAR_HEROES.Rol
-			(codigo int IDENTITY PRIMARY KEY,
+		CREATE Table GITAR_HEROES.Funcionalidad
+			(codigo smallint PRIMARY KEY,
 			descripcion varchar(60) NOT NULL)
 
-		--INSERT INTO
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (1, 'ABM de Rol')
+
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (3, 'ABM de Usuario')
+
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (4, 'ABM de Clientes')
+		
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (5, 'ABM de Hotel')
+		
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (6, 'ABM de Habitacion')
+		
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (7, 'ABM de Régimen de Estadia')
+
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (8, 'Generar o Modificar Reserva')
+		
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (9, 'Registrar estadia')
+		
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (10, 'Registrar Consumibles')
+		
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (11, 'Facturar Publicaciones')
+		
+				INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (13, 'Listado Estadistico')
 
 
+/*			
 	-- /////////////// CLIENTE ///////////////
 
 
@@ -148,6 +179,8 @@ CREATE Procedure GITAR_HEROES.borrarTablas
 AS
 	BEGIN
 
+		DROP Table GITAR_HEROES.Funcionalidad
+		DROP Table GITAR_HEROES.Rol
 		DROP Table GITAR_HEROES.Usuario
 		DROP Table GITAR_HEROES.Cliente
 		DROP Table GITAR_HEROES.TipoDocumento
