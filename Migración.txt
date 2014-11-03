@@ -50,7 +50,7 @@ AS
 		INSERT INTO GITAR_HEROES.TipoDocumento (descripcion)
 		VALUES ('LE')
 
-/*
+
 	-- /////////////// USUARIO ///////////////
 
 		CREATE Table GITAR_HEROES.Usuario
@@ -72,7 +72,7 @@ AS
 			PRIMARY KEY (username, password))
 			FOREIGN KEY (tipo_doc) REFERENCES GITAR_HEROES.TipoDocumento)
 		
-
+/*
 	-- /////////////// ROL ///////////////
 
 		CREATE Table GITAR_HEROES.Rol
@@ -147,8 +147,11 @@ AS
 		DROP Table GITAR_HEROES.TipoDocumento
 		DROP Table GITAR_HEROES.Hotel
 		
+		DROP Procedure GITAR_HEROES.crearTablas
+		
 	END	
 
+--DROP Procedure GITAR_HEROES.borrarTablas
 
 -- ////////////////////  EJECUCIÓN DE PROCEDIMIENTOS ////////////////////
 
