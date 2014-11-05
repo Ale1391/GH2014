@@ -259,9 +259,7 @@ AS
 
 	END
 
-
---Revisar tipos de datos
---Revisar nombres de columnas de la tabla maestra
+GO
 
 CREATE Procedure GITAR_HEROES.borrarTablas
 AS
@@ -286,5 +284,7 @@ AS
 --DROP Procedure GITAR_HEROES.borrarTablas
 
 -- ////////////////////  EJECUCIÓN DE PROCEDIMIENTOS ////////////////////
+
+GO
 
 EXEC GITAR_HEROES.crearTablas
