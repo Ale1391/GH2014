@@ -51,7 +51,6 @@ AS
 		VALUES ('LE')
 
 
-/*			
 	-- /////////////// CLIENTE ///////////////
 
 		CREATE Table GITAR_HEROES.Cliente
@@ -88,7 +87,6 @@ AS
 		FROM gd_esquema.Maestra
 
 --Las restricciones de la tabla Cliente no se hacen a nivel de base de datos por inconsistencias en el sistema viejo
-*/
 
 
 	-- /////////////// USUARIO ///////////////
@@ -285,7 +283,7 @@ AS
 		GROUP BY Hotel.codigo, Regimen.codigo
 		ORDER BY Hotel.codigo, Regimen.codigo
 
-/*
+
 	-- /////////////// TIPOHABITACION ///////////////
 
 		CREATE Table GITAR_HEROES.TipoHabitacion
@@ -293,27 +291,41 @@ AS
 			descripcion varchar(60),
 			porcentual decimal(4,2))
 
-		--INSERT INTO GITAR_HEROES.TipoHabitacion
+		INSERT INTO GITAR_HEROES.TipoHabitacion
+		SELECT DISTINCT
+			   Habitacion_Tipo_Codigo,
+			   Habitacion_Tipo_Descripcion,
+			   Habitacion_Tipo_Porcentual
+		FROM gd_esquema.Maestra
+		ORDER BY Habitacion_Tipo_Codigo
 
-
+/*
 	-- /////////////// HABITACION ///////////////
 
 		CREATE Table GITAR_HEROES.Habitacion
 			(numero int,
 			codigo_hotel int,
-			piso smallint NOT NULL,
+			piso smallint,
 			tipo smallint,
 			ubicacion varchar(60),
 			estado smallint NOT NULL,
-			PRIMARY KEY (numero, codigo_hotel),
-			FOREIGN KEY (codigo_hotel) REFERENCES (GITAR_HEROES.Hotel),
-			FOREIGN KEY (tipo) REFERENCES (GITAR_HEROES.TipoHabitacion))
+			PRIMARY KEY (numero, codigo_hotel, piso),
+			FOREIGN KEY (codigo_hotel) REFERENCES GITAR_HEROES.Hotel,
+			FOREIGN KEY (tipo) REFERENCES GITAR_HEROES.TipoHabitacion)
 
-		--INSERT INTO GITAR_HEROES.Habitacion
-		--SELECT 
-		--FROM gd_esquema.Maestra
+		INSERT INTO GITAR_HEROES.Habitacion
+		SELECT Habitacion_Numero,
+			   Hotel.codigo,
+			   Habitacion_Piso,
+			   Habitacion_Tipo_Codigo,
+			   CASE Habitacion_Frente WHEN 'S' THEN 'Vista al exterior' ELSE 'Interno' END,
+			   1						-- Corresponde al estado que por defecto se encuentra "habilitado"
 
+		FROM gd_esquema.Maestra JOIN GITAR_HEROES.Hotel Hotel ON Hotel_Ciudad = Hotel.ciudad
+		GROUP BY Habitacion_Numero, Hotel.codigo, Habitacion_Piso, Habitacion_Tipo_Codigo, Habitacion_Frente
+		ORDER BY Hotel.codigo, Habitacion_Piso, Habitacion_Numero
 
+/*
 	-- /////////////// HOTELINHABILITADO ///////////////
 
 		CREATE Table GITAR_HEROES.HotelInhabilitado
