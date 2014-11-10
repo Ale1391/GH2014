@@ -287,7 +287,7 @@ AS
 	-- /////////////// TIPOHABITACION ///////////////
 
 		CREATE Table GITAR_HEROES.TipoHabitacion
-			(codigo smallint PRIMARY KEY,
+			(codigo int PRIMARY KEY,
 			descripcion varchar(60),
 			porcentual decimal(4,2))
 
@@ -299,24 +299,24 @@ AS
 		FROM gd_esquema.Maestra
 		ORDER BY Habitacion_Tipo_Codigo
 
-/*
+
 	-- /////////////// HABITACION ///////////////
 
 		CREATE Table GITAR_HEROES.Habitacion
-			(numero int,
-			codigo_hotel int,
-			piso smallint,
-			tipo smallint,
+			(codigo int IDENTITY PRIMARY KEY,
+			codigo_hotel int NOT NULL,
+			piso smallint NOT NULL,
+			numero int NOT NULL,
+			tipo int NOT NULL,
 			ubicacion varchar(60),
 			estado smallint NOT NULL,
-			PRIMARY KEY (numero, codigo_hotel, piso),
 			FOREIGN KEY (codigo_hotel) REFERENCES GITAR_HEROES.Hotel,
 			FOREIGN KEY (tipo) REFERENCES GITAR_HEROES.TipoHabitacion)
 
-		INSERT INTO GITAR_HEROES.Habitacion
-		SELECT Habitacion_Numero,
-			   Hotel.codigo,
+		INSERT INTO GITAR_HEROES.Habitacion 
+		SELECT Hotel.codigo,
 			   Habitacion_Piso,
+			   Habitacion_Numero,
 			   Habitacion_Tipo_Codigo,
 			   CASE Habitacion_Frente WHEN 'S' THEN 'Vista al exterior' ELSE 'Interno' END,
 			   1						-- Corresponde al estado que por defecto se encuentra "habilitado"
