@@ -1,3 +1,11 @@
+USE GD2C2014
+
+GO
+
+Create Schema GITAR_HEROES authorization gd
+
+GO
+
 CREATE Procedure GITAR_HEROES.crearTablas
 AS
 	BEGIN
@@ -325,7 +333,7 @@ AS
 		GROUP BY Habitacion_Numero, Hotel.codigo, Habitacion_Piso, Habitacion_Tipo_Codigo, Habitacion_Frente
 		ORDER BY Hotel.codigo, Habitacion_Piso, Habitacion_Numero
 
-/*
+
 	-- /////////////// HOTELINHABILITADO ///////////////
 
 		CREATE Table GITAR_HEROES.HotelInhabilitado
@@ -334,11 +342,7 @@ AS
 			fecha_fin smalldatetime,
 			descripcion varchar(60),
 			PRIMARY KEY (codigo_hotel, fecha_inicio),
-			FOREIGN KEY (codigo_hotel) REFERENCES (GITAR_HEROES.Hotel))
-
-		--INSERT INTO GITAR_HEROES.HotelInhabilitado
-		--SELECT 
-		--FROM gd_esquema.Maestra
+			FOREIGN KEY (codigo_hotel) REFERENCES GITAR_HEROES.Hotel)
 
 
 	-- /////////////// TIPOESTADORESERVA ///////////////
@@ -379,16 +383,21 @@ AS
 			nro_doc_cliente numeric(11,0),
 			--costo decimal (10,2),			--??????????
 			codigo_estado smallint,
-		-- Podrían referenciar a la tabla RegimenHotel -------------------------
-			FOREIGN KEY (codigo_hotel) REFERENCES (GITAR_HEROES.Hotel),
-			FOREIGN KEY (codigo_regimen) REFERENCES (GITAR_HEROES.Regimen),
-		------------------------------------------------------------------------
+		-- Podrían referenciar a las tablas Regimen y Hotel por separado --------------------
+			FOREIGN KEY (codigo_hotel, codigo_regimen) REFERENCES GITAR_HEROES.RegimenHotel,
+			--FOREIGN KEY (codigo_regimen) REFERENCES GITAR_HEROES.RegimenGotel,
+		-------------------------------------------------------------------------------------
 			--FOREIGN KEY (tipo_doc_cliente, nro_doc_cliente) REFERENCES (GITAR_HEROES.Cliente),
-			FOREIGN KEY (codigo_estado) REFERENCES (GITAR_HEROES.TipoEstadoReserva))
+			FOREIGN KEY (codigo_estado) REFERENCES GITAR_HEROES.TipoEstadoReserva)
 
-		--INSERT INTO GITAR_HEROES.Reserva
-		--SELECT 
-		--FROM gd_esquema.Maestra
+/*
+		INSERT INTO GITAR_HEROES.Reserva
+		SELECT Reserva_Codigo,
+			   Reserva_Fecha_Inicio,		-- NO existe fecha de realizacion en el sistema, tomo por defecto fecha de inicio
+			   Reserva_Fecha_Inicio,
+			   Reserva_Fecha_Inicio + Reserva_Cant_Noches,
+	      
+		FROM gd_esquema.Maestra
 
 
 	-- /////////////// USUARIORESERVA ///////////////
@@ -521,6 +530,7 @@ AS
 	BEGIN
 
 	-- BORRADO DE TABLAS		
+/*
 		DROP Table GITAR_HEROES.ItemFactura
 		DROP Table GITAR_HEROES.Factura
 		DROP Table GITAR_HEROES.TipoPago
@@ -530,6 +540,7 @@ AS
 		DROP Table GITAR_HEROES.ReservaCancelada
 		DROP Table GITAR_HEROES.ReservaHabitacion
 		DROP Table GITAR_HEROES.UsuarioReserva
+*/
 		DROP Table GITAR_HEROES.Reserva
 		DROP Table GITAR_HEROES.TipoEstadoReserva
 		DROP Table GITAR_HEROES.HotelInhabilitado
@@ -549,13 +560,16 @@ AS
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
 		DROP Procedure GITAR_HEROES.crearTablas
+		DROP Procedure GITAR_HEROES.borrarTablas
+
+	-- BORRADO DEL ESQUEMA		
+		DROP Schema GITAR_HEROES
 		
 	END	
 
---DROP Procedure GITAR_HEROES.borrarTablas
-
+GO
 -- ////////////////////  EJECUCIÓN DE PROCEDIMIENTOS ////////////////////
 
-GO
-
 EXEC GITAR_HEROES.crearTablas
+
+--EXEC GITAR_HEROES.borrarTablas
