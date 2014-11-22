@@ -147,10 +147,11 @@ AS
 	-- /////////////// ROLUSUARIO ///////////////
 
 		CREATE Table GITAR_HEROES.RolUsuario
-			(codigo_rol int,
-			username varchar(15),
-			PRIMARY KEY (codigo_rol, username))
-
+			(codigo_rol smallint,
+			username char(15),
+			PRIMARY KEY (codigo_rol, username),
+			FOREIGN KEY (codigo_rol) REFERENCES GITAR_HEROES.Rol,
+			FOREIGN KEY (username) REFERENCES GITAR_HEROES.Usuario)
 
 	-- /////////////// FUNCIONALIDAD ///////////////
 
@@ -180,13 +181,16 @@ AS
 		VALUES (8, 'Generar o Modificar Reserva')
 		
 		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
-		VALUES (9, 'Registrar estadia')
+		VALUES (9, 'Cancelar Reserva')
 		
 		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
-		VALUES (10, 'Registrar Consumibles')
+		VALUES (10, 'Registrar estadia')
 		
 		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
-		VALUES (11, 'Facturar Publicaciones')
+		VALUES (11, 'Registrar Consumibles')
+		
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		VALUES (12, 'Facturar Publicaciones')
 		
 				INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
 		VALUES (13, 'Listado Estadistico')
@@ -195,9 +199,11 @@ AS
 	-- /////////////// ROLFUNCIONALIDAD ///////////////
 
 		CREATE Table GITAR_HEROES.RolFuncionalidad
-			(codigo_rol int,
-			codigo_funcionalidad int,
-			PRIMARY KEY (codigo_rol, codigo_funcionalidad))
+			(codigo_rol smallint,
+			codigo_funcionalidad smallint,
+			PRIMARY KEY (codigo_rol, codigo_funcionalidad),
+			FOREIGN KEY (codigo_rol) REFERENCES GITAR_HEROES.Rol,
+			FOREIGN KEY (codigo_funcionalidad) REFERENCES GITAR_HEROES.Funcionalidad)
 
 		-- Administrador - ABM de Rol
 		INSERT INTO GITAR_HEROES.RolFuncionalidad
