@@ -17,7 +17,8 @@ namespace FrbaHotel.Listado_Funcionalidades
         private SqlCommand command;
         private SqlDataAdapter adapter;
         private DataTable dataTable;
-
+        private int codigo_funcionalidad;
+        private List<int> lista_codigos_funcionalidad = new List<int>();
 
         public Funcionalidades()
         {
@@ -26,18 +27,12 @@ namespace FrbaHotel.Listado_Funcionalidades
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void InitializecomboBoxFuncionalidades()
-        {
-            string[] test = new string[] { "uno", "dos" };
-            comboBoxFuncionalidades.Items.AddRange(test);
+            codigo_funcionalidad = lista_codigos_funcionalidad[comboBoxFuncionalidades.SelectedIndex];
+            MessageBox.Show("codigo elegido: " + codigo_funcionalidad.ToString());
         }
 
         private void Funcionalidades_Load(object sender, EventArgs e)
         {
-            //this.InitializecomboBoxFuncionalidades();
             connection = new System.Data.SqlClient.SqlConnection();
             try
             {
@@ -45,7 +40,7 @@ namespace FrbaHotel.Listado_Funcionalidades
                 //connection = new SqlConnection(connectionStr);
                 connection.ConnectionString = connectionStr;
                 connection.Open();
-                command = new SqlCommand("select GITAR_HEROES.Funcionalidad.descripcion from GITAR_HEROES.Funcionalidad INNER JOIN GITAR_HEROES.RolFuncionalidad ON GITAR_HEROES.Funcionalidad.codigo = GITAR_HEROES.RolFuncionalidad.codigo_funcionalidad AND GITAR_HEROES.RolFuncionalidad.codigo_rol = 3");
+                command = new SqlCommand("select GITAR_HEROES.Funcionalidad.descripcion,GITAR_HEROES.Funcionalidad.codigo from GITAR_HEROES.Funcionalidad INNER JOIN GITAR_HEROES.RolFuncionalidad ON GITAR_HEROES.Funcionalidad.codigo = GITAR_HEROES.RolFuncionalidad.codigo_funcionalidad AND GITAR_HEROES.RolFuncionalidad.codigo_rol = 3");
                 command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
                 dataTable = new DataTable();
@@ -54,10 +49,8 @@ namespace FrbaHotel.Listado_Funcionalidades
                 foreach (DataRow row in dataTable.Rows)
                 {
                     comboBoxFuncionalidades.Items.Add(row["descripcion"].ToString());
+                    lista_codigos_funcionalidad.Add(Convert.ToInt16(row["codigo"]));
                 }
-
-
-                
             }
             catch (Exception exc)
             {
