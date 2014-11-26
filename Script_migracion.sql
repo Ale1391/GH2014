@@ -317,21 +317,21 @@ AS
 	-- /////////////// HABITACION ///////////////
 
 		CREATE Table GITAR_HEROES.Habitacion
-			(codigo int IDENTITY PRIMARY KEY,
-			codigo_hotel int NOT NULL,
-			piso smallint NOT NULL,
-			numero int NOT NULL,
-			tipo int NOT NULL,
-			ubicacion varchar(60),
-			estado smallint NOT NULL,
-			FOREIGN KEY (codigo_hotel) REFERENCES GITAR_HEROES.Hotel,
-			FOREIGN KEY (tipo) REFERENCES GITAR_HEROES.TipoHabitacion)
+			  (codigo_hotel int,
+			   numero smallint,
+			   piso smallint NOT NULL,
+			   tipo int NOT NULL,
+			   ubicacion varchar(60),
+			   estado smallint NOT NULL,
+			   PRIMARY KEY (codigo_hotel, numero),
+			   FOREIGN KEY (codigo_hotel) REFERENCES GITAR_HEROES.Hotel,
+			   FOREIGN KEY (tipo) REFERENCES GITAR_HEROES.TipoHabitacion)
 
 		INSERT INTO GITAR_HEROES.Habitacion 
 		SELECT DISTINCT
 			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),
-			   Habitacion_Piso,
 			   Habitacion_Numero,
+			   Habitacion_Piso,
 			   Habitacion_Tipo_Codigo,
 			   CASE Habitacion_Frente WHEN 'S' THEN 'Vista al exterior' ELSE 'Interno' END,
 			   1						-- Corresponde al estado que por defecto se encuentra "habilitado"
@@ -431,18 +431,19 @@ AS
 			PRIMARY KEY (codigo_reserva, username),
 			FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Reserva,
 			FOREIGN KEY (username) REFERENCES GITAR_HEROES.Usuario)
-/*
+
 
 	-- /////////////// RESERVAHABITACION ///////////////
 
 		CREATE Table GITAR_HEROES.ReservaHabitacion
-			(codigo_reserva int, 
-			c int,
-			PRIMARY KEY (codigo_reserva, ReservaHabitacion),
-			FOREIGN KEY (codigo_reserva) REFERENCES (GITAR_HEROES.Reserva),
-			FOREIGN KEY (ReservaHabitacion) REFERENCES (GITAR_HEROES.Habitacion))
+			  (codigo_reserva int, 
+			   codigo_hotel int,
+			   numero_habitacion smallint,
+			   PRIMARY KEY (codigo_reserva, codigo_hotel, numero_habitacion),
+			   FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Reserva,
+			   FOREIGN KEY (codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.Habitacion)
 
-
+/*
 	-- /////////////// RESERVACANCELADA ///////////////
 
 		CREATE Table GITAR_HEROES.ReservaCancelada
