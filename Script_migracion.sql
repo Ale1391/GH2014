@@ -328,17 +328,16 @@ AS
 			FOREIGN KEY (tipo) REFERENCES GITAR_HEROES.TipoHabitacion)
 
 		INSERT INTO GITAR_HEROES.Habitacion 
-		SELECT Hotel.codigo,
+		SELECT DISTINCT
+			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),
 			   Habitacion_Piso,
 			   Habitacion_Numero,
 			   Habitacion_Tipo_Codigo,
 			   CASE Habitacion_Frente WHEN 'S' THEN 'Vista al exterior' ELSE 'Interno' END,
 			   1						-- Corresponde al estado que por defecto se encuentra "habilitado"
 
-		FROM gd_esquema.Maestra JOIN GITAR_HEROES.Hotel Hotel ON Hotel_Ciudad = Hotel.ciudad
-		GROUP BY Habitacion_Numero, Hotel.codigo, Habitacion_Piso, Habitacion_Tipo_Codigo, Habitacion_Frente
-		ORDER BY Hotel.codigo, Habitacion_Piso, Habitacion_Numero
-
+		FROM gd_esquema.Maestra M
+		--ORDER BY 1, Habitacion_Numero
 
 	-- /////////////// HOTELINHABILITADO ///////////////
 
@@ -378,6 +377,7 @@ AS
 
 	-- /////////////// RESERVA ///////////////
 
+		
 		CREATE Table GITAR_HEROES.Reserva
 			(codigo int PRIMARY KEY,
 			fecha_reserva smalldatetime NOT NULL,
@@ -387,24 +387,40 @@ AS
 			codigo_regimen smallint,
 			tipo_doc_cliente smallint,
 			nro_doc_cliente numeric(11,0),
-			--costo decimal (10,2),			--??????????
+			costo_total decimal (10,2),
 			codigo_estado smallint,
-		-- Podrían referenciar a las tablas Regimen y Hotel por separado --------------------
-			FOREIGN KEY (codigo_hotel, codigo_regimen) REFERENCES GITAR_HEROES.RegimenHotel,
-			--FOREIGN KEY (codigo_regimen) REFERENCES GITAR_HEROES.RegimenGotel,
-		-------------------------------------------------------------------------------------
-			--FOREIGN KEY (tipo_doc_cliente, nro_doc_cliente) REFERENCES (GITAR_HEROES.Cliente),
+			FOREIGN KEY (codigo_hotel) REFERENCES GITAR_HEROES.Hotel,
 			FOREIGN KEY (codigo_estado) REFERENCES GITAR_HEROES.TipoEstadoReserva)
 
-/*
-		INSERT INTO GITAR_HEROES.Reserva
-		SELECT Reserva_Codigo,
-			   Reserva_Fecha_Inicio,		-- NO existe fecha de realizacion en el sistema, tomo por defecto fecha de inicio
-			   Reserva_Fecha_Inicio,
-			   Reserva_Fecha_Inicio + Reserva_Cant_Noches,
-	      
-		FROM gd_esquema.Maestra
 
+		INSERT INTO GITAR_HEROES.Reserva
+		SELECT DISTINCT
+			   Reserva_Codigo,
+		-- NO existe fecha de realizacion en el sistema, tomo por defecto fecha de inicio
+			   Reserva_Fecha_Inicio,							
+			   Reserva_Fecha_Inicio,
+			   Reserva_Fecha_Inicio + Reserva_Cant_Noches,		-- fecha_fin
+		-- Se busca el codigo del hotel desde la tabla Hotel
+			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel 
+			   WHERE Hotel.ciudad = Hotel_Ciudad AND 
+					 Hotel.domicilio_calle = Hotel_Calle 
+					 AND Hotel.domicilio_numero = Hotel_Nro_Calle),		-- codigo_hotel
+		-- Se busca el codigo del regimen desde la tabla Regimen
+			  (SELECT Regimen.codigo FROM GITAR_HEROES.Regimen Regimen 
+			   WHERE Regimen.descripcion = Regimen_Descripcion),		-- codigo_regimen
+			  1,	-- tipo_doc_cliente
+		-- Se busca el numero de documento desde la tabla Cliente
+			  (SELECT Cliente.nro_doc FROM GITAR_HEROES.Cliente Cliente 
+			   WHERE Cliente.nro_doc = Cliente_Pasaporte_Nro 
+			 		 AND Cliente.mail = Cliente_Mail),					-- nro_doc_cliente
+			   Regimen_Precio * Habitacion_Tipo_Porcentual + Hotel_CantEstrella * Hotel_Recarga_Estrella,		-- costo_total
+		-- Si la reserva tiene factura se la considera de estado efectivizada sino simplemente correcta
+			   CASE WHEN EXISTS(SELECT 1 FROM gd_esquema.Maestra WHERE M.Reserva_Codigo = Reserva_Codigo AND Factura_Nro IS NOT NULL) 
+			   THEN 6 ELSE 1 END
+	      
+		FROM gd_esquema.Maestra M
+		--ORDER BY Reserva_Codigo
+		
 
 	-- /////////////// USUARIORESERVA ///////////////
 
@@ -413,9 +429,9 @@ AS
 			username char(15),
 			descripción varchar(30),
 			PRIMARY KEY (codigo_reserva, username),
-			FOREIGN KEY (codigo_reserva) REFERENCES (GITAR_HEROES.Reserva),
-			FOREIGN KEY (username) REFERENCES (GITAR_HEROES.Usuario))
-
+			FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Reserva,
+			FOREIGN KEY (username) REFERENCES GITAR_HEROES.Usuario)
+/*
 
 	-- /////////////// RESERVAHABITACION ///////////////
 
@@ -545,8 +561,8 @@ AS
 		DROP Table GITAR_HEROES.TipoConsumible
 		DROP Table GITAR_HEROES.ReservaCancelada
 		DROP Table GITAR_HEROES.ReservaHabitacion
-		DROP Table GITAR_HEROES.UsuarioReserva
 */
+		DROP Table GITAR_HEROES.UsuarioReserva
 		DROP Table GITAR_HEROES.Reserva
 		DROP Table GITAR_HEROES.TipoEstadoReserva
 		DROP Table GITAR_HEROES.HotelInhabilitado
