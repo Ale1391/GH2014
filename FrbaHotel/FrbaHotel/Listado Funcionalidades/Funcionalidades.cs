@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using FrbaHotel.Cancelar_Reserva;
 
 namespace FrbaHotel.Listado_Funcionalidades
 {
@@ -28,11 +29,12 @@ namespace FrbaHotel.Listado_Funcionalidades
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             codigo_funcionalidad = lista_codigos_funcionalidad[comboBoxFuncionalidades.SelectedIndex];
-            MessageBox.Show("codigo elegido: " + codigo_funcionalidad.ToString());
+            //MessageBox.Show("codigo elegido: " + codigo_funcionalidad.ToString());
         }
 
         private void Funcionalidades_Load(object sender, EventArgs e)
         {
+            this.StartPosition = FormStartPosition.CenterScreen;
             connection = new System.Data.SqlClient.SqlConnection();
             try
             {
@@ -65,6 +67,18 @@ namespace FrbaHotel.Listado_Funcionalidades
             this.Hide();
             Principal prinForm = new Principal();
             prinForm.Show();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (codigo_funcionalidad == 9)
+            {
+                //CONTINUAR
+                this.Hide();
+                CancelarReserva cancelar_reserva = new CancelarReserva();
+                cancelar_reserva.StartPosition = FormStartPosition.CenterScreen;
+                cancelar_reserva.ShowDialog();
+            }
         }
     }
 }
