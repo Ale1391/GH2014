@@ -43,7 +43,9 @@ namespace FrbaHotel.Login
                 string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
                 connection.ConnectionString = connectionStr;
                 connection.Open();
-                command = new SqlCommand("select username from GITAR_HEROES.Usuario where username = '"+usuario+"' and password = '"+hashstring+"'");
+                string query = "select username from GITAR_HEROES.Usuario where username = '" + usuario + "' and password = '" + hashstring + "'";
+                command = new SqlCommand(query);
+                command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
                 dataTable = new DataTable();
                 adapter.Fill(dataTable);
@@ -55,6 +57,7 @@ namespace FrbaHotel.Login
                     command = new SqlCommand("select GITAR_HEROES.Rol.descripcion from GITAR_HEROES.RolUsuario inner join GITAR_HEROES.Rol on GITAR_HEROES.Rol.codigo = GITAR_HEROES.RolUsuario.codigo_rol where username = '"+usuario+"'");
                     adapter = new SqlDataAdapter(command);
                     dataTable = new DataTable();
+                    command.Connection = connection;
                     adapter.Fill(dataTable);
                     foreach (DataRow row in dataTable.Rows)
                     {
