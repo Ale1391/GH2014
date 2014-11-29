@@ -101,7 +101,7 @@ AS
 
 		CREATE Table GITAR_HEROES.Usuario
 			(username char(15),
-			password char(15) NOT NULL,
+			password char(64) NOT NULL,
 			nombre varchar(50) NOT NULL,
 			apellido varchar(50) NOT NULL,
 			tipo_doc smallint NOT NULL,
@@ -228,6 +228,18 @@ AS
 		-- Administrador - ABM de Regimen de Estadia
 		INSERT INTO GITAR_HEROES.RolFuncionalidad
 		VALUES (1, 7)
+		
+		-- Administrador - Generar o Modificar Reserva
+		INSERT INTO GITAR_HEROES.RolFuncionalidad
+		VALUES (1, 8)
+
+		-- Administrador - Cancelar Reserva
+		INSERT INTO GITAR_HEROES.RolFuncionalidad
+		VALUES (1, 9)
+
+		-- Administrador - Registrar Estadia
+		INSERT INTO GITAR_HEROES.RolFuncionalidad
+		VALUES (1, 10)
 
 		-- Administrador - Registrar Consumibles
 		INSERT INTO GITAR_HEROES.RolFuncionalidad
@@ -442,42 +454,77 @@ AS
 			   PRIMARY KEY (codigo_reserva, codigo_hotel, numero_habitacion),
 			   FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Reserva,
 			   FOREIGN KEY (codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.Habitacion)
+			   
+			   
+		INSERT INTO GITAR_HEROES.ReservaHabitacion
+		SELECT Reserva_Codigo,
+			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel 
+			   WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),		--codigo_hotel
+			   Habitacion_Numero
 
-/*
+		FROM gd_esquema.Maestra M
+		GROUP BY Reserva_Codigo, Hotel_Calle, Hotel_Nro_Calle, Habitacion_Numero
+
+	
+
 	-- /////////////// RESERVACANCELADA ///////////////
 
 		CREATE Table GITAR_HEROES.ReservaCancelada
 			(codigo_reserva int PRIMARY KEY,
-			fecha:cancelacion smalldatetime,
+			fecha_cancelacion smalldatetime,
 			descripción_motivo varchar(60),
 			username char(15),
-			FOREIGN KEY (codigo_reserva) REFERENCES (GITAR_HEROES.Reserva)
-			FOREIGN KEY (username) REFERENCES (GITAR_HEROES.Usuario))
+		-- Podria considerarse username tambien como clave primaria
+			FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Reserva,
+			FOREIGN KEY (username) REFERENCES GITAR_HEROES.Usuario)
 
 
 	-- /////////////// TIPOCONSUMIBLE ///////////////
 
 		CREATE Table GITAR_HEROES.TipoConsumible
-			(codigo_consumible int PRIMARY KEY,
-			descripción_motivo varchar(60),
-
+			(codigo int PRIMARY KEY,
+			descripción varchar(60),
+			precio decimal(10,2))
+			
+		INSERT INTO GITAR_HEROES.TipoConsumible
+		SELECT DISTINCT Consumible_Codigo, Consumible_Descripcion, Consumible_Precio
+		FROM gd_esquema.Maestra
+		WHERE Consumible_Codigo IS NOT NULL
+		
+		
 
 	-- /////////////// ESTADIA ///////////////
 
 		CREATE Table GITAR_HEROES.Estadia
-			(codigo_reserva int PRIMARY KEY,
+			(codigo_reserva int,
+			codigo_hotel int,
+			numero_habitacion smallint,
+			fecha_ingreso smalldatetime,
 			username_ingreso char(15),
 			fecha_egreso smalldatetime,		-- cant_noches
 			username_egreso char(15),
-			FOREIGN KEY (codigo_reserva) REFERENCES (GITAR_HEROES.Reserva),
-			FOREIGN KEY (username_ingreso) REFERENCES (GITAR_HEROES.Usuario),
-			FOREIGN KEY (username_egreso) REFERENCES (GITAR_HEROES.Usuario))
+			PRIMARY KEY (codigo_reserva, codigo_hotel, numero_habitacion),
+			FOREIGN KEY (codigo_reserva, codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.ReservaHabitacion,
+			FOREIGN KEY (username_ingreso) REFERENCES GITAR_HEROES.Usuario,
+			FOREIGN KEY (username_egreso) REFERENCES GITAR_HEROES.Usuario)
 
-		--INSERT INTO GITAR_HEROES.Estadia
-		--SELECT
-		--FROM gd_esquema.Maestra
+		INSERT INTO GITAR_HEROES.Estadia
+		SELECT DISTINCT
+			   Reserva_Codigo,
+			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel 
+			   WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),		-- codigo_hotel			   
+			   Habitacion_Numero,
+			   Estadia_Fecha_Inicio,
+			   NULL,		-- username_ingreso
+			   Estadia_Fecha_Inicio + Estadia_Cant_Noches,		-- fecha_egreso
+			   NULL			-- username_egreso
+			     
+		FROM gd_esquema.Maestra M
+		WHERE (SELECT Reserva.codigo_estado FROM GITAR_HEROES.Reserva Reserva WHERE Reserva.codigo = M.Reserva_Codigo) = 6
+			   AND Estadia_Fecha_Inicio IS NOT NULL
 
 
+/*
 	-- /////////////// CONSUMIBLESADQUIRIDOS ///////////////
 
 		CREATE Table GITAR_HEROES.ConsumiblesAdquiridos
@@ -548,6 +595,55 @@ AS
 
 GO
 
+CREATE Procedure GITAR_HEROES.generarUsuario 
+	  (@username char(15), 
+	   @password char(64),
+	   @nombre varchar(50),
+	   @apellido varchar(50),
+	   @tipo_doc smallint,
+	   @nro_doc int,
+	   @fecha_nacimiento smalldatetime,
+	   @domicilio_calle varchar(60),
+	   @domicilio_numero int,
+	   @domicilio_piso smallint,
+	   @domicilio_depto char(1),
+	   @mail varchar(50),
+	   @telefono bigint,
+	   @codigo_rol smallint)
+
+AS
+	BEGIN
+		IF EXISTS (SELECT 1 FROM GITAR_HEROES.Usuario WHERE @username = username)
+			RAISERROR('ERROR, El usuario ya existe!!!',16,1)
+		ELSE
+			BEGIN
+				INSERT INTO GITAR_HEROES.Usuario
+				VALUES (@username,
+						@password,
+						@nombre,
+						@apellido,
+						@tipo_doc,
+						@nro_doc,
+						@fecha_nacimiento,
+						@domicilio_calle,
+						@domicilio_numero,
+						@domicilio_piso,
+						@domicilio_depto,
+						@mail,
+						@telefono,
+						1,			-- estado
+						1)			-- estado_sistema
+				
+				INSERT INTO GITAR_HEROES.RolUsuario
+				VALUES (@codigo_rol, @username)
+	
+				PRINT('Usuario creado correctamente!!!')
+						
+			END
+	END
+
+GO
+
 CREATE Procedure GITAR_HEROES.borrarTablas
 AS
 	BEGIN
@@ -558,11 +654,11 @@ AS
 		DROP Table GITAR_HEROES.Factura
 		DROP Table GITAR_HEROES.TipoPago
 		DROP Table GITAR_HEROES.ConsumiblesAdquiridos
+*/
 		DROP Table GITAR_HEROES.Estadia
 		DROP Table GITAR_HEROES.TipoConsumible
 		DROP Table GITAR_HEROES.ReservaCancelada
 		DROP Table GITAR_HEROES.ReservaHabitacion
-*/
 		DROP Table GITAR_HEROES.UsuarioReserva
 		DROP Table GITAR_HEROES.Reserva
 		DROP Table GITAR_HEROES.TipoEstadoReserva
@@ -583,6 +679,7 @@ AS
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
 		DROP Procedure GITAR_HEROES.crearTablas
+		DROP Procedure GITAR_HEROES.generarUsuario
 		DROP Procedure GITAR_HEROES.borrarTablas
 
 	-- BORRADO DEL ESQUEMA		
@@ -594,5 +691,22 @@ GO
 -- ////////////////////  EJECUCIÓN DE PROCEDIMIENTOS ////////////////////
 
 EXEC GITAR_HEROES.crearTablas
+
+-- Se crea el usuario base en el sistema
+EXEC GITAR_HEROES.generarUsuario 
+	'admin', 
+	 'e6b87050bfcb8143fcb8db0170a4dc9ed00d904ddd3e2a4ad1b1e8dc0fdc9be7',
+	 'Administrador General',
+	 'Administrador General',
+	 1,
+	 11111111,
+	 NULL,
+	 NULL,
+	 NULL,
+	 NULL,
+	 NULL,
+	 'admin@gitarheroes.com',
+	 NULL,
+	 1
 
 --EXEC GITAR_HEROES.borrarTablas
