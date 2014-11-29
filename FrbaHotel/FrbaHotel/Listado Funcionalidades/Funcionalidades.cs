@@ -14,7 +14,6 @@ namespace FrbaHotel.Listado_Funcionalidades
     public partial class Funcionalidades : Form
     {
         System.Data.SqlClient.SqlConnection connection;
-        //private SqlConnection connection;
         private SqlCommand command;
         private SqlDataAdapter adapter;
         private DataTable dataTable;
@@ -42,7 +41,7 @@ namespace FrbaHotel.Listado_Funcionalidades
                 //connection = new SqlConnection(connectionStr);
                 connection.ConnectionString = connectionStr;
                 connection.Open();
-                command = new SqlCommand("select GITAR_HEROES.Funcionalidad.descripcion,GITAR_HEROES.Funcionalidad.codigo from GITAR_HEROES.Funcionalidad INNER JOIN GITAR_HEROES.RolFuncionalidad ON GITAR_HEROES.Funcionalidad.codigo = GITAR_HEROES.RolFuncionalidad.codigo_funcionalidad AND GITAR_HEROES.RolFuncionalidad.codigo_rol = 3");
+                command = new SqlCommand("SELECT GITAR_HEROES.Funcionalidad.descripcion, GITAR_HEROES.Funcionalidad.codigo FROM GITAR_HEROES.Funcionalidad INNER JOIN GITAR_HEROES.RolFuncionalidad ON GITAR_HEROES.Funcionalidad.codigo = GITAR_HEROES.RolFuncionalidad.codigo_funcionalidad WHERE GITAR_HEROES.RolFuncionalidad.codigo_rol = 3");
                 command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
                 dataTable = new DataTable();
