@@ -472,7 +472,7 @@ AS
 		CREATE Table GITAR_HEROES.ReservaCancelada
 			(codigo_reserva int PRIMARY KEY,
 			fecha_cancelacion smalldatetime,
-			descripción_motivo varchar(60),
+			descripcion_motivo varchar(60),
 			username char(15),
 		-- Podria considerarse username tambien como clave primaria
 			FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Reserva,
@@ -524,56 +524,72 @@ AS
 			   AND Estadia_Fecha_Inicio IS NOT NULL
 
 
-/*
 	-- /////////////// CONSUMIBLESADQUIRIDOS ///////////////
 
-		CREATE Table GITAR_HEROES.ConsumiblesAdquiridos
+		CREATE Table GITAR_HEROES.ConsumibleAdquirido
 			(codigo_consumible int,
 			codigo_reserva int,
-			numero_habitacion int,
+			codigo_hotel int,
+			numero_habitacion smallint,
 			cantidad int NOT NULL,
-			PRIMARY KEY (codigo_consumible, codigo_reserva, numero_habitacion),
+			leyenda varchar(32),
+			PRIMARY KEY (codigo_consumible, codigo_reserva, codigo_hotel, numero_habitacion),
+			FOREIGN KEY (codigo_consumible) REFERENCES GITAR_HEROES.TipoConsumible,
+			FOREIGN KEY (codigo_reserva, codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.Estadia)
 		
-			FOREIGN KEY (codigo_consumible) REFERENCES (GITAR_HEROES.),
-		-- Podrían referenciar la tabla ReservaHabitacion ----------------------------
-			-- Podría referenciar la tabla Estadía -------------------------------
-			FOREIGN KEY (codigo_reserva) REFERENCES (GITAR_HEROES.Reserva),	      
-			FOREIGN KEY (numero_habitacion) REFERENCES (GITAR_HEROES.habitacion))
-		------------------------------------------------------------------------------
-		
-		--INSERT INTO GITAR_HEROES.ConsumiblesAdquiridos
-		--SELECT 
-		--FROM gd_esquema.Maestra
+		INSERT INTO GITAR_HEROES.ConsumibleAdquirido
+		SELECT DISTINCT 
+			   Consumible_Codigo,
+			   Reserva_Codigo,
+			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel 
+			   WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),		-- codigo_hotel			   
+			   Habitacion_Numero,
+			   SUM(Item_Factura_Cantidad),
+			   'Consumible'			-- leyenda
+			   
+		FROM gd_esquema.Maestra M
+		WHERE Consumible_Codigo IS NOT NULL
+		GROUP BY Consumible_Codigo, Reserva_Codigo, Habitacion_Numero, Hotel_Calle, Hotel_Nro_Calle
 
 
 	-- /////////////// TIPOPAGO ///////////////
 
 		CREATE Table GITAR_HEROES.TipoPago
-			(codigo smallint PRIMARY KEY,
-			descripcion varchar(30) NOT NULL)
+			  (codigo smallint PRIMARY KEY,
+			   descripcion varchar(30) NOT NULL)
+		
+		-- Tipo de pago en Efectivo
+		INSERT INTO GITAR_HEROES.TipoPago
+		VALUES (1, 'Efectivo')
+		
+		-- Tipo de pago por Tarjeta de credito
+		INSERT INTO GITAR_HEROES.TipoPago
+		VALUES (2, 'Tarjeta de credito')
 
-
+/*
 	-- /////////////// FACTURA ///////////////
 
 		CREATE Table GITAR_HEROES.Factura
 			(numero_factura int PRIMARY KEY,
 			tipo_doc_cliente smallint, 
 			nro_doc_cliente numeric(11,0), 
+			codigo_reserva int,
 			codigo_hotel int,
+			numero_habitacion smallint,
 			fecha smalldatetime,
 			total decimal(10,2),
 			codigo_tipo_pago smallint,
 			nro_tarjeta numeric(17),
 			dias_cumplidos int NOT NULL,
 			dias_faltantes int NOT NULL,
-			-- Podrían referenciar la tabla Reserva ---------------------------------------
-			FOREIGN KEY (tipo_doc_cliente, nro_doc_cliente) REFERENCES (GITAR_HEROES.Cliente),
-			FOREIGN KEY (codigo_hotel) REFERENCES (GITAR_HEROES.HOTEL),
-			FOREIGN KEY (codigo_tipo_pago) REFERENCES (GITAR_HEROES.TipoPago))
+			FOREIGN KEY (codigo_reserva, codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.Estadia,
+			FOREIGN KEY (codigo_tipo_pago) REFERENCES GITAR_HEROES.TipoPago)
 
-		--INSERT INTO GITAR_HEROES.Factura
-		--SELECT 
-		--FROM gd_esquema.Maestra
+		INSERT INTO GITAR_HEROES.Factura
+		SELECT Factura_Nro,
+			   
+			   
+		FROM gd_esquema.Maestra
 
 
 	-- /////////////// ITEMFACTURA ///////////////
@@ -609,7 +625,7 @@ CREATE Procedure GITAR_HEROES.generarUsuario
 	   @domicilio_depto char(1),
 	   @mail varchar(50),
 	   @telefono bigint,
-	   @codigo_rol smallint)
+	   @descripcion_rol varchar(60))
 
 AS
 	BEGIN
@@ -617,6 +633,10 @@ AS
 			RAISERROR('ERROR, El usuario ya existe!!!',16,1)
 		ELSE
 			BEGIN
+				
+				DECLARE @codigo_rol smallint
+				SET @codigo_rol = (SELECT codigo FROM GITAR_HEROES.Rol WHERE @descripcion_rol = descripcion)
+				
 				INSERT INTO GITAR_HEROES.Usuario
 				VALUES (@username,
 						@password,
@@ -644,6 +664,43 @@ AS
 
 GO
 
+-- Agrega a la tabla UsuarioHotel un registro vinculando al username con sus hoteles asignados
+CREATE Procedure GITAR_HEROES.agregarUsuarioHotel (@codigo_hotel int, @username char(15))
+AS
+	BEGIN
+		INSERT INTO GITAR_HEROES.UsuarioHotel
+		VALUES (@codigo_hotel, @username)
+	END
+
+GO
+
+-- Asigna al username todos los hoteles existentes registrados
+CREATE Procedure GITAR_HEROES.setearSuperUsuario (@username char(15))
+AS
+	BEGIN
+		DECLARE @codigo_hotel int
+		
+		DECLARE cHoteles CURSOR FOR
+		SELECT codigo
+		FROM Hotel
+		
+		OPEN cHoteles
+		
+		FETCH cHoteles INTO @codigo_hotel
+		
+		WHILE (@@FETCH_STATUS = 0)
+		BEGIN
+			EXEC GITAR_HEROES.agregarUsuarioHotel @codigo_hotel, @username
+			FETCH cHoteles INTO @codigo_hotel
+		END
+		
+		CLOSE cHoteles
+		DEALLOCATE cHoteles
+		
+	END
+
+GO
+
 CREATE Procedure GITAR_HEROES.borrarTablas
 AS
 	BEGIN
@@ -652,9 +709,9 @@ AS
 /*
 		DROP Table GITAR_HEROES.ItemFactura
 		DROP Table GITAR_HEROES.Factura
-		DROP Table GITAR_HEROES.TipoPago
-		DROP Table GITAR_HEROES.ConsumiblesAdquiridos
 */
+		DROP Table GITAR_HEROES.TipoPago
+		DROP Table GITAR_HEROES.ConsumibleAdquirido
 		DROP Table GITAR_HEROES.Estadia
 		DROP Table GITAR_HEROES.TipoConsumible
 		DROP Table GITAR_HEROES.ReservaCancelada
@@ -678,6 +735,8 @@ AS
 		DROP Table GITAR_HEROES.Hotel
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
+		DROP Procedure GITAR_HEROES.agregarUsuarioHotel
+		DROP Procedure GITAR_HEROES.setearSuperUsuario
 		DROP Procedure GITAR_HEROES.crearTablas
 		DROP Procedure GITAR_HEROES.generarUsuario
 		DROP Procedure GITAR_HEROES.borrarTablas
@@ -692,9 +751,9 @@ GO
 
 EXEC GITAR_HEROES.crearTablas
 
--- Se crea el usuario base en el sistema
+-- Se crea el usuario admnistrador base en el sistema
 EXEC GITAR_HEROES.generarUsuario 
-	'admin', 
+	 'admin', 
 	 'e6b87050bfcb8143fcb8db0170a4dc9ed00d904ddd3e2a4ad1b1e8dc0fdc9be7',
 	 'Administrador General',
 	 'Administrador General',
@@ -707,6 +766,29 @@ EXEC GITAR_HEROES.generarUsuario
 	 NULL,
 	 'admin@gitarheroes.com',
 	 NULL,
-	 1
+	 'Administrador'
 
+-- Se agrega acceso a todos los hoteles para el usuario "admin"
+EXEC GITAR_HEROES.setearSuperUsuario 'admin'
+
+-- Se crea el usuario guest generico en el sistema
+EXEC GITAR_HEROES.generarUsuario 
+	 'guest', 
+	 '',
+	 'Guest',
+	 'Guest',
+	 2,
+	 22222222,
+	 NULL,
+	 NULL,
+	 NULL,
+	 NULL,
+	 NULL,
+	 'guest@gitarheroes.com',
+	 NULL,
+	 'Guest'
+	 
+-- Se agrega acceso a todos los hoteles para el usuario "guest"
+EXEC GITAR_HEROES.setearSuperUsuario 'guest'
+	 
 --EXEC GITAR_HEROES.borrarTablas
