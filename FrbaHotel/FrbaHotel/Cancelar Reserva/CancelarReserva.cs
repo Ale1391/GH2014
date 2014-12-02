@@ -39,7 +39,7 @@ namespace FrbaHotel.Cancelar_Reserva
                 string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
                 connection.ConnectionString = connectionStr;
                 connection.Open();
-                command = new SqlCommand("select fecha_inicio,codigo_estado from GITAR_HEROES.Reserva where codigo = " + numero_reserva.Text);
+                command = new SqlCommand("select fecha_inicio,codigo_estado,codigo_hotel from GITAR_HEROES.Reserva where codigo = " + numero_reserva.Text);
                 command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
                 dataTable = new DataTable();
@@ -55,7 +55,7 @@ namespace FrbaHotel.Cancelar_Reserva
                     DateTime fecha_actual = DateTime.Today;
                     int diferencia_en_dias = (int)(fecha_reserva - fecha_actual).TotalDays;
                     int estado = Convert.ToInt32(dataTable.Rows[0]["codigo_estado"]);
-
+                    string hotel = dataTable.Rows[0]["codigo_hotel"].ToString();
                     if (estado >= 3)
                     {
                         MessageBox.Show("Error: El estado de la reserva no permite cancelación.");
@@ -64,40 +64,56 @@ namespace FrbaHotel.Cancelar_Reserva
                     {
                         if (diferencia_en_dias >= 1)
                         {
-                            string query;
-                            if (Variables.tipo_usuario == "Recepcionista")
-                            {
-                                query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 3 WHERE codigo = " + numero_reserva.Text;
-                            }
-                            else if (Variables.tipo_usuario == "Guest")
-                            {
-                                query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 4 WHERE codigo = " + numero_reserva.Text;
-                            }
-                            else
-                            {
-                                query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 5 WHERE codigo = " + numero_reserva.Text;
-                            }
-                            command = new SqlCommand(query);
+                            string query_test = "select * from GITAR_HEROES.UsuarioHotel where username = '"+Variables.usuario+"' and codigo_hotel = "+hotel;
+                            command = new SqlCommand(query_test);
                             command.Connection = connection;
                             adapter = new SqlDataAdapter(command);
                             dataTable = new DataTable();
                             adapter.Fill(dataTable);
+                            if (dataTable.Rows.Count < 1)
+                            {
+                                MessageBox.Show("Error: No puede cancelar la reserva por no pertenecer al hotel.");
+                            }
+                            else
+                            {
+                                string query;
+                                
+                                if (Variables.tipo_usuario == "Recepcionista")
+                                {
+                                    query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 3 WHERE codigo = " + numero_reserva.Text;
+                                }
+                                else if (Variables.tipo_usuario == "Guest")
+                                {
+                                    query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 4 WHERE codigo = " + numero_reserva.Text;
+                                }
+                                else
+                                {
+                                    query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 5 WHERE codigo = " + numero_reserva.Text;
+                                }
+                                command = new SqlCommand(query);
+                                command.Connection = connection;
+                                adapter = new SqlDataAdapter(command);
+                                dataTable = new DataTable();
+                                adapter.Fill(dataTable);
 
-                            //if (!dataTable.HasErrors)
-                            //{
+                                if (!dataTable.HasErrors)
+                                {
 
-                                //string currentDate = DateTime.Now.ToString("yyyy-dd-MM hh:mm:ss");
-                                //query = "INSERT INTO GITAR_HEROES.ReservaCancelada (codigo_reserva,fecha_cancelacion,descripción_motivo,username) VALUES (" + numero_reserva.Text + ",'" + currentDate + "','" + motivo_textbox.Text + "','" + Variables.usuario + "')";
-                            
-                                //command = new SqlCommand(query);
-                                //command.Connection = connection;
-                                //adapter = new SqlDataAdapter(command);
-                                //dataTable = new DataTable();
-                                //adapter.Fill(dataTable);
+                                    string currentDate = DateTime.Now.ToString("yyyy-dd-MM hh:mm:ss");
+                                    query = "INSERT INTO GITAR_HEROES.ReservaCancelada (codigo_reserva,fecha_cancelacion,descripcion_motivo,username) VALUES (" + numero_reserva.Text + ",'" + currentDate + "','" + motivo_textbox.Text + "','" + Variables.usuario + "')";
+                                
+                                    command = new SqlCommand(query);
+                                    command.Connection = connection;
+                                    adapter = new SqlDataAdapter(command);
+                                    dataTable = new DataTable();
+                                    adapter.Fill(dataTable);
 
-                                //if (!dataTable.HasErrors)
-                                    MessageBox.Show("ok cancelacion");
-                                //}
+                                    if (!dataTable.HasErrors) 
+                                    {
+                                        MessageBox.Show("ok cancelacion");
+                                    }
+                                }
+                            }
                         }
                         else
                         {

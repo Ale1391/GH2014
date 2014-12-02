@@ -23,6 +23,7 @@ namespace FrbaHotel
         {
             //OMITIR
             Variables.tipo_usuario = "Guest";
+            Variables.usuario = "guest";
             this.Hide();
             Funcionalidades func = new Funcionalidades();
             func.StartPosition = FormStartPosition.CenterScreen;
