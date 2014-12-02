@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using FrbaHotel.Cancelar_Reserva;
+using FrbaHotel.ABM_de_Usuario;
 
 namespace FrbaHotel.Listado_Funcionalidades
 {
@@ -41,7 +42,7 @@ namespace FrbaHotel.Listado_Funcionalidades
                 //connection = new SqlConnection(connectionStr);
                 connection.ConnectionString = connectionStr;
                 connection.Open();
-                command = new SqlCommand("SELECT GITAR_HEROES.Funcionalidad.descripcion, GITAR_HEROES.Funcionalidad.codigo FROM GITAR_HEROES.Funcionalidad INNER JOIN GITAR_HEROES.RolFuncionalidad ON GITAR_HEROES.Funcionalidad.codigo = GITAR_HEROES.RolFuncionalidad.codigo_funcionalidad WHERE GITAR_HEROES.RolFuncionalidad.codigo_rol = (select codigo from GITAR_HEROES.Rol where descripcion = '"+Variables.usuario+"')");
+                command = new SqlCommand("SELECT GITAR_HEROES.Funcionalidad.descripcion, GITAR_HEROES.Funcionalidad.codigo FROM GITAR_HEROES.Funcionalidad INNER JOIN GITAR_HEROES.RolFuncionalidad ON GITAR_HEROES.Funcionalidad.codigo = GITAR_HEROES.RolFuncionalidad.codigo_funcionalidad WHERE GITAR_HEROES.RolFuncionalidad.codigo_rol = (select codigo from GITAR_HEROES.Rol where descripcion = '" + Variables.tipo_usuario + "')");
                 command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
                 dataTable = new DataTable();
@@ -70,13 +71,20 @@ namespace FrbaHotel.Listado_Funcionalidades
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //CONTINUAR
             if (codigo_funcionalidad == 9)
             {
-                //CONTINUAR
                 this.Hide();
                 CancelarReserva cancelar_reserva = new CancelarReserva();
                 cancelar_reserva.StartPosition = FormStartPosition.CenterScreen;
                 cancelar_reserva.ShowDialog();
+            }
+            else if (codigo_funcionalidad == 3)
+            {
+                this.Hide();
+                Usuario abm_usuario = new Usuario();
+                abm_usuario.StartPosition = FormStartPosition.CenterScreen;
+                abm_usuario.ShowDialog();
             }
         }
     }

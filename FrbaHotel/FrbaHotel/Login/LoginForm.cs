@@ -62,7 +62,8 @@ namespace FrbaHotel.Login
                     foreach (DataRow row in dataTable.Rows)
                     {
                         string descrip_rol = row["descripcion"].ToString();
-                        Variables.usuario = descrip_rol;
+                        Variables.tipo_usuario = descrip_rol;
+                        Variables.usuario = usuario;
                     }
                     //
                     this.Hide();

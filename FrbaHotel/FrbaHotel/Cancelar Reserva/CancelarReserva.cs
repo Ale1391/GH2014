@@ -33,32 +33,71 @@ namespace FrbaHotel.Cancelar_Reserva
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Variables.usuario == "guest")
+            connection = new System.Data.SqlClient.SqlConnection();
+            try
             {
-                connection = new System.Data.SqlClient.SqlConnection();
-                try
-                {
-                    string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
-                    connection.ConnectionString = connectionStr;
-                    connection.Open();
-                    command = new SqlCommand("select fecha_inicio from GITAR_HEROES.Reserva where codigo = " + numero_reserva.Text);
-                    command.Connection = connection;
-                    adapter = new SqlDataAdapter(command);
-                    dataTable = new DataTable();
-                    adapter.Fill(dataTable);
+                string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
+                connection.ConnectionString = connectionStr;
+                connection.Open();
+                command = new SqlCommand("select fecha_inicio,codigo_estado from GITAR_HEROES.Reserva where codigo = " + numero_reserva.Text);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
 
-                    if (dataTable.Rows.Count == 0)
+                if (dataTable.Rows.Count == 0)
+                {
+                    MessageBox.Show("Error: No se tiene ninguna reserva hecha con el número ingresado.");
+                }
+                else if (dataTable.Rows.Count == 1)
+                {
+                    DateTime fecha_reserva = (DateTime)dataTable.Rows[0]["fecha_inicio"];
+                    DateTime fecha_actual = DateTime.Today;
+                    int diferencia_en_dias = (int)(fecha_reserva - fecha_actual).TotalDays;
+                    int estado = Convert.ToInt32(dataTable.Rows[0]["codigo_estado"]);
+
+                    if (estado >= 3)
                     {
-                        MessageBox.Show("Error: No se tiene ninguna reserva hecha con el número ingresado.");
+                        MessageBox.Show("Error: El estado de la reserva no permite cancelación.");
                     }
-                    else if (dataTable.Rows.Count == 1)
+                    else 
                     {
-                        DateTime fecha_reserva = (DateTime)dataTable.Rows[0]["fecha_inicio"];
-                        DateTime fecha_actual = DateTime.Today;
-                        int diferencia_en_dias = (int)(fecha_reserva - fecha_actual).TotalDays;
                         if (diferencia_en_dias >= 1)
                         {
-                            MessageBox.Show("ok cancelacion");
+                            string query;
+                            if (Variables.tipo_usuario == "Recepcionista")
+                            {
+                                query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 3 WHERE codigo = " + numero_reserva.Text;
+                            }
+                            else if (Variables.tipo_usuario == "Guest")
+                            {
+                                query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 4 WHERE codigo = " + numero_reserva.Text;
+                            }
+                            else
+                            {
+                                query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 5 WHERE codigo = " + numero_reserva.Text;
+                            }
+                            command = new SqlCommand(query);
+                            command.Connection = connection;
+                            adapter = new SqlDataAdapter(command);
+                            dataTable = new DataTable();
+                            adapter.Fill(dataTable);
+
+                            //if (!dataTable.HasErrors)
+                            //{
+
+                                //string currentDate = DateTime.Now.ToString("yyyy-dd-MM hh:mm:ss");
+                                //query = "INSERT INTO GITAR_HEROES.ReservaCancelada (codigo_reserva,fecha_cancelacion,descripción_motivo,username) VALUES (" + numero_reserva.Text + ",'" + currentDate + "','" + motivo_textbox.Text + "','" + Variables.usuario + "')";
+                            
+                                //command = new SqlCommand(query);
+                                //command.Connection = connection;
+                                //adapter = new SqlDataAdapter(command);
+                                //dataTable = new DataTable();
+                                //adapter.Fill(dataTable);
+
+                                //if (!dataTable.HasErrors)
+                                    MessageBox.Show("ok cancelacion");
+                                //}
                         }
                         else
                         {
@@ -66,15 +105,10 @@ namespace FrbaHotel.Cancelar_Reserva
                         }
                     }
                 }
-                catch (Exception exc)
-                {
-                    MessageBox.Show("Error: " + exc);
-                }
-
             }
-            else
+            catch (Exception exc)
             {
-                MessageBox.Show("Recepcionista");
+                MessageBox.Show("Error: " + exc);
             }
         }
     }

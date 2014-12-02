@@ -8,5 +8,6 @@ namespace FrbaHotel
     class Variables
     {
         public static string usuario = "";
+        public static string tipo_usuario = "";
     }
 }
