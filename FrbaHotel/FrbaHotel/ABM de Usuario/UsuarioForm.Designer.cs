@@ -54,7 +54,7 @@
             this.textBoxFechaNac = new System.Windows.Forms.TextBox();
             this.hotelesChecklist = new System.Windows.Forms.CheckedListBox();
             this.buttonFinalizar = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.checkBoxUsuarioActivo = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // linkLabel1
@@ -265,28 +265,29 @@
             // 
             // buttonFinalizar
             // 
-            this.buttonFinalizar.Location = new System.Drawing.Point(329, 439);
+            this.buttonFinalizar.Location = new System.Drawing.Point(235, 439);
             this.buttonFinalizar.Name = "buttonFinalizar";
             this.buttonFinalizar.Size = new System.Drawing.Size(111, 23);
             this.buttonFinalizar.TabIndex = 7;
             this.buttonFinalizar.Text = "Guardar Edición";
             this.buttonFinalizar.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // checkBoxUsuarioActivo
             // 
-            this.button1.Location = new System.Drawing.Point(142, 439);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(104, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Eliminar Usuario";
-            this.button1.UseVisualStyleBackColor = true;
+            this.checkBoxUsuarioActivo.AutoSize = true;
+            this.checkBoxUsuarioActivo.Location = new System.Drawing.Point(305, 291);
+            this.checkBoxUsuarioActivo.Name = "checkBoxUsuarioActivo";
+            this.checkBoxUsuarioActivo.Size = new System.Drawing.Size(95, 17);
+            this.checkBoxUsuarioActivo.TabIndex = 9;
+            this.checkBoxUsuarioActivo.Text = "Usuario Activo";
+            this.checkBoxUsuarioActivo.UseVisualStyleBackColor = true;
             // 
             // UsuarioForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(579, 484);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.checkBoxUsuarioActivo);
             this.Controls.Add(this.buttonFinalizar);
             this.Controls.Add(this.hotelesChecklist);
             this.Controls.Add(this.textBoxMail);
@@ -349,6 +350,6 @@
         private System.Windows.Forms.TextBox textBoxFechaNac;
         private System.Windows.Forms.CheckedListBox hotelesChecklist;
         private System.Windows.Forms.Button buttonFinalizar;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox checkBoxUsuarioActivo;
     }
 }
