@@ -73,7 +73,7 @@ namespace FrbaHotel.ABM_de_Usuario
                     //connection = new SqlConnection(connectionStr);
                     connection.ConnectionString = connectionStr;
                     connection.Open();
-                    string query = "select * from GITAR_HEROES.Usuario where username = '" + usuarioTextbox.Text + "' and estado_sistema = 1";
+                    string query = "select * from GITAR_HEROES.Usuario where username = '" + usuarioTextbox.Text + "'";
                     command = new SqlCommand(query);
                     command.Connection = connection;
                     adapter = new SqlDataAdapter(command);
