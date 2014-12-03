@@ -5,3 +5,18 @@
 3. Para la migración de la tabla Reserva se considera que el costo_total será el valor del campo Item_Factura_Monto siempre y cuando el valor
 
 4. Puede no ser necesario dejar el codigo_hotel en la tabla Reserva, ya que es utilizada en las tablas Estadia y ReservaHabitacion
+
+5. ItemFactura:
+
+	a. Se le quitó la variable numero_item y la PK es contra numero_factura y codigo_consumible.
+
+	OPCION 1:
+	a. Dos tipos de items para la factura, 
+
+
+	OPCION 2:
+
+	b. Se modifican todos los items correspondientes a regimen de estadia y se les asigna el codigo_consumible -1.
+	c. Se pierde la FK con la tabla consumibleAdquirido por el registro item que contempla el concepto de regimen cobrado.
+	
+	En itemFacturaEstadia si no hay dias que no se alojó no se inserta registro
