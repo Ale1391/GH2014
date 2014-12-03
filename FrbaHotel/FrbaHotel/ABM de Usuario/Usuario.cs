@@ -21,7 +21,7 @@ namespace FrbaHotel.ABM_de_Usuario
         public Usuario()
         {
             InitializeComponent();
-            comboBoxFuncionalidad.Items.Add("Editar/Eliminar Usuario existente");
+            comboBoxFuncionalidad.Items.Add("Editar Usuario Existente");
             comboBoxFuncionalidad.Items.Add("Crear Usuario Nuevo");
         }
 
@@ -35,7 +35,7 @@ namespace FrbaHotel.ABM_de_Usuario
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxFuncionalidad.Text == "Editar/Eliminar Usuario existente")
+            if (comboBoxFuncionalidad.Text == "Editar Usuario Existente")
             {
                 usuarioTextbox.Enabled = true;
             }
@@ -51,7 +51,7 @@ namespace FrbaHotel.ABM_de_Usuario
             {
                 MessageBox.Show("Primero debes elegir una opción.");
             }
-            else if (comboBoxFuncionalidad.Text == "Editar/Eliminar Usuario existente" && usuarioTextbox.Text.Length == 0)
+            else if (comboBoxFuncionalidad.Text == "Editar Usuario Existente" && usuarioTextbox.Text.Length == 0)
             {
                 MessageBox.Show("Primero debes ingresar un usuario valido.");
             }

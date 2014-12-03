@@ -50,7 +50,15 @@ namespace FrbaHotel.ABM_de_Usuario
                     textBoxTelefono.Text = dataTable.Rows[0]["telefono"].ToString();
                     textBoxDireccion.Text = dataTable.Rows[0]["domicilio_calle"].ToString();
                     textBoxFechaNac.Text = dataTable.Rows[0]["fecha_nacimiento"].ToString();
-                
+                    if (dataTable.Rows[0]["estado_sistema"].ToString() == "1")
+                    {
+                        checkBoxUsuarioActivo.Checked = true;
+                    }
+                    else
+                    {
+                        checkBoxUsuarioActivo.Checked = false;
+                    }
+
                     string query2 = "select descripcion from GITAR_HEROES.Rol inner join GITAR_HEROES.RolUsuario on GITAR_HEROES.Rol.codigo = GITAR_HEROES.RolUsuario.codigo_rol where username = '"+nombre_usuario+"'";
                     command = new SqlCommand(query2);
                     command.Connection = connection;
@@ -111,6 +119,77 @@ namespace FrbaHotel.ABM_de_Usuario
             {
                 cargarFormulario();
                 llenarCheckedlist();
+                llenarCombos();
+            }
+            else
+            {
+                llenarCombosNuevo();
+            }
+
+        }
+
+        private void llenarCombosNuevo()
+        {
+            connection = new System.Data.SqlClient.SqlConnection();
+            try
+            {
+                string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
+                connection.ConnectionString = connectionStr;
+                connection.Open();
+                string query = "select * from GITAR_HEROES.Rol";
+                command = new SqlCommand(query);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    comboBoxRol.Items.Add(row["descripcion"].ToString());
+                }
+
+                string query2 = "select * from GITAR_HEROES.TipoDocumento";
+                command = new SqlCommand(query2);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    comboBoxTipodni.Items.Add(row["descripcion"].ToString());
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error: " + exc);
+            }
+        }
+
+        private void llenarCombos()
+        {
+            string query = "select * from GITAR_HEROES.Rol";
+            command = new SqlCommand(query);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                comboBoxRol.Items.Add(row["descripcion"].ToString());
+            }
+
+            string query2 = "select * from GITAR_HEROES.TipoDocumento";
+            command = new SqlCommand(query2);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                comboBoxTipodni.Items.Add(row["descripcion"].ToString());
             }
         }
     }
