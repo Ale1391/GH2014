@@ -20,3 +20,7 @@
 	c. Se pierde la FK con la tabla consumibleAdquirido por el registro item que contempla el concepto de regimen cobrado.
 	
 	En itemFacturaEstadia si no hay dias que no se alojó no se inserta registro
+
+6. Estadia:
+	a. Se deja a codigo_reserva como PK únicamente.
+	b. Se sacan los campos codigo_hotel y numero_habitacion. Se vincula con las habitaciones por la tabla ReservaHabitacion. 
