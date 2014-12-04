@@ -490,6 +490,9 @@ AS
 		FROM gd_esquema.Maestra
 		WHERE Consumible_Codigo IS NOT NULL
 		
+		-- Se inserta el tipo de consumible -1 que correspondera al final de la carga de consumibles por estadia
+		INSERT INTO GITAR_HEROES.TipoConsumible
+		VALUES (-1, 'Finalizacion carga consumibles', NULL)
 		
 
 	-- /////////////// ESTADIA ///////////////
@@ -722,6 +725,51 @@ AS
 
 GO
 
+-- ////////////////////// REGISTRAR CONSUMIBLES //////////////////////
+
+CREATE Procedure GITAR_HEROES.cargarConsumible (@descripcion_consumible varchar(60), @codigo_reserva int, @cantidad int)
+AS
+	BEGIN
+		-- Se corrobora que la reserva este efectivizada
+		IF @codigo_reserva IN (SELECT codigo_reserva FROM GITAR_HEROES.Estadia)
+		BEGIN
+			
+			DECLARE @codigo_consumible int
+			SET @codigo_consumible = (SELECT codigo FROM GITAR_HEROES.TipoConsumible WHERE descripción = @descripcion_consumible)
+						
+			-- Se buscan consumibles del mismo codigo ya ingresados
+			IF EXISTS (SELECT 1 FROM GITAR_HEROES.ConsumibleAdquirido WHERE @codigo_reserva = codigo_reserva AND @codigo_consumible = codigo_consumible)
+			-- Si existe se suman las cantidades
+			BEGIN
+				DECLARE @cantidad_anterior int
+				SET @cantidad_anterior = (SELECT cantidad FROM GITAR_HEROES.ConsumibleAdquirido WHERE @codigo_reserva = codigo_reserva AND @codigo_consumible = codigo_consumible)
+				
+				UPDATE GITAR_HEROES.ConsumibleAdquirido
+				SET cantidad = @cantidad_anterior + @cantidad
+				WHERE @codigo_reserva = codigo_reserva AND @codigo_consumible = codigo_consumible
+			END
+			ELSE
+			-- Sino se inserta un registro nuevo
+			BEGIN
+				INSERT INTO GITAR_HEROES.ConsumibleAdquirido
+				VALUES (@codigo_consumible, @codigo_reserva, @cantidad, 'Consumible')
+			END
+		END
+		ELSE
+			RAISERROR('ERROR: La reserva NO fue efectivizada.', 16, 1)
+	END
+	
+GO
+
+/*
+CREATE Procedure GITAR_HEROES.modificarConsumible (@descripcion_consumible varchar(60), @codigo_reserva int, @cantidad int)
+AS
+	BEGIN
+
+	END
+*/
+GO
+
 -- ////////////////////// OTROS PROCEDIMIENTOS //////////////////////
 
 -- Asigna al username todos los hoteles existentes registrados
@@ -785,6 +833,8 @@ AS
 		DROP Table GITAR_HEROES.Hotel
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
+		DROP Procedure GITAR_HEROES.modificarConsumible
+		DROP Procedure GITAR_HEROES.cargarConsumible
 		DROP Procedure GITAR_HEROES.agregarUsuarioHotel
 		DROP Procedure GITAR_HEROES.setearSuperUsuario
 		DROP Procedure GITAR_HEROES.crearTablas
