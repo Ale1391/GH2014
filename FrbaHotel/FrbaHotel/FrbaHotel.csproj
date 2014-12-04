@@ -96,6 +96,12 @@
     <Compile Include="Listado Funcionalidades\Funcionalidades.Designer.cs">
       <DependentUpon>Funcionalidades.cs</DependentUpon>
     </Compile>
+    <Compile Include="Login\HotelSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login\HotelSelect.Designer.cs">
+      <DependentUpon>HotelSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="Principal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Listado Funcionalidades\Funcionalidades.resx">
       <DependentUpon>Funcionalidades.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login\HotelSelect.resx">
+      <DependentUpon>HotelSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>

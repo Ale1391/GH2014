@@ -13,6 +13,8 @@ namespace FrbaHotel.ABM_de_Usuario
 {
     public partial class UsuarioForm : Form
     {
+        public List<int> lista_codigos_hoteles = new List<int>();
+        public List<string> lista_nombres_hoteles = new List<string>();
         public string nombre_usuario;
         System.Data.SqlClient.SqlConnection connection;
         private SqlCommand command;
@@ -29,8 +31,7 @@ namespace FrbaHotel.ABM_de_Usuario
             connection = new System.Data.SqlClient.SqlConnection();
             try
             {
-                string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
-                connection.ConnectionString = connectionStr;
+                connection.ConnectionString = Variables.connectionStr;
                 connection.Open();
                 string query = "select * from GITAR_HEROES.Usuario where username = '"+nombre_usuario+"'";
                 command = new SqlCommand(query);
@@ -90,6 +91,23 @@ namespace FrbaHotel.ABM_de_Usuario
             }
         }
 
+        private void llenarCheckedlist2()
+        {
+            string query = "select domicilio_calle,codigo from GITAR_HEROES.Hotel";
+            command = new SqlCommand(query);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                hotelesChecklist.Items.Add(row["domicilio_calle"].ToString(), false);
+                lista_codigos_hoteles.Add(Convert.ToInt32(row["codigo"]));
+                lista_nombres_hoteles.Add(row["domicilio_calle"].ToString());
+            }
+        }
+
         private void llenarCheckedlist()
         {
             string query = "select domicilio_calle from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.UsuarioHotel.username = '" + nombre_usuario + "'";
@@ -124,6 +142,7 @@ namespace FrbaHotel.ABM_de_Usuario
             else
             {
                 llenarCombosNuevo();
+                llenarCheckedlist2();
             }
 
         }
@@ -133,8 +152,7 @@ namespace FrbaHotel.ABM_de_Usuario
             connection = new System.Data.SqlClient.SqlConnection();
             try
             {
-                string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
-                connection.ConnectionString = connectionStr;
+                connection.ConnectionString = Variables.connectionStr;
                 connection.Open();
                 string query = "select * from GITAR_HEROES.Rol";
                 command = new SqlCommand(query);
@@ -190,6 +208,89 @@ namespace FrbaHotel.ABM_de_Usuario
             foreach (DataRow row in dataTable.Rows)
             {
                 comboBoxTipodni.Items.Add(row["descripcion"].ToString());
+            }
+        }
+
+        private void buttonFinalizar_Click(object sender, EventArgs e)
+        {
+            if (nombre_usuario.Length > 0)
+            {
+                editarUsuario();
+            }
+            else
+            {
+                crearUsuario();
+                foreach (int index_checked in hotelesChecklist.CheckedIndices)
+                {
+                    crearUsuarioHotel(lista_codigos_hoteles[index_checked]);
+                }
+                
+                MessageBox.Show("Usuario creado exitosamente");
+            }
+        }
+
+        private void editarUsuario()
+        {
+ 
+        }
+
+        private void crearUsuarioHotel(int codigo_hotel)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+                {
+                    using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.agregarUsuarioHotel", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add("@codigo_hotel", SqlDbType.VarChar).Value = codigo_hotel;
+                        cmd.Parameters.Add("@username", SqlDbType.VarChar).Value = textBoxUsuario.Text;
+                                
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error: " + exc);
+            }
+        }
+
+        private void crearUsuario()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+                {
+                    using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.generarUsuario", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add("@username", SqlDbType.VarChar).Value = textBoxUsuario.Text;
+                        cmd.Parameters.Add("@password", SqlDbType.VarChar).Value = textBoxClave.Text;
+                        cmd.Parameters.Add("@nombre", SqlDbType.VarChar).Value = textBoxNombre.Text;
+                        cmd.Parameters.Add("@apellido", SqlDbType.VarChar).Value = textBoxApellido.Text;
+                        cmd.Parameters.Add("@tipo_doc", SqlDbType.VarChar).Value = 1;
+                        cmd.Parameters.Add("@nro_doc", SqlDbType.VarChar).Value = Convert.ToInt32(textBoxDni.Text);
+                        cmd.Parameters.Add("@fecha_nacimiento", SqlDbType.VarChar).Value = "2015-10-10 00:00:00";
+                        cmd.Parameters.Add("@domicilio_calle", SqlDbType.VarChar).Value = textBoxDireccion.Text;
+                        cmd.Parameters.Add("@domicilio_numero", SqlDbType.VarChar).Value = 25;
+                        cmd.Parameters.Add("@domicilio_piso", SqlDbType.VarChar).Value = 2;
+                        cmd.Parameters.Add("@domicilio_depto", SqlDbType.VarChar).Value = "A";
+                        cmd.Parameters.Add("@mail", SqlDbType.VarChar).Value = textBoxMail.Text;
+                        cmd.Parameters.Add("@telefono", SqlDbType.VarChar).Value = Convert.ToInt32(textBoxTelefono.Text);
+                        cmd.Parameters.Add("@descripcion_rol", SqlDbType.VarChar).Value = "Administrador";
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error: " + exc);
             }
         }
     }

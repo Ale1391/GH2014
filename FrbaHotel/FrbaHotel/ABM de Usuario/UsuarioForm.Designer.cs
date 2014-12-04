@@ -271,6 +271,7 @@
             this.buttonFinalizar.TabIndex = 7;
             this.buttonFinalizar.Text = "Guardar Edición";
             this.buttonFinalizar.UseVisualStyleBackColor = true;
+            this.buttonFinalizar.Click += new System.EventHandler(this.buttonFinalizar_Click);
             // 
             // checkBoxUsuarioActivo
             // 
