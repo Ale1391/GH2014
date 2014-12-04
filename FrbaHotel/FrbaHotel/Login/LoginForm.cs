@@ -40,8 +40,7 @@ namespace FrbaHotel.Login
             connection = new System.Data.SqlClient.SqlConnection();
             try
             {
-                string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
-                connection.ConnectionString = connectionStr;
+                connection.ConnectionString = Variables.connectionStr;
                 connection.Open();
                 string query = "select username from GITAR_HEROES.Usuario where username = '" + usuario + "' and password = '" + hashstring + "'";
                 command = new SqlCommand(query);
@@ -65,11 +64,39 @@ namespace FrbaHotel.Login
                         Variables.tipo_usuario = descrip_rol;
                         Variables.usuario = usuario;
                     }
+
+                    command = new SqlCommand("select domicilio_calle,codigo from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.UsuarioHotel.username = '"+usuario+"'");
+                    adapter = new SqlDataAdapter(command);
+                    dataTable = new DataTable();
+                    command.Connection = connection;
+                    adapter.Fill(dataTable);
+                    if (dataTable.Rows.Count > 1)
+                    {
+                        List<string> lista_hoteles = new List<string>();
+                        List<int> lista_codigos = new List<int>();
+                        foreach (DataRow row in dataTable.Rows)
+                        {
+                            lista_codigos.Add(Convert.ToInt32(row["codigo"]));
+                            lista_hoteles.Add(row["domicilio_calle"].ToString());
+                        }
+                        this.Hide();
+                        HotelSelect hoteles = new HotelSelect();
+                        hoteles.lista_codigos_hoteles = lista_codigos;
+                        hoteles.lista_nombres_hoteles = lista_hoteles;
+                        hoteles.StartPosition = FormStartPosition.CenterScreen;
+                        hoteles.ShowDialog();
+                    }
+                    else if (dataTable.Rows.Count == 1)
+                    {
+                        Variables.hotel_id = Convert.ToInt32(dataTable.Rows[0]["codigo"].ToString());
+                        this.Hide();
+                        Funcionalidades func = new Funcionalidades();
+                        func.StartPosition = FormStartPosition.CenterScreen;
+                        func.ShowDialog();
+                    }
+
                     //
-                    this.Hide();
-                    Funcionalidades func = new Funcionalidades();
-                    func.StartPosition = FormStartPosition.CenterScreen;
-                     func.ShowDialog();
+                    
                 }
                 else 
                 {

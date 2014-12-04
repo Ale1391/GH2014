@@ -69,9 +69,7 @@ namespace FrbaHotel.ABM_de_Usuario
                 connection = new System.Data.SqlClient.SqlConnection();
                 try
                 {
-                    string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
-                    //connection = new SqlConnection(connectionStr);
-                    connection.ConnectionString = connectionStr;
+                    connection.ConnectionString = Variables.connectionStr;
                     connection.Open();
                     string query = "select * from GITAR_HEROES.Usuario where username = '" + usuarioTextbox.Text + "'";
                     command = new SqlCommand(query);

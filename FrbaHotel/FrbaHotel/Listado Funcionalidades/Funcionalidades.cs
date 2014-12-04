@@ -38,9 +38,7 @@ namespace FrbaHotel.Listado_Funcionalidades
             connection = new System.Data.SqlClient.SqlConnection();
             try
             {
-                string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
-                //connection = new SqlConnection(connectionStr);
-                connection.ConnectionString = connectionStr;
+                connection.ConnectionString = Variables.connectionStr;
                 connection.Open();
                 command = new SqlCommand("SELECT GITAR_HEROES.Funcionalidad.descripcion, GITAR_HEROES.Funcionalidad.codigo FROM GITAR_HEROES.Funcionalidad INNER JOIN GITAR_HEROES.RolFuncionalidad ON GITAR_HEROES.Funcionalidad.codigo = GITAR_HEROES.RolFuncionalidad.codigo_funcionalidad WHERE GITAR_HEROES.RolFuncionalidad.codigo_rol = (select codigo from GITAR_HEROES.Rol where descripcion = '" + Variables.tipo_usuario + "')");
                 command.Connection = connection;

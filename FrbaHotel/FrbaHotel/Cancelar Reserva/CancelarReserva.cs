@@ -36,8 +36,7 @@ namespace FrbaHotel.Cancelar_Reserva
             connection = new System.Data.SqlClient.SqlConnection();
             try
             {
-                string connectionStr = "Data Source=localhost\\SQLSERVER2008;Initial Catalog=GD2C2014;User ID=gd;Password=gd2014";
-                connection.ConnectionString = connectionStr;
+                connection.ConnectionString = Variables.connectionStr;
                 connection.Open();
                 command = new SqlCommand("select fecha_inicio,codigo_estado,codigo_hotel from GITAR_HEROES.Reserva where codigo = " + numero_reserva.Text);
                 command.Connection = connection;
@@ -73,6 +72,10 @@ namespace FrbaHotel.Cancelar_Reserva
                             if (dataTable.Rows.Count < 1)
                             {
                                 MessageBox.Show("Error: No puede cancelar la reserva por no pertenecer al hotel.");
+                            }
+                            else if ((Convert.ToInt32(dataTable.Rows[0]["codigo_hotel"]) != Variables.hotel_id) && (Variables.usuario != "guest"))
+                            {
+                                MessageBox.Show("Error: No puede cancelar la reserva por no haber ingresado al hotel en donde se encuentra.");
                             }
                             else
                             {
