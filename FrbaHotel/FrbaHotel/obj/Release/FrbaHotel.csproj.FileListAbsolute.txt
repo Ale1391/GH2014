@@ -1,0 +1,14 @@
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\bin\Release\FrbaHotel.exe
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\bin\Release\FrbaHotel.pdb
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\ResolveAssemblyReference.cache
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.ABM_de_Usuario.Usuario.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.ABM_de_Usuario.UsuarioForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.Cancelar_Reserva.CancelarReserva.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.Listado_Funcionalidades.Funcionalidades.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.Login.LoginForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.Principal.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.Properties.Resources.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.csproj.GenerateResource.Cache
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.exe
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.pdb
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Release\FrbaHotel.Login.HotelSelect.resources
