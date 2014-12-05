@@ -490,29 +490,27 @@ AS
 		FROM gd_esquema.Maestra
 		WHERE Consumible_Codigo IS NOT NULL
 		
+		-- Se inserta el tipo de consumible -1 que correspondera al final de la carga de consumibles por estadia
+		INSERT INTO GITAR_HEROES.TipoConsumible
+		VALUES (-1, 'Finalizacion carga consumibles', NULL)
 		
 
 	-- /////////////// ESTADIA ///////////////
 
 		CREATE Table GITAR_HEROES.Estadia
 			(codigo_reserva int,
-			codigo_hotel int,
-			numero_habitacion smallint,
 			fecha_ingreso smalldatetime,
 			username_ingreso char(15),
 			fecha_egreso smalldatetime,		-- cant_noches
 			username_egreso char(15),
-			PRIMARY KEY (codigo_reserva, codigo_hotel, numero_habitacion),
-			FOREIGN KEY (codigo_reserva, codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.ReservaHabitacion,
+			PRIMARY KEY (codigo_reserva),
+			FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Reserva,
 			FOREIGN KEY (username_ingreso) REFERENCES GITAR_HEROES.Usuario,
 			FOREIGN KEY (username_egreso) REFERENCES GITAR_HEROES.Usuario)
 
 		INSERT INTO GITAR_HEROES.Estadia
 		SELECT DISTINCT
 			   Reserva_Codigo,
-			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel 
-			   WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),		-- codigo_hotel			   
-			   Habitacion_Numero,
 			   Estadia_Fecha_Inicio,
 			   NULL,		-- username_ingreso
 			   Estadia_Fecha_Inicio + Estadia_Cant_Noches,		-- fecha_egreso
@@ -528,27 +526,22 @@ AS
 		CREATE Table GITAR_HEROES.ConsumibleAdquirido
 			(codigo_consumible int,
 			codigo_reserva int,
-			codigo_hotel int,
-			numero_habitacion smallint,
 			cantidad int NOT NULL,
 			leyenda varchar(32),
-			PRIMARY KEY (codigo_consumible, codigo_reserva, codigo_hotel, numero_habitacion),
+			PRIMARY KEY (codigo_consumible, codigo_reserva),
 			FOREIGN KEY (codigo_consumible) REFERENCES GITAR_HEROES.TipoConsumible,
-			FOREIGN KEY (codigo_reserva, codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.Estadia)
+			FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Estadia)
 		
 		INSERT INTO GITAR_HEROES.ConsumibleAdquirido
 		SELECT DISTINCT 
 			   Consumible_Codigo,
 			   Reserva_Codigo,
-			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel 
-			   WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),		-- codigo_hotel			   
-			   Habitacion_Numero,
 			   SUM(Item_Factura_Cantidad),
 			   'Consumible'			-- leyenda
 			   
 		FROM gd_esquema.Maestra M
 		WHERE Consumible_Codigo IS NOT NULL
-		GROUP BY Consumible_Codigo, Reserva_Codigo, Habitacion_Numero, Hotel_Calle, Hotel_Nro_Calle
+		GROUP BY Consumible_Codigo, Reserva_Codigo
 
 
 	-- /////////////// TIPOPAGO ///////////////
@@ -573,13 +566,11 @@ AS
 			tipo_doc_cliente smallint, 
 			nro_doc_cliente numeric(11,0), 
 			codigo_reserva int,
-			codigo_hotel int,
-			numero_habitacion smallint,
 			fecha smalldatetime,
 			total decimal(10,2),
 			codigo_tipo_pago smallint,
 			nro_tarjeta numeric(17),
-			FOREIGN KEY (codigo_reserva, codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.Estadia,
+			FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Estadia,
 			FOREIGN KEY (codigo_tipo_pago) REFERENCES GITAR_HEROES.TipoPago)
 
 		INSERT INTO GITAR_HEROES.Factura
@@ -588,9 +579,6 @@ AS
 			   1,		-- tipo_doc_cliente correspondiente al pasaporte.
 			   Cliente_Pasaporte_Nro,
 			   Reserva_Codigo,
-			  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel 
-			   WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),		-- codigo_hotel
-			   Habitacion_Numero,
 			   Factura_Fecha,
 		-- Al total que aparece en la tabla maestra se le suma el monto de la estadia que no esta contemplado
 			   Factura_Total + (SELECT Item_Factura_Monto FROM gd_esquema.Maestra M1 WHERE M.Factura_Nro = M1.Factura_Nro AND M1.Consumible_Codigo IS NULL),
@@ -604,46 +592,41 @@ AS
 
 	-- /////////////// ITEMFACTURACONSUMIBLE ///////////////
 
-		CREATE Table GITAR_HEROES.ItemFacturaConsumible
-			  (numero_factura int,
-			   --numero_item smallint,
-			   codigo_consumible int,
-			   codigo_reserva int,
-			   codigo_hotel int,
-			   numero_habitacion smallint,
-			   cantidad int,
-			   monto decimal(10,2),
-			   PRIMARY KEY (numero_factura, codigo_consumible),
-			   FOREIGN KEY (numero_factura) REFERENCES GITAR_HEROES.Factura,
-			   FOREIGN KEY (codigo_consumible, codigo_reserva, codigo_hotel, numero_habitacion) REFERENCES GITAR_HEROES.ConsumibleAdquirido)
+	CREATE Table GITAR_HEROES.ItemFacturaConsumible
+		  (numero_factura int,
+		   --numero_item smallint,
+		   codigo_consumible int,
+		   codigo_reserva int,
+		   cantidad int,
+		   monto decimal(10,2),
+		   PRIMARY KEY (numero_factura, codigo_consumible),
+		   FOREIGN KEY (numero_factura) REFERENCES GITAR_HEROES.Factura,
+		   FOREIGN KEY (codigo_consumible, codigo_reserva) REFERENCES GITAR_HEROES.ConsumibleAdquirido)
 	
 	INSERT INTO GITAR_HEROES.ItemFacturaConsumible
 	SELECT Factura_Nro,
 		   Consumible_Codigo,
 		   Reserva_Codigo,
-		  (SELECT Hotel.codigo FROM GITAR_HEROES.Hotel Hotel 
-		   WHERE M.Hotel_Calle = Hotel.domicilio_calle AND M.Hotel_Nro_Calle = Hotel.domicilio_numero),		-- codigo_hotel
-		   Habitacion_Numero,
 		   SUM(Item_Factura_Cantidad),
 		   Item_Factura_Monto
 		  
 	FROM gd_esquema.Maestra M
 	WHERE Factura_Nro IS NOT NULL AND Consumible_Codigo IS NOT NULL
-	GROUP BY Factura_Nro, Consumible_Codigo, Reserva_Codigo, Hotel_Calle, Hotel_Nro_Calle, Habitacion_Numero, Item_Factura_Monto
+	GROUP BY Factura_Nro, Consumible_Codigo, Reserva_Codigo, Item_Factura_Monto
 	
 	
 	-- /////////////// ITEMFACTURAESTADIA ///////////////
 
-		CREATE Table GITAR_HEROES.ItemFacturaEstadia
-			  (numero_factura int,
-			   tipo_registro int,		-- Toma el valor 1 para los registros que contemplan dias en que se alojo y 0 para los que no
-			   --codigo_reserva int,
-			   --codigo_hotel int,
-			   --numero_habitacion smallint,
-			   cantidad_dias int,
-			   monto decimal(10,2),
-			   PRIMARY KEY (numero_factura, tipo_registro),
-			   FOREIGN KEY (numero_factura) REFERENCES GITAR_HEROES.Factura)
+	CREATE Table GITAR_HEROES.ItemFacturaEstadia
+		  (numero_factura int,
+		   tipo_registro int,		-- Toma el valor 1 para los registros que contemplan dias en que se alojo y 0 para los que no
+		   --codigo_reserva int,
+		   --codigo_hotel int,
+		   --numero_habitacion smallint,
+		   cantidad_dias int,
+		   monto decimal(10,2),
+		   PRIMARY KEY (numero_factura, tipo_registro),
+		   FOREIGN KEY (numero_factura) REFERENCES GITAR_HEROES.Factura)
 			   
 	INSERT INTO GITAR_HEROES.ItemFacturaEstadia
 	SELECT Factura_Nro,
@@ -658,6 +641,8 @@ AS
 	END
 
 GO
+
+-- ////////////////////// ABM USUARIO //////////////////////
 
 CREATE Procedure GITAR_HEROES.generarUsuario 
 	  (@username char(15), 
@@ -716,6 +701,77 @@ AS
 
 GO
 
+-- ////////////////////// REGISTRAR ESTADIA //////////////////////
+
+CREATE Procedure GITAR_HEROES.ingresoEgresoEstadia (@codigo_reserva int, @username char(15))
+AS
+	BEGIN
+	
+		IF NOT EXISTS (SELECT 1 FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva)
+		-- Check in de la estadia
+		BEGIN
+			INSERT INTO GITAR_HEROES.Estadia
+			VALUES (@codigo_reserva, GETDATE(), @username, NULL, NULL)
+		END
+		ELSE
+		-- Check out de la estadia
+		BEGIN
+			UPDATE GITAR_HEROES.Estadia
+			SET fecha_egreso = GETDATE(), username_egreso = @username
+			WHERE codigo_reserva = @codigo_reserva
+		END
+	
+	END
+
+GO
+
+-- ////////////////////// REGISTRAR CONSUMIBLES //////////////////////
+
+CREATE Procedure GITAR_HEROES.cargarConsumible (@descripcion_consumible varchar(60), @codigo_reserva int, @cantidad int)
+AS
+	BEGIN
+		-- Se corrobora que la reserva este efectivizada
+		IF @codigo_reserva IN (SELECT codigo_reserva FROM GITAR_HEROES.Estadia)
+		BEGIN
+			
+			DECLARE @codigo_consumible int
+			SET @codigo_consumible = (SELECT codigo FROM GITAR_HEROES.TipoConsumible WHERE descripción = @descripcion_consumible)
+						
+			-- Se buscan consumibles del mismo codigo ya ingresados
+			IF EXISTS (SELECT 1 FROM GITAR_HEROES.ConsumibleAdquirido WHERE @codigo_reserva = codigo_reserva AND @codigo_consumible = codigo_consumible)
+			-- Si existe se suman las cantidades
+			BEGIN
+				DECLARE @cantidad_anterior int
+				SET @cantidad_anterior = (SELECT cantidad FROM GITAR_HEROES.ConsumibleAdquirido WHERE @codigo_reserva = codigo_reserva AND @codigo_consumible = codigo_consumible)
+				
+				UPDATE GITAR_HEROES.ConsumibleAdquirido
+				SET cantidad = @cantidad_anterior + @cantidad
+				WHERE @codigo_reserva = codigo_reserva AND @codigo_consumible = codigo_consumible
+			END
+			ELSE
+			-- Sino se inserta un registro nuevo
+			BEGIN
+				INSERT INTO GITAR_HEROES.ConsumibleAdquirido
+				VALUES (@codigo_consumible, @codigo_reserva, @cantidad, 'Consumible')
+			END
+		END
+		ELSE
+			RAISERROR('ERROR: La reserva NO fue efectivizada.', 16, 1)
+	END
+	
+GO
+
+/*
+CREATE Procedure GITAR_HEROES.modificarConsumible (@descripcion_consumible varchar(60), @codigo_reserva int, @cantidad int)
+AS
+	BEGIN
+
+	END
+*/
+GO
+
+-- ////////////////////// OTROS PROCEDIMIENTOS //////////////////////
+
 -- Asigna al username todos los hoteles existentes registrados
 CREATE Procedure GITAR_HEROES.setearSuperUsuario (@username char(15))
 AS
@@ -747,7 +803,7 @@ CREATE Procedure GITAR_HEROES.borrarTablas
 AS
 	BEGIN
 
-	-- BXORRADO DE TABLAS		
+	-- BORRADO DE TABLAS		
 		
 		DROP Table GITAR_HEROES.ItemFacturaEstadia
 		DROP Table GITAR_HEROES.ItemFacturaConsumible
@@ -777,9 +833,12 @@ AS
 		DROP Table GITAR_HEROES.Hotel
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
+		DROP Procedure GITAR_HEROES.modificarConsumible
+		DROP Procedure GITAR_HEROES.cargarConsumible
 		DROP Procedure GITAR_HEROES.agregarUsuarioHotel
 		DROP Procedure GITAR_HEROES.setearSuperUsuario
 		DROP Procedure GITAR_HEROES.crearTablas
+		DROP Procedure GITAR_HEROES.ingresoEgresoEstadia
 		DROP Procedure GITAR_HEROES.generarUsuario
 		DROP Procedure GITAR_HEROES.borrarTablas
 
@@ -795,7 +854,7 @@ EXEC GITAR_HEROES.crearTablas
 
 -- Se crea el usuario admnistrador base en el sistema
 EXEC GITAR_HEROES.generarUsuario 
-	 'admin2', 
+	 'admin', 
 	 'e6b87050bfcb8143fcb8db0170a4dc9ed00d904ddd3e2a4ad1b1e8dc0fdc9be7',
 	 'Administrador General',
 	 'Administrador General',
@@ -803,7 +862,7 @@ EXEC GITAR_HEROES.generarUsuario
 	 11111111,
 	 NULL,
 	 'Domicilio no especificado',
-	 'admin2@gitarheroes.com',
+	 'admin@gitarheroes.com',
 	 11111111,
 	 'Administrador'
 
