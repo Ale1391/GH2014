@@ -691,6 +691,15 @@ AS
 
 GO
 
+CREATE Procedure GITAR_HEROES.limpiarUsuarioHotel(@username char(15))
+AS
+	BEGIN
+		DELETE GITAR_HEROES.UsuarioHotel
+	END
+
+
+GO
+
 -- Agrega a la tabla UsuarioHotel un registro vinculando al username con sus hoteles asignados
 CREATE Procedure GITAR_HEROES.agregarUsuarioHotel (@codigo_hotel int, @username char(15))
 AS
@@ -761,14 +770,68 @@ AS
 	
 GO
 
-/*
 CREATE Procedure GITAR_HEROES.modificarConsumible (@descripcion_consumible varchar(60), @codigo_reserva int, @cantidad int)
 AS
 	BEGIN
+		-- Se corrobora que la reserva este efectivizada
+		IF @codigo_reserva IN (SELECT codigo_reserva FROM GITAR_HEROES.Estadia)
+		BEGIN
+			DECLARE @codigo_consumible int
+			SET @codigo_consumible = (SELECT codigo FROM GITAR_HEROES.TipoConsumible WHERE descripción = @descripcion_consumible)
 
+			-- Se buscan consumibles del mismo codigo ya ingresados
+			IF EXISTS (SELECT 1 FROM GITAR_HEROES.ConsumibleAdquirido WHERE @codigo_reserva = codigo_reserva AND @codigo_consumible = codigo_consumible)
+			-- Si existe se modifica la cantidad
+			BEGIN
+				UPDATE GITAR_HEROES.ConsumibleAdquirido
+				SET cantidad = @cantidad
+				WHERE @codigo_reserva = codigo_reserva AND @codigo_consumible = codigo_consumible
+			END
+			ELSE
+			-- Sino se indica que el consumible no fue cargado
+				RAISERROR('ERROR: Consumible no cargado.', 16, 1)
+		END
+		ELSE
+			RAISERROR('ERROR: La reserva NO fue efectivizada.', 16, 1)
+	END	
+
+GO
+
+CREATE Procedure GITAR_HEROES.finalizarCargaConsumibles (@codigo_reserva int)
+AS
+	BEGIN
+		
+		DECLARE @codigo_regimen smallint
+		SET @codigo_regimen = (SELECT codigo FROM GITAR_HEROES.Regimen WHERE descripcion IN ('Full Board', 'All Inclusive'))
+		
+		-- Revisamos el regimen aplicado a esa reserva
+		IF (SELECT codigo_regimen FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva) = @codigo_regimen
+		BEGIN
+			INSERT INTO GITAR_HEROES.ConsumibleAdquirido
+			VALUES (-1, @codigo_reserva, NULL, 'Fin de carga, descuento por regimen de estadia')
+		END
+		ELSE
+		BEGIN
+			INSERT INTO GITAR_HEROES.ConsumibleAdquirido
+			VALUES (-1, @codigo_reserva, NULL, 'Fin de carga')
+		END
+	END
+
+GO
+
+-- ////////////////////// FACTURAR PUBLICACIONES //////////////////////
+/*
+CREATE Procedure GITAR_HEROES.facturar (@codigo_reserva int, @codigo_tipo_pago int, @nro_tarjeta numeric (17,0))
+AS
+	BEGIN
+		DECLARE @tipo_doc_cliente smallint,
+				@nro_doc_cliente int,
+				@fecha smalldatetime,
+				@total decimal(10,2),				
+	
 	END
 */
-GO
+
 
 -- ////////////////////// OTROS PROCEDIMIENTOS //////////////////////
 
