@@ -235,9 +235,9 @@
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(13, 271);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(93, 13);
+            this.label11.Size = new System.Drawing.Size(170, 13);
             this.label11.TabIndex = 2;
-            this.label11.Text = "Fecha Nacimiento";
+            this.label11.Text = "Fecha Nacimiento (DD-MM-AAAA)";
             // 
             // label12
             // 

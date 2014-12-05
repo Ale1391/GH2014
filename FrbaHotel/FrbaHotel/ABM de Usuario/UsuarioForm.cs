@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using FrbaHotel.Listado_Funcionalidades;
 using System.Data.SqlClient;
+using System.Globalization;
 
 namespace FrbaHotel.ABM_de_Usuario
 {
@@ -15,6 +16,13 @@ namespace FrbaHotel.ABM_de_Usuario
     {
         public List<int> lista_codigos_hoteles = new List<int>();
         public List<string> lista_nombres_hoteles = new List<string>();
+
+        private List<int> lista_codigos_dni = new List<int>();
+        private List<string> lista_nombres_dni = new List<string>();
+
+        private List<int> lista_codigos_rol = new List<int>();
+        private List<string> lista_nombres_rol = new List<string>();
+
         public string nombre_usuario;
         System.Data.SqlClient.SqlConnection connection;
         private SqlCommand command;
@@ -72,7 +80,7 @@ namespace FrbaHotel.ABM_de_Usuario
                         comboBoxRol.Text = dataTable.Rows[0]["descripcion"].ToString();
                     }
 
-                    string query3 = "select descripcion from GITAR_HEROES.TipoDocumento inner join GITAR_HEROES.Usuario on GITAR_HEROES.TipoDocumento.codigo = GITAR_HEROES.Usuario.tipo_doc where username = '"+nombre_usuario+"'";
+                    string query3 = "select descripcion,codigo from GITAR_HEROES.TipoDocumento inner join GITAR_HEROES.Usuario on GITAR_HEROES.TipoDocumento.codigo = GITAR_HEROES.Usuario.tipo_doc where username = '"+nombre_usuario+"'";
                     command = new SqlCommand(query3);
                     command.Connection = connection;
                     adapter = new SqlDataAdapter(command);
@@ -82,6 +90,7 @@ namespace FrbaHotel.ABM_de_Usuario
                     if (dataTable.Rows.Count > 0)
                     {
                         comboBoxTipodni.Text = dataTable.Rows[0]["descripcion"].ToString();
+                        
                     }
                 }
             }
@@ -176,6 +185,8 @@ namespace FrbaHotel.ABM_de_Usuario
                 foreach (DataRow row in dataTable.Rows)
                 {
                     comboBoxTipodni.Items.Add(row["descripcion"].ToString());
+                    lista_codigos_dni.Add(Convert.ToInt32(row["codigo"]));
+                    lista_nombres_dni.Add(row["descripcion"].ToString());
                 }
             }
             catch (Exception exc)
@@ -196,6 +207,8 @@ namespace FrbaHotel.ABM_de_Usuario
             foreach (DataRow row in dataTable.Rows)
             {
                 comboBoxRol.Items.Add(row["descripcion"].ToString());
+                lista_codigos_rol.Add(Convert.ToInt32(row["codigo"]));
+                lista_nombres_rol.Add(row["descripcion"].ToString());
             }
 
             string query2 = "select * from GITAR_HEROES.TipoDocumento";
@@ -231,7 +244,7 @@ namespace FrbaHotel.ABM_de_Usuario
 
         private void editarUsuario()
         {
- 
+            
         }
 
         private void crearUsuarioHotel(int codigo_hotel)
@@ -272,16 +285,19 @@ namespace FrbaHotel.ABM_de_Usuario
                         cmd.Parameters.Add("@password", SqlDbType.VarChar).Value = textBoxClave.Text;
                         cmd.Parameters.Add("@nombre", SqlDbType.VarChar).Value = textBoxNombre.Text;
                         cmd.Parameters.Add("@apellido", SqlDbType.VarChar).Value = textBoxApellido.Text;
-                        cmd.Parameters.Add("@tipo_doc", SqlDbType.VarChar).Value = 1;
+                        cmd.Parameters.Add("@tipo_doc", SqlDbType.VarChar).Value = lista_codigos_dni[comboBoxTipodni.SelectedIndex];
                         cmd.Parameters.Add("@nro_doc", SqlDbType.VarChar).Value = Convert.ToInt32(textBoxDni.Text);
-                        cmd.Parameters.Add("@fecha_nacimiento", SqlDbType.VarChar).Value = "2015-10-10 00:00:00";
+                        
+                        string string_date = textBoxFechaNac.Text;
+                        DateTime dt = DateTime.Parse(string_date);
+                        cmd.Parameters.Add("@fecha_nacimiento", System.Data.SqlDbType.DateTime).Value = dt;
                         cmd.Parameters.Add("@domicilio_calle", SqlDbType.VarChar).Value = textBoxDireccion.Text;
                         cmd.Parameters.Add("@domicilio_numero", SqlDbType.VarChar).Value = 25;
                         cmd.Parameters.Add("@domicilio_piso", SqlDbType.VarChar).Value = 2;
                         cmd.Parameters.Add("@domicilio_depto", SqlDbType.VarChar).Value = "A";
                         cmd.Parameters.Add("@mail", SqlDbType.VarChar).Value = textBoxMail.Text;
                         cmd.Parameters.Add("@telefono", SqlDbType.VarChar).Value = Convert.ToInt32(textBoxTelefono.Text);
-                        cmd.Parameters.Add("@descripcion_rol", SqlDbType.VarChar).Value = "Administrador";
+                        cmd.Parameters.Add("@descripcion_rol", SqlDbType.VarChar).Value = comboBoxRol.Text;
 
                         con.Open();
                         cmd.ExecuteNonQuery();
