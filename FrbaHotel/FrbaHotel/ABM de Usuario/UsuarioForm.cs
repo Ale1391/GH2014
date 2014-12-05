@@ -291,10 +291,7 @@ namespace FrbaHotel.ABM_de_Usuario
                         string string_date = textBoxFechaNac.Text;
                         DateTime dt = DateTime.Parse(string_date);
                         cmd.Parameters.Add("@fecha_nacimiento", System.Data.SqlDbType.DateTime).Value = dt;
-                        cmd.Parameters.Add("@domicilio_calle", SqlDbType.VarChar).Value = textBoxDireccion.Text;
-                        cmd.Parameters.Add("@domicilio_numero", SqlDbType.VarChar).Value = 25;
-                        cmd.Parameters.Add("@domicilio_piso", SqlDbType.VarChar).Value = 2;
-                        cmd.Parameters.Add("@domicilio_depto", SqlDbType.VarChar).Value = "A";
+                        cmd.Parameters.Add("@domicilio", SqlDbType.VarChar).Value = textBoxDireccion.Text;
                         cmd.Parameters.Add("@mail", SqlDbType.VarChar).Value = textBoxMail.Text;
                         cmd.Parameters.Add("@telefono", SqlDbType.VarChar).Value = Convert.ToInt32(textBoxTelefono.Text);
                         cmd.Parameters.Add("@descripcion_rol", SqlDbType.VarChar).Value = comboBoxRol.Text;
