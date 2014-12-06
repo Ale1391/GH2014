@@ -655,7 +655,7 @@ CREATE Procedure GITAR_HEROES.generarUsuario
 	   @domicilio varchar(60),
 	   @mail varchar(50),
 	   @telefono bigint,
-	   @descripcion_rol varchar(60))
+	   @codigo_rol smallint)
 
 AS
 	BEGIN
@@ -663,9 +663,6 @@ AS
 			RAISERROR('ERROR, El usuario ya existe!!!',16,1)
 		ELSE
 			BEGIN
-				
-				DECLARE @codigo_rol smallint
-				SET @codigo_rol = (SELECT codigo FROM GITAR_HEROES.Rol WHERE @descripcion_rol = descripcion)
 				
 				INSERT INTO GITAR_HEROES.Usuario
 				VALUES (@username,
@@ -691,6 +688,52 @@ AS
 
 GO
 
+CREATE Procedure GITAR_HEROES.modificarUsuario 
+	  (@username char(15), 
+	   @password char(64),
+	   @nombre varchar(50),
+	   @apellido varchar(50),
+	   @tipo_doc smallint,
+	   @nro_doc int,
+	   @fecha_nacimiento smalldatetime,
+	   @domicilio varchar(60),
+	   @mail varchar(50),
+	   @telefono bigint,
+	   @codigo_rol smallint,
+	   @codigo_estado_sistema smallint)
+
+AS
+	BEGIN
+		IF NOT EXISTS (SELECT 1 FROM GITAR_HEROES.Usuario WHERE @username = username)
+			RAISERROR('ERROR, El usuario NO existe!!!', 16, 1)
+		ELSE
+			BEGIN
+				
+				UPDATE GITAR_HEROES.Usuario 
+				SET	password = @password,
+					nombre = @nombre,
+					apellido = @apellido,
+					tipo_doc = @tipo_doc,
+					nro_doc = @nro_doc,
+					fecha_nacimiento =@fecha_nacimiento,
+					domicilio = @domicilio,
+					mail = @mail,
+					telefono = @telefono,
+				 	estado_sistema = @codigo_estado_sistema
+					
+				WHERE username = @username
+				
+				UPDATE GITAR_HEROES.RolUsuario
+				SET codigo_rol = @codigo_rol, username = @username
+				
+				PRINT('Usuario modificado correctamente!!!')
+						
+			END
+	END
+
+
+GO
+
 CREATE Procedure GITAR_HEROES.limpiarUsuarioHotel(@username char(15))
 AS
 	BEGIN
@@ -709,6 +752,7 @@ AS
 	END
 
 GO
+
 
 -- ////////////////////// REGISTRAR ESTADIA //////////////////////
 
@@ -821,17 +865,81 @@ GO
 
 -- ////////////////////// FACTURAR PUBLICACIONES //////////////////////
 /*
-CREATE Procedure GITAR_HEROES.facturar (@codigo_reserva int, @codigo_tipo_pago int, @nro_tarjeta numeric (17,0))
+CREATE Function GITAR_HEROES.calcularCantDias (@fecha_ingreso smalldatetime, @fecha_egreso smalldatetime)
+RETURNS int
 AS
 	BEGIN
+
+	RETURN 0
+	END
+
+
+CREATE Function GITAR_HEROES.obtenerCostoBase (@codigo_reserva int)
+RETURNS decimal(10,2)
+AS
+	BEGIN
+
+	RETURN 0
+	END
+
+
+CREATE Procedure GITAR_HEROES.facturar (@codigo_reserva int, @codigo_tipo_pago int, @nro_tarjeta numeric (17,0))
+
+AS
+	BEGIN
+
+		-- ///////////////////
+		-- Variables para tabla Factura
 		DECLARE @tipo_doc_cliente smallint,
 				@nro_doc_cliente int,
-				@fecha smalldatetime,
-				@total decimal(10,2),				
+				@fecha_egreso_estadia smalldatetime,
+				@total decimal(10,2)
+
+		SET @tipo_doc_cliente = (SELECT tipo_doc_cliente FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
+		SET @nro_doc_cliente = (SELECT nro_doc_cliente FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
+		SET @fecha_egreso_estadia = (SELECT fecha_egreso FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva)
+
+		-- Se carga la factura dejando vacío el campo total. numero_factura se calcula automáticamente por ser Identiity ??????
+		INSERT INTO GITAR_HEROES.Factura 
+				   (tipo_doc_cliente, 
+				    nro_doc_cliente, 
+				    codigo_reserva, 
+				    fecha, codigo_tipo_pago, 
+				    nro_tarjeta)
+				    
+		VALUES (@tipo_doc_cliente,
+				@nro_doc_cliente, 
+				@codigo_reserva, 
+				@fecha_egreso_estadia, 
+				@codigo_tipo_pago, 
+				@nro_tarjeta)
+
+		-- ///////////////////
+		-- Variables para tabla ItemFacturaEstadia
+		DECLARE @fecha_inicio_estadia smalldatetime,
+				@fecha_fin_reserva smalldatetime,
+				@monto_base decimal(10,2),
+				@cant_dias_alojados int,
+				@cant_dias_reservados int
+
+		SET @fecha_inicio_estadia = (SELECT fecha_ingreso FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva)
+		SET @fecha_fin_reserva = (SELECT fecha_fin FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
 	
+		-- Se cargan los items del tipo estadia
+			-- Registro que suma (tipo 1)
+		INSERT INTO GITAR_HEROES.ItemFacturaEstadia
+		VALUES (1,		-- tipo_registro
+				
+				)
+
+		
+
+	
+	
+
 	END
 */
-
+GO
 
 -- ////////////////////// OTROS PROCEDIMIENTOS //////////////////////
 
@@ -896,18 +1004,27 @@ AS
 		DROP Table GITAR_HEROES.Hotel
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
+		DROP Procedure GITAR_HEROES.setearSuperUsuario
+		
+		--DROP Procedure GITAR_HEROES.facturar
+		DROP Procedure GITAR_HEROES.finalizarCargaConsumibles
 		DROP Procedure GITAR_HEROES.modificarConsumible
 		DROP Procedure GITAR_HEROES.cargarConsumible
-		DROP Procedure GITAR_HEROES.agregarUsuarioHotel
-		DROP Procedure GITAR_HEROES.setearSuperUsuario
 		DROP Procedure GITAR_HEROES.crearTablas
 		DROP Procedure GITAR_HEROES.ingresoEgresoEstadia
+		DROP Procedure GITAR_HEROES.limpiarUsuarioHotel
+		DROP Procedure GITAR_HEROES.agregarUsuarioHotel
+		DROP Procedure GITAR_HEROES.modificarUsuario
 		DROP Procedure GITAR_HEROES.generarUsuario
 		DROP Procedure GITAR_HEROES.borrarTablas
 
+	-- BORRADO DE FUNCIONES
+		--DROP Function GITAR_HEROES.calcularCantDias
+		--DROP Function GITAR_HEROES.obtenerCostoBase
+	
 	-- BORRADO DEL ESQUEMA		
 		DROP Schema GITAR_HEROES
-		
+	
 	END	
 
 GO
@@ -927,7 +1044,7 @@ EXEC GITAR_HEROES.generarUsuario
 	 'Domicilio no especificado',
 	 'admin@gitarheroes.com',
 	 11111111,
-	 'Administrador'
+	 1
 
 -- Se agrega acceso a todos los hoteles para el usuario "admin"
 EXEC GITAR_HEROES.setearSuperUsuario 'admin'
@@ -944,7 +1061,7 @@ EXEC GITAR_HEROES.generarUsuario
 	 'Domicilio no especificado',
 	 'guest@gitarheroes.com',
 	 22222222,
-	 'Guest'
+	 3
 	 
 	 
 -- Se agrega acceso a todos los hoteles para el usuario "guest"
