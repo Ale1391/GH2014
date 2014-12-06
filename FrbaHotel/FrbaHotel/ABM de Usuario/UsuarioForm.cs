@@ -217,6 +217,10 @@ namespace FrbaHotel.ABM_de_Usuario
                 comboBoxRol.Items.Add(row["descripcion"].ToString());
                 lista_codigos_rol.Add(Convert.ToInt32(row["codigo"]));
                 lista_nombres_rol.Add(row["descripcion"].ToString());
+
+                comboBoxTipodni.Items.Add(row["descripcion"].ToString());
+                lista_codigos_dni.Add(Convert.ToInt32(row["codigo"]));
+                lista_nombres_dni.Add(row["descripcion"].ToString());
             }
 
             string query2 = "select * from GITAR_HEROES.TipoDocumento";
