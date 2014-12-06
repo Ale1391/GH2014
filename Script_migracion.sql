@@ -725,6 +725,7 @@ AS
 				
 				UPDATE GITAR_HEROES.RolUsuario
 				SET codigo_rol = @codigo_rol, username = @username
+				WHERE username = @username
 				
 				PRINT('Usuario modificado correctamente!!!')
 						
@@ -1073,3 +1074,4 @@ EXEC GITAR_HEROES.generarUsuario
 EXEC GITAR_HEROES.setearSuperUsuario 'guest'
 	 
 --EXEC GITAR_HEROES.borrarTablas
+
