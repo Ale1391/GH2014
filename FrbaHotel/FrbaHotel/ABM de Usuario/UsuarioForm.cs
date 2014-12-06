@@ -60,7 +60,7 @@ namespace FrbaHotel.ABM_de_Usuario
                     textBoxTelefono.Text = dataTable.Rows[0]["telefono"].ToString();
                     textBoxDireccion.Text = dataTable.Rows[0]["domicilio"].ToString();
                     DateTime dt = DateTime.Parse(dataTable.Rows[0]["fecha_nacimiento"].ToString());
-                    textBoxFechaNac.Text = dt.Day.ToString() + "-" + dt.Month.ToString() + "-" + dt.Year.ToString();
+                    textBoxFechaNac.Text = (dt.Day.ToString().Length==1?"0":"")+dt.Day.ToString() + "-" + (dt.Month.ToString().Length==1?"0":"")+ dt.Month.ToString() + "-" + dt.Year.ToString();
                     if (dataTable.Rows[0]["estado_sistema"].ToString() == "1")
                     {
                         checkBoxUsuarioActivo.Checked = true;
@@ -179,6 +179,8 @@ namespace FrbaHotel.ABM_de_Usuario
                 foreach (DataRow row in dataTable.Rows)
                 {
                     comboBoxRol.Items.Add(row["descripcion"].ToString());
+                    lista_codigos_rol.Add(Convert.ToInt32(row["codigo"]));
+                    lista_nombres_rol.Add(row["descripcion"].ToString());
                 }
 
                 string query2 = "select * from GITAR_HEROES.TipoDocumento";
@@ -232,7 +234,6 @@ namespace FrbaHotel.ABM_de_Usuario
 
         private void buttonFinalizar_Click(object sender, EventArgs e)
         {
-            //
             if (nombre_usuario.Length > 0)
             {
                 editarUsuario();
@@ -357,7 +358,16 @@ namespace FrbaHotel.ABM_de_Usuario
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.Add("@username", SqlDbType.VarChar).Value = textBoxUsuario.Text;
-                        cmd.Parameters.Add("@password", SqlDbType.VarChar).Value = textBoxClave.Text;
+
+                        SHA256 sha256 = SHA256.Create();
+                        byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(textBoxClave.Text));
+                        string hashstring = string.Empty;
+                        foreach (byte x in hash)
+                        {
+                            hashstring += string.Format("{0:x2}", x);
+                        }
+
+                        cmd.Parameters.Add("@password", SqlDbType.VarChar).Value = hashstring;
                         cmd.Parameters.Add("@nombre", SqlDbType.VarChar).Value = textBoxNombre.Text;
                         cmd.Parameters.Add("@apellido", SqlDbType.VarChar).Value = textBoxApellido.Text;
                         cmd.Parameters.Add("@tipo_doc", SqlDbType.VarChar).Value = lista_codigos_dni[comboBoxTipodni.SelectedIndex];
