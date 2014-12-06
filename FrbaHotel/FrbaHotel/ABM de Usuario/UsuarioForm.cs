@@ -321,7 +321,7 @@ namespace FrbaHotel.ABM_de_Usuario
         }
 
         private void borrarUsuarioHotel()
-        {
+        {//
             using (SqlConnection con = new SqlConnection(Variables.connectionStr))
             {
                 using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.limpiarUsuarioHotel", con))
