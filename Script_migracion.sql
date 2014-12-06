@@ -739,6 +739,7 @@ CREATE Procedure GITAR_HEROES.limpiarUsuarioHotel(@username char(15))
 AS
 	BEGIN
 		DELETE GITAR_HEROES.UsuarioHotel
+		WHERE username = @username
 	END
 
 
