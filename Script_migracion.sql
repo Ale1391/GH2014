@@ -1030,6 +1030,11 @@ AS
 GO
 -- ////////////////////  EJECUCIÓN DE PROCEDIMIENTOS ////////////////////
 
+-- CREACION DE USUARIOS BASE
+-- Se declara la variable para asignar fecha de nacimiento a usuarios
+DECLARE @fecha_nac smalldatetime
+SET @fecha_nac = GETDATE()
+
 EXEC GITAR_HEROES.crearTablas
 
 -- Se crea el usuario admnistrador base en el sistema
@@ -1040,7 +1045,7 @@ EXEC GITAR_HEROES.generarUsuario
 	 'Administrador General',
 	 1,
 	 11111111,
-	 NULL,
+	 @fecha_nac,
 	 'Domicilio no especificado',
 	 'admin@gitarheroes.com',
 	 11111111,
@@ -1057,7 +1062,7 @@ EXEC GITAR_HEROES.generarUsuario
 	 'Guest',
 	 2,
 	 22222222,
-	 NULL,
+	 @fecha_nac,
 	 'Domicilio no especificado',
 	 'guest@gitarheroes.com',
 	 22222222,
