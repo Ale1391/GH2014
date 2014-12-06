@@ -189,7 +189,7 @@ AS
 		VALUES (11, 'Registrar Consumibles')
 		
 		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
-		VALUES (12, 'Facturar Publicaciones')
+		VALUES (12, 'Facturar Estadia')
 		
 				INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
 		VALUES (13, 'Listado Estadistico')
@@ -244,7 +244,7 @@ AS
 		INSERT INTO GITAR_HEROES.RolFuncionalidad
 		VALUES (1, 11)
 
-		-- Administrador - Facturar Publicaciones
+		-- Administrador - Facturar Estadia
 		INSERT INTO GITAR_HEROES.RolFuncionalidad
 		VALUES (1, 12)
 
@@ -398,7 +398,7 @@ AS
 			codigo_regimen smallint,
 			tipo_doc_cliente smallint,
 			nro_doc_cliente numeric(11,0),
-			costo_total decimal (10,2),
+			costo_base decimal (10,2),
 			codigo_estado smallint,
 			FOREIGN KEY (codigo_hotel) REFERENCES GITAR_HEROES.Hotel,
 			FOREIGN KEY (codigo_estado) REFERENCES GITAR_HEROES.TipoEstadoReserva)
@@ -424,7 +424,7 @@ AS
 			  (SELECT Cliente.nro_doc FROM GITAR_HEROES.Cliente Cliente 
 			   WHERE Cliente.nro_doc = Cliente_Pasaporte_Nro 
 			 		 AND Cliente.mail = Cliente_Mail),					-- nro_doc_cliente
-			   Regimen_Precio * Habitacion_Tipo_Porcentual + Hotel_CantEstrella * Hotel_Recarga_Estrella,		-- costo_total
+			   Regimen_Precio * Habitacion_Tipo_Porcentual + Hotel_CantEstrella * Hotel_Recarga_Estrella,		-- costo_base
 		-- Si la reserva tiene factura se la considera de estado efectivizada sino simplemente correcta
 			   CASE WHEN EXISTS(SELECT 1 FROM gd_esquema.Maestra WHERE M.Reserva_Codigo = Reserva_Codigo AND Factura_Nro IS NOT NULL) 
 			   THEN 6 ELSE 1 END
@@ -865,8 +865,8 @@ AS
 
 GO
 
--- ////////////////////// FACTURAR PUBLICACIONES //////////////////////
-/*
+-- ////////////////////// FACTURAR ESTADIA //////////////////////
+
 CREATE Function GITAR_HEROES.calcularCantDias (@fecha_ingreso smalldatetime, @fecha_egreso smalldatetime)
 RETURNS int
 AS
@@ -875,7 +875,8 @@ AS
 	RETURN 0
 	END
 
-
+GO
+/*
 CREATE Function GITAR_HEROES.obtenerCostoBase (@codigo_reserva int)
 RETURNS decimal(10,2)
 AS
@@ -883,8 +884,18 @@ AS
 
 	RETURN 0
 	END
+*/
+	
+CREATE Function GITAR_HEROES.obtenerSiguienteFactura()
+RETURNS int
+AS
+	BEGIN
+	
+	RETURN 0
+	END
 
-
+GO
+/*
 CREATE Procedure GITAR_HEROES.facturar (@codigo_reserva int, @codigo_tipo_pago int, @nro_tarjeta numeric (17,0))
 
 AS
@@ -895,21 +906,25 @@ AS
 		DECLARE @tipo_doc_cliente smallint,
 				@nro_doc_cliente int,
 				@fecha_egreso_estadia smalldatetime,
-				@total decimal(10,2)
-
+				@total decimal(10,2),
+				@numero_factura int
+				
 		SET @tipo_doc_cliente = (SELECT tipo_doc_cliente FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
 		SET @nro_doc_cliente = (SELECT nro_doc_cliente FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
 		SET @fecha_egreso_estadia = (SELECT fecha_egreso FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva)
-
-		-- Se carga la factura dejando vacío el campo total. numero_factura se calcula automáticamente por ser Identiity ??????
+		SET @numero_factura = GITAR_HEROES.obtenerSiguienteFactura()
+		
+		-- Se carga la factura dejando vacío el campo total
 		INSERT INTO GITAR_HEROES.Factura 
-				   (tipo_doc_cliente, 
+				   (numero_factura,
+				    tipo_doc_cliente, 
 				    nro_doc_cliente, 
 				    codigo_reserva, 
 				    fecha, codigo_tipo_pago, 
 				    nro_tarjeta)
 				    
-		VALUES (@tipo_doc_cliente,
+		VALUES (@numero_factura,
+				@tipo_doc_cliente,
 				@nro_doc_cliente, 
 				@codigo_reserva, 
 				@fecha_egreso_estadia, 
@@ -926,21 +941,67 @@ AS
 
 		SET @fecha_inicio_estadia = (SELECT fecha_ingreso FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva)
 		SET @fecha_fin_reserva = (SELECT fecha_fin FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
+		SET @monto_base = (SELECT costo_total FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
+		SET @cant_dias_alojados = GITAR_HEROES.calcularCantDias (@fecha_inicio_estadia, @fecha_egreso_estadia)
+		SET @cant_dias_reservados = GITAR_HEROES.calcularCantDias (@fecha_inicio_estadia, @fecha_fin_reserva)
 	
 		-- Se cargan los items del tipo estadia
 			-- Registro que suma (tipo 1)
 		INSERT INTO GITAR_HEROES.ItemFacturaEstadia
-		VALUES (1,		-- tipo_registro
+		VALUES (@numero_factura,
+				1,		-- tipo_registro
+				@cant_dias_alojados,
+				@monto_base)
+
+			-- Registro que suma (tipo 0)
+		INSERT INTO GITAR_HEROES.ItemFacturaEstadia
+		VALUES (@numero_factura,
+				0,		-- tipo_registro
+				@cant_dias_reservados - @cant_dias_alojados,
+				0)		-- monto
+
+
+		-- ///////////////////
+		DECLARE @codigo_regimen smallint,
+				@descripcion_regimen varchar(60)
 				
-				)
-
+		SET @codigo_regimen = (SELECT codigo_regimen FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
+		SET @descripcion_regimen = (SELECT descripcion FROM GITAR_HEROES.Regimen WHERE codigo = @codigo_regimen)
 		
-
-	
-	
-
+		-- Se cargan los items del tipo consumible
+			-- Se cargan los consumibles propiamente dichos
+		INSERT INTO GITAR_HEROES.ItemFacturaConsumible
+		SELECT @numero_factura,
+			   codigo_consumible,
+			   @codigo_reserva,
+			   cantidad,
+			  (SELECT precio FROM GITAR_HEROES.TipoConsumible WHERE codigo = @codigo_reserva)
+		
+		FROM GITAR_HEROES.ConsumibleAdquirido
+		WHERE codigo_reserva = @codigo_reserva AND codigo_consumible != -1
+		
+			-- Se carga el descuento si el regimen corresponde a All Inclusive
+		IF @descripcion_regimen IN ('All Inclusive', 'Full Board') 
+		BEGIN
+			INSERT INTO GITAR_HEROES.ItemFacturaConsumible
+			SELECT (@numero_factura,
+					codigo_consumible,
+					@codigo_reserva,
+					1,
+					-(SELECT SUM(cantidad * monto)  FROM GITAR_HEROES.ItemFacturaConsumible WHERE ConsAdq.codigo_reserva = @codigo_reserva AND ConsAdq.codigo_consumible != -1)
+			
+			FROM GITAR_HEROES.ConsumibleAdquirido ConsAdq
+			WHERE codigo_reserva = @codigo_reserva AND codigo_consumible = -1
+		END
+		
+		-- ///////////////////
+		-- Carga de total en la tabla factura
+		
+		
+		
 	END
 */
+
 GO
 
 -- ////////////////////// OTROS PROCEDIMIENTOS //////////////////////
@@ -1008,7 +1069,7 @@ AS
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
 		DROP Procedure GITAR_HEROES.setearSuperUsuario
 		
-		--DROP Procedure GITAR_HEROES.facturar
+		DROP Procedure GITAR_HEROES.facturar
 		DROP Procedure GITAR_HEROES.finalizarCargaConsumibles
 		DROP Procedure GITAR_HEROES.modificarConsumible
 		DROP Procedure GITAR_HEROES.cargarConsumible
@@ -1021,7 +1082,8 @@ AS
 		DROP Procedure GITAR_HEROES.borrarTablas
 
 	-- BORRADO DE FUNCIONES
-		--DROP Function GITAR_HEROES.calcularCantDias
+		DROP Function GITAR_HEROES.calcularCantDias
+		DROP Function GITAR_HEROES.obtenerSiguienteFactura
 		--DROP Function GITAR_HEROES.obtenerCostoBase
 	
 	-- BORRADO DEL ESQUEMA		
