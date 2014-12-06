@@ -37,13 +37,37 @@ namespace FrbaHotel.ABM_de_Usuario
 
         private void cargarFormulario()
         {
-            connection = new System.Data.SqlClient.SqlConnection();
-            try
+            
+            string query = "select * from GITAR_HEROES.Usuario where username = '"+nombre_usuario+"'";
+            command = new SqlCommand(query);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            if (dataTable.Rows.Count > 0)
             {
-                connection.ConnectionString = Variables.connectionStr;
-                connection.Open();
-                string query = "select * from GITAR_HEROES.Usuario where username = '"+nombre_usuario+"'";
-                command = new SqlCommand(query);
+                textBoxUsuario.Text = dataTable.Rows[0]["username"].ToString();
+                //textBoxClave.Text = dataTable.Rows[0]["password"].ToString();
+                textBoxNombre.Text = dataTable.Rows[0]["nombre"].ToString();
+                textBoxApellido.Text = dataTable.Rows[0]["apellido"].ToString();
+                textBoxDni.Text = dataTable.Rows[0]["nro_doc"].ToString();
+                textBoxMail.Text = dataTable.Rows[0]["mail"].ToString();
+                textBoxTelefono.Text = dataTable.Rows[0]["telefono"].ToString();
+                textBoxDireccion.Text = dataTable.Rows[0]["domicilio"].ToString();
+                DateTime dt = DateTime.Parse(dataTable.Rows[0]["fecha_nacimiento"].ToString());
+                textBoxFechaNac.Text = (dt.Day.ToString().Length==1?"0":"")+dt.Day.ToString() + "-" + (dt.Month.ToString().Length==1?"0":"")+ dt.Month.ToString() + "-" + dt.Year.ToString();
+                if (dataTable.Rows[0]["estado_sistema"].ToString() == "1")
+                {
+                    checkBoxUsuarioActivo.Checked = true;
+                }
+                else
+                {
+                    checkBoxUsuarioActivo.Checked = false;
+                }
+
+                string query2 = "select descripcion from GITAR_HEROES.Rol inner join GITAR_HEROES.RolUsuario on GITAR_HEROES.Rol.codigo = GITAR_HEROES.RolUsuario.codigo_rol where username = '"+nombre_usuario+"'";
+                command = new SqlCommand(query2);
                 command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
                 dataTable = new DataTable();
@@ -51,49 +75,61 @@ namespace FrbaHotel.ABM_de_Usuario
 
                 if (dataTable.Rows.Count > 0)
                 {
-                    textBoxUsuario.Text = dataTable.Rows[0]["username"].ToString();
-                    //textBoxClave.Text = dataTable.Rows[0]["password"].ToString();
-                    textBoxNombre.Text = dataTable.Rows[0]["nombre"].ToString();
-                    textBoxApellido.Text = dataTable.Rows[0]["apellido"].ToString();
-                    textBoxDni.Text = dataTable.Rows[0]["nro_doc"].ToString();
-                    textBoxMail.Text = dataTable.Rows[0]["mail"].ToString();
-                    textBoxTelefono.Text = dataTable.Rows[0]["telefono"].ToString();
-                    textBoxDireccion.Text = dataTable.Rows[0]["domicilio"].ToString();
-                    DateTime dt = DateTime.Parse(dataTable.Rows[0]["fecha_nacimiento"].ToString());
-                    textBoxFechaNac.Text = (dt.Day.ToString().Length==1?"0":"")+dt.Day.ToString() + "-" + (dt.Month.ToString().Length==1?"0":"")+ dt.Month.ToString() + "-" + dt.Year.ToString();
-                    if (dataTable.Rows[0]["estado_sistema"].ToString() == "1")
-                    {
-                        checkBoxUsuarioActivo.Checked = true;
-                    }
-                    else
-                    {
-                        checkBoxUsuarioActivo.Checked = false;
-                    }
+                    comboBoxRol.Text = dataTable.Rows[0]["descripcion"].ToString();
 
-                    string query2 = "select descripcion from GITAR_HEROES.Rol inner join GITAR_HEROES.RolUsuario on GITAR_HEROES.Rol.codigo = GITAR_HEROES.RolUsuario.codigo_rol where username = '"+nombre_usuario+"'";
-                    command = new SqlCommand(query2);
-                    command.Connection = connection;
-                    adapter = new SqlDataAdapter(command);
-                    dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-
-                    if (dataTable.Rows.Count > 0)
+                    for (int i = 0; i < lista_nombres_rol.Count; i++)
                     {
-                        comboBoxRol.Text = dataTable.Rows[0]["descripcion"].ToString();
+                        string rol = lista_nombres_rol[i];
+                        if (rol == comboBoxRol.Text)
+                        {
+                            comboBoxRol.SelectedItem = i;
+                        }
                     }
+                }
 
-                    string query3 = "select descripcion,codigo from GITAR_HEROES.TipoDocumento inner join GITAR_HEROES.Usuario on GITAR_HEROES.TipoDocumento.codigo = GITAR_HEROES.Usuario.tipo_doc where username = '"+nombre_usuario+"'";
-                    command = new SqlCommand(query3);
-                    command.Connection = connection;
-                    adapter = new SqlDataAdapter(command);
-                    dataTable = new DataTable();
-                    adapter.Fill(dataTable);
+                string query3 = "select descripcion,codigo from GITAR_HEROES.TipoDocumento inner join GITAR_HEROES.Usuario on GITAR_HEROES.TipoDocumento.codigo = GITAR_HEROES.Usuario.tipo_doc where username = '"+nombre_usuario+"'";
+                command = new SqlCommand(query3);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
 
-                    if (dataTable.Rows.Count > 0)
+                if (dataTable.Rows.Count > 0)
+                {
+                    comboBoxTipodni.Text = dataTable.Rows[0]["descripcion"].ToString();
+
+                    for (int i = 0; i < lista_nombres_dni.Count; i++)
                     {
-                        comboBoxTipodni.Text = dataTable.Rows[0]["descripcion"].ToString();
-                        
+                        string tipo_doc = lista_nombres_dni[i];
+                        if (tipo_doc == comboBoxTipodni.Text)
+                        {
+                            comboBoxTipodni.SelectedItem = i;
+                        }
                     }
+                    
+                }
+            }
+        }
+
+        private void llenarCheckedlistNuevo()
+        {
+            connection = new System.Data.SqlClient.SqlConnection();
+            try
+            {
+                connection.ConnectionString = Variables.connectionStr;
+                connection.Open();
+                string query = "select domicilio_calle,codigo from GITAR_HEROES.Hotel";
+                command = new SqlCommand(query);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    hotelesChecklist.Items.Add(row["domicilio_calle"].ToString(), false);
+                    lista_codigos_hoteles.Add(Convert.ToInt32(row["codigo"]));
+                    lista_nombres_hoteles.Add(row["domicilio_calle"].ToString());
                 }
             }
             catch (Exception exc)
@@ -102,24 +138,7 @@ namespace FrbaHotel.ABM_de_Usuario
             }
         }
 
-        private void llenarCheckedlist2()
-        {
-            string query = "select domicilio_calle,codigo from GITAR_HEROES.Hotel";
-            command = new SqlCommand(query);
-            command.Connection = connection;
-            adapter = new SqlDataAdapter(command);
-            dataTable = new DataTable();
-            adapter.Fill(dataTable);
-
-            foreach (DataRow row in dataTable.Rows)
-            {
-                hotelesChecklist.Items.Add(row["domicilio_calle"].ToString(), false);
-                lista_codigos_hoteles.Add(Convert.ToInt32(row["codigo"]));
-                lista_nombres_hoteles.Add(row["domicilio_calle"].ToString());
-            }
-        }
-
-        private void llenarCheckedlist()
+        private void tildarCheckedlistEdicion()
         {
             string query = "select domicilio_calle from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.UsuarioHotel.username = '" + nombre_usuario + "'";
             command = new SqlCommand(query);
@@ -130,7 +149,14 @@ namespace FrbaHotel.ABM_de_Usuario
 
             foreach (DataRow row in dataTable.Rows)
             {
-                hotelesChecklist.Items.Add(row["domicilio_calle"].ToString(),true);
+                for (int i = 0;i<hotelesChecklist.Items.Count;i++)
+                {
+                    object hotel = hotelesChecklist.Items[i];
+                    if (hotel.ToString() == row["domicilio_calle"].ToString())
+                    {
+                        hotelesChecklist.SetItemChecked(i, true);
+                    }
+                }
             }
         }
 
@@ -148,9 +174,10 @@ namespace FrbaHotel.ABM_de_Usuario
             {
                 //USUARIO EXISTENTE
                 textBoxUsuario.Enabled = false;
-                cargarFormulario();
-                llenarCheckedlist();
+                llenarCheckedlistNuevo();
+                tildarCheckedlistEdicion();
                 llenarCombos();
+                cargarFormulario();
             }
             else
             {
@@ -158,7 +185,7 @@ namespace FrbaHotel.ABM_de_Usuario
                 checkBoxUsuarioActivo.Enabled = false;
                 checkBoxUsuarioActivo.Checked = true;
                 llenarCombosNuevo();
-                llenarCheckedlist2();
+                llenarCheckedlistNuevo();
             }
         }
 
@@ -217,10 +244,6 @@ namespace FrbaHotel.ABM_de_Usuario
                 comboBoxRol.Items.Add(row["descripcion"].ToString());
                 lista_codigos_rol.Add(Convert.ToInt32(row["codigo"]));
                 lista_nombres_rol.Add(row["descripcion"].ToString());
-
-                comboBoxTipodni.Items.Add(row["descripcion"].ToString());
-                lista_codigos_dni.Add(Convert.ToInt32(row["codigo"]));
-                lista_nombres_dni.Add(row["descripcion"].ToString());
             }
 
             string query2 = "select * from GITAR_HEROES.TipoDocumento";
@@ -233,6 +256,9 @@ namespace FrbaHotel.ABM_de_Usuario
             foreach (DataRow row in dataTable.Rows)
             {
                 comboBoxTipodni.Items.Add(row["descripcion"].ToString());
+                lista_codigos_dni.Add(Convert.ToInt32(row["codigo"]));
+                lista_nombres_dni.Add(row["descripcion"].ToString());
+
             }
         }
 
