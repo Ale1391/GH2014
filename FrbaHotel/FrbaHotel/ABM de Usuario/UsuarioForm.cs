@@ -232,6 +232,7 @@ namespace FrbaHotel.ABM_de_Usuario
 
         private void buttonFinalizar_Click(object sender, EventArgs e)
         {
+            //
             if (nombre_usuario.Length > 0)
             {
                 editarUsuario();
