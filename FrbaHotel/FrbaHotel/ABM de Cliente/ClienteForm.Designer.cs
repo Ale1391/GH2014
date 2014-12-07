@@ -52,6 +52,7 @@
             this.textBox1FechaNacimiento = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.comboBoxTipoDocumento = new System.Windows.Forms.ComboBox();
+            this.checkBoxActivo = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // linkLabel1
@@ -252,11 +253,22 @@
             this.comboBoxTipoDocumento.Size = new System.Drawing.Size(92, 21);
             this.comboBoxTipoDocumento.TabIndex = 9;
             // 
+            // checkBoxActivo
+            // 
+            this.checkBoxActivo.AutoSize = true;
+            this.checkBoxActivo.Location = new System.Drawing.Point(281, 310);
+            this.checkBoxActivo.Name = "checkBoxActivo";
+            this.checkBoxActivo.Size = new System.Drawing.Size(56, 17);
+            this.checkBoxActivo.TabIndex = 10;
+            this.checkBoxActivo.Text = "Activo";
+            this.checkBoxActivo.UseVisualStyleBackColor = true;
+            // 
             // ClienteForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(523, 425);
+            this.Controls.Add(this.checkBoxActivo);
             this.Controls.Add(this.comboBoxTipoDocumento);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label11);
@@ -315,5 +327,6 @@
         private System.Windows.Forms.TextBox textBox1FechaNacimiento;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ComboBox comboBoxTipoDocumento;
+        private System.Windows.Forms.CheckBox checkBoxActivo;
     }
 }

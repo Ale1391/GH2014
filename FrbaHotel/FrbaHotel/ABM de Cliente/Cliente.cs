@@ -37,9 +37,10 @@ namespace FrbaHotel.ABM_de_Cliente
             else if (comboBoxCliente.Text == "Crear Cliente Nuevo")
             {
                 this.Hide();
-                ClienteForm abm_rol = new ClienteForm();
-                abm_rol.StartPosition = FormStartPosition.CenterScreen;
-                abm_rol.ShowDialog();
+                ClienteForm cliente_form = new ClienteForm();
+                cliente_form.mail = "";
+                cliente_form.StartPosition = FormStartPosition.CenterScreen;
+                cliente_form.ShowDialog();
             }
             else if (comboBoxCliente.Text == "Editar Cliente Existente")
             {
