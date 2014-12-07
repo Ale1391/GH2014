@@ -24,3 +24,23 @@
 6. Estadia:
 	a. Se deja a codigo_reserva como PK únicamente.
 	b. Se sacan los campos codigo_hotel y numero_habitacion. Se vincula con las habitaciones por la tabla ReservaHabitacion. 
+
+7. Factura: 
+	a. Al total de la factura se le suma el monto derivado de la estadía.
+	FUENTE: https://groups.google.com/forum/#!searchin/gestiondedatos/factura/gestiondedatos/Yzi_yuEmjqQ/GY72ObfaY5EJ
+
+8. ConsumibleAdquirido e ItemFacturaConsumible:
+	a. Se agrega un INSERT extra para ingresar un consumible extra de nombre "Otro" para reflejar las diferencias entre el total de la factura y la suma de los items.
+	FUENTE: https://groups.google.com/forum/#!searchin/gestiondedatos/factura/gestiondedatos/Yzi_yuEmjqQ/GY72ObfaY5EJ
+
+9. TipoConsumible:
+	a. Se agrega un tipo nuevo correspondiente a "Otros"
+
+10. OtroConsumibleAdquirido
+	a. Contempla consumibles que aparecen en la facturación pero no tienen código.
+	b. Consta de codigo_reserva y costo
+	c. Aparecen en la tabla ConsumibleAdquirido con código -2
+	d. Requiere agregado de procedimientos en Registrar Consumibles
+
+11. FacturarEstadia:
+	a. Falta corroborar si existe facturación previa.

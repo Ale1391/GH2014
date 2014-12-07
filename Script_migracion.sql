@@ -505,6 +505,10 @@ AS
 		INSERT INTO GITAR_HEROES.TipoConsumible
 		VALUES (-1, 'Finalizacion carga consumibles', NULL)
 		
+		-- Se inserta el tipo de consumible -2 que correspondera a Otros.
+		INSERT INTO GITAR_HEROES.TipoConsumible
+		VALUES (-2, 'Otros', NULL)
+		
 
 	-- /////////////// ESTADIA ///////////////
 
@@ -532,7 +536,7 @@ AS
 			   AND Estadia_Fecha_Inicio IS NOT NULL
 
 
-	-- /////////////// CONSUMIBLESADQUIRIDOS ///////////////
+	-- /////////////// CONSUMIBLEADQUIRIDO ///////////////
 
 		CREATE Table GITAR_HEROES.ConsumibleAdquirido
 			(codigo_consumible int,
@@ -553,6 +557,37 @@ AS
 		FROM gd_esquema.Maestra M
 		WHERE Consumible_Codigo IS NOT NULL
 		GROUP BY Consumible_Codigo, Reserva_Codigo
+		
+		-- Se crea una tabla temporal para almacenar las reservas que no tienen asociados consumibles pero el valor de la factura es mayor que 0
+		SELECT Reserva_Codigo, Factura_Nro, Factura_Total
+		INTO #ReservasConConsumiblesNoRegistrados
+		FROM gd_esquema.Maestra M
+		WHERE NOT EXISTS (SELECT 1 FROM gd_esquema.Maestra WHERE Reserva_Codigo = M.Reserva_Codigo AND Consumible_Codigo IS NOT NULL)
+			  AND Factura_Total <> 0
+		--ORDER BY Reserva_Codigo DESC
+		
+		-- Se inserta un consumible extra para los casos registrados en la tabla temporal #ReservasConConsumiblesNoRegistrados
+		INSERT INTO GITAR_HEROES.ConsumibleAdquirido
+		SELECT -2,					-- codigo_consumibe
+			   Reserva_Codigo,
+			   1,					-- cantidad
+			   'Otros consumibles'	-- leyenda
+			   
+		FROM #ReservasConConsumiblesNoRegistrados
+
+
+	-- /////////////// OTROCONSUMIBLEADQUIRIDO ///////////////
+
+		CREATE Table GITAR_HEROES.OtroConsumibleAdquirido
+					(codigo_reserva int,
+					 costo numeric(10,2),
+					 PRIMARY KEY (codigo_reserva),
+					 FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Estadia)
+		
+		INSERT INTO GITAR_HEROES.OtroConsumibleAdquirido
+		SELECT Reserva_Codigo,
+			   Factura_Total	
+		FROM #ReservasConConsumiblesNoRegistrados
 
 
 	-- /////////////// TIPOPAGO ///////////////
@@ -625,6 +660,15 @@ AS
 	WHERE Factura_Nro IS NOT NULL AND Consumible_Codigo IS NOT NULL
 	GROUP BY Factura_Nro, Consumible_Codigo, Reserva_Codigo, Item_Factura_Monto
 	
+	-- Se inserta un consumible extra para los casos registrados en la tabla temporal #ReservasConConsumiblesNoRegistrados
+	INSERT INTO GITAR_HEROES.ItemFacturaConsumible
+	SELECT Factura_Nro,
+		   -2,					-- codigo_consumibe
+		   Reserva_Codigo,		-- codigo_reserva
+		   1,					-- cantidad
+		   Factura_Total		-- monto
+		   
+	FROM #ReservasConConsumiblesNoRegistrados
 	
 	-- /////////////// ITEMFACTURAESTADIA ///////////////
 
@@ -878,15 +922,6 @@ GO
 
 -- ////////////////////// FACTURAR ESTADIA //////////////////////
 
-CREATE Function GITAR_HEROES.calcularCantDias (@fecha_ingreso smalldatetime, @fecha_egreso smalldatetime)
-RETURNS int
-AS
-	BEGIN
-
-	RETURN 0
-	END
-
-GO
 /*
 CREATE Function GITAR_HEROES.obtenerCostoBase (@codigo_reserva int)
 RETURNS decimal(10,2)
@@ -901,17 +936,16 @@ CREATE Function GITAR_HEROES.obtenerSiguienteFactura()
 RETURNS int
 AS
 	BEGIN
-	
-	RETURN 0
+	RETURN (SELECT TOP 1 numero_factura + 1 FROM GITAR_HEROES.Factura ORDER BY numero_factura DESC)
 	END
 
 GO
-/*
+
 CREATE Procedure GITAR_HEROES.facturar (@codigo_reserva int, @codigo_tipo_pago int, @nro_tarjeta numeric (17,0))
 
 AS
 	BEGIN
-
+	-- IF no fue facturada previamente
 		-- ///////////////////
 		-- Variables para tabla Factura
 		DECLARE @tipo_doc_cliente smallint,
@@ -952,9 +986,9 @@ AS
 
 		SET @fecha_inicio_estadia = (SELECT fecha_ingreso FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva)
 		SET @fecha_fin_reserva = (SELECT fecha_fin FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
-		SET @monto_base = (SELECT costo_total FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
-		SET @cant_dias_alojados = GITAR_HEROES.calcularCantDias (@fecha_inicio_estadia, @fecha_egreso_estadia)
-		SET @cant_dias_reservados = GITAR_HEROES.calcularCantDias (@fecha_inicio_estadia, @fecha_fin_reserva)
+		SET @monto_base = (SELECT costo_base FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
+		SET @cant_dias_alojados = DATEDIFF (DAY, @fecha_inicio_estadia, @fecha_egreso_estadia)
+		SET @cant_dias_reservados = DATEDIFF (DAY, @fecha_inicio_estadia, @fecha_fin_reserva)
 	
 		-- Se cargan los items del tipo estadia
 			-- Registro que suma (tipo 1)
@@ -964,13 +998,15 @@ AS
 				@cant_dias_alojados,
 				@monto_base)
 
-			-- Registro que suma (tipo 0)
-		INSERT INTO GITAR_HEROES.ItemFacturaEstadia
-		VALUES (@numero_factura,
-				0,		-- tipo_registro
-				@cant_dias_reservados - @cant_dias_alojados,
-				0)		-- monto
-
+			-- Registro que no suma ni resta, indica dias no alojados (tipo 0)
+		IF (@cant_dias_reservados - @cant_dias_alojados <> 0)
+		BEGIN
+			INSERT INTO GITAR_HEROES.ItemFacturaEstadia
+			VALUES (@numero_factura,
+					0,		-- tipo_registro
+					@cant_dias_reservados - @cant_dias_alojados,
+					0)		-- monto
+		END
 
 		-- ///////////////////
 		DECLARE @codigo_regimen smallint,
@@ -986,7 +1022,11 @@ AS
 			   codigo_consumible,
 			   @codigo_reserva,
 			   cantidad,
-			  (SELECT precio FROM GITAR_HEROES.TipoConsumible WHERE codigo = @codigo_reserva)
+			   -- monto
+			   CASE WHEN codigo_consumible <> -2	
+					THEN (SELECT precio FROM GITAR_HEROES.TipoConsumible WHERE codigo = @codigo_reserva)
+					ELSE (SELECT costo FROM GITAR_HEROES.OtroConsumibleAdquirido WHERE codigo_reserva = @codigo_reserva)
+			   END
 		
 		FROM GITAR_HEROES.ConsumibleAdquirido
 		WHERE codigo_reserva = @codigo_reserva AND codigo_consumible != -1
@@ -995,11 +1035,11 @@ AS
 		IF @descripcion_regimen IN ('All Inclusive', 'Full Board') 
 		BEGIN
 			INSERT INTO GITAR_HEROES.ItemFacturaConsumible
-			SELECT (@numero_factura,
-					codigo_consumible,
-					@codigo_reserva,
-					1,
-					-(SELECT SUM(cantidad * monto)  FROM GITAR_HEROES.ItemFacturaConsumible WHERE ConsAdq.codigo_reserva = @codigo_reserva AND ConsAdq.codigo_consumible != -1)
+			SELECT @numero_factura,
+				   codigo_consumible,
+				   @codigo_reserva,
+				   1,
+				   -(SELECT SUM(cantidad * monto)  FROM GITAR_HEROES.ItemFacturaConsumible WHERE ConsAdq.codigo_reserva = @codigo_reserva AND ConsAdq.codigo_consumible != -1)
 			
 			FROM GITAR_HEROES.ConsumibleAdquirido ConsAdq
 			WHERE codigo_reserva = @codigo_reserva AND codigo_consumible = -1
@@ -1007,11 +1047,29 @@ AS
 		
 		-- ///////////////////
 		-- Carga de total en la tabla factura
+			-- Se crea una tabla temporal para luego sumar conceptos
+		SELECT monto
+		INTO #MontosItemsFactura
+		FROM GITAR_HEROES.ItemFacturaEstadia
+		WHERE numero_factura = @numero_factura
 		
+		INSERT INTO #MontosItemsFactura
+		SELECT monto
+		FROM GITAR_HEROES.ItemFacturaConsumible
+		WHERE numero_factura = @numero_factura
+
+		--SELECT * FROM #MontosItemsFactura
+		--DROP Table #MontosItemsFactura		
 		
+		SET @total = (SELECT SUM(monto) FROM #MontosItemsFactura)
+		
+			-- Se actualiza la tabla factura
+		UPDATE GITAR_HEROES.Factura
+		SET total = @total
+		WHERE numero_factura = @numero_factura
 		
 	END
-*/
+
 
 GO
 
@@ -1054,6 +1112,7 @@ AS
 		DROP Table GITAR_HEROES.ItemFacturaConsumible
 		DROP Table GITAR_HEROES.Factura
 		DROP Table GITAR_HEROES.TipoPago
+		DROP Table GITAR_HEROES.OtroConsumibleAdquirido
 		DROP Table GITAR_HEROES.ConsumibleAdquirido
 		DROP Table GITAR_HEROES.Estadia
 		DROP Table GITAR_HEROES.TipoConsumible
@@ -1080,7 +1139,7 @@ AS
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
 		DROP Procedure GITAR_HEROES.setearSuperUsuario
 		
-		--DROP Procedure GITAR_HEROES.facturar
+		DROP Procedure GITAR_HEROES.facturar
 		DROP Procedure GITAR_HEROES.finalizarCargaConsumibles
 		DROP Procedure GITAR_HEROES.modificarConsumible
 		DROP Procedure GITAR_HEROES.cargarConsumible
@@ -1093,7 +1152,6 @@ AS
 		DROP Procedure GITAR_HEROES.borrarTablas
 
 	-- BORRADO DE FUNCIONES
-		DROP Function GITAR_HEROES.calcularCantDias
 		DROP Function GITAR_HEROES.obtenerSiguienteFactura
 		--DROP Function GITAR_HEROES.obtenerCostoBase
 	
@@ -1148,4 +1206,3 @@ EXEC GITAR_HEROES.generarUsuario
 EXEC GITAR_HEROES.setearSuperUsuario 'guest'
 	 
 --EXEC GITAR_HEROES.borrarTablas
-
