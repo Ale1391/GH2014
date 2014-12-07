@@ -48,11 +48,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ABM de Cliente\Form1.cs">
+    <Compile Include="ABM de Cliente\ClienteBusqueda.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ABM de Cliente\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="ABM de Cliente\ClienteBusqueda.Designer.cs">
+      <DependentUpon>ClienteBusqueda.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ABM de Cliente\ClienteForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ABM de Cliente\ClienteForm.Designer.cs">
+      <DependentUpon>ClienteForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ABM de Cliente\Cliente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ABM de Cliente\Cliente.Designer.cs">
+      <DependentUpon>Cliente.cs</DependentUpon>
     </Compile>
     <Compile Include="ABM de Habitacion\Form1.cs">
       <SubType>Form</SubType>
@@ -66,11 +78,17 @@
     <Compile Include="ABM de Regimen\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ABM de Rol\Form1.cs">
+    <Compile Include="ABM de Rol\RolForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ABM de Rol\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="ABM de Rol\RolForm.Designer.cs">
+      <DependentUpon>RolForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ABM de Rol\Rol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ABM de Rol\Rol.Designer.cs">
+      <DependentUpon>Rol.cs</DependentUpon>
     </Compile>
     <Compile Include="ABM de Usuario\Usuario.cs">
       <SubType>Form</SubType>
@@ -128,6 +146,21 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ABM de Cliente\Cliente.resx">
+      <DependentUpon>Cliente.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ABM de Cliente\ClienteBusqueda.resx">
+      <DependentUpon>ClienteBusqueda.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ABM de Cliente\ClienteForm.resx">
+      <DependentUpon>ClienteForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ABM de Rol\Rol.resx">
+      <DependentUpon>Rol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ABM de Rol\RolForm.resx">
+      <DependentUpon>RolForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ABM de Usuario\Usuario.resx">
       <DependentUpon>Usuario.cs</DependentUpon>
     </EmbeddedResource>

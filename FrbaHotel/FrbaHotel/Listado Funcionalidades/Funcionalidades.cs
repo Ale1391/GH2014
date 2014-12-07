@@ -9,6 +9,8 @@ using System.Text;
 using System.Windows.Forms;
 using FrbaHotel.Cancelar_Reserva;
 using FrbaHotel.ABM_de_Usuario;
+using FrbaHotel.ABM_de_Rol;
+using FrbaHotel.ABM_de_Cliente;
 
 namespace FrbaHotel.Listado_Funcionalidades
 {
@@ -72,6 +74,7 @@ namespace FrbaHotel.Listado_Funcionalidades
             //CONTINUAR
             if (codigo_funcionalidad == 9)
             {
+                //CANCELAR RESERVA
                 this.Hide();
                 CancelarReserva cancelar_reserva = new CancelarReserva();
                 cancelar_reserva.StartPosition = FormStartPosition.CenterScreen;
@@ -79,10 +82,27 @@ namespace FrbaHotel.Listado_Funcionalidades
             }
             else if (codigo_funcionalidad == 3)
             {
+                //ABM USUARIO
                 this.Hide();
                 Usuario abm_usuario = new Usuario();
                 abm_usuario.StartPosition = FormStartPosition.CenterScreen;
                 abm_usuario.ShowDialog();
+            }
+            else if (codigo_funcionalidad == 1)
+            {
+                //ABM ROL
+                this.Hide();
+                Rol abm_rol = new Rol();
+                abm_rol.StartPosition = FormStartPosition.CenterScreen;
+                abm_rol.ShowDialog();
+            }
+            else if (codigo_funcionalidad == 4)
+            {
+                //ABM CLIENTE
+                this.Hide();
+                Cliente abm_cliente = new Cliente();
+                abm_cliente.StartPosition = FormStartPosition.CenterScreen;
+                abm_cliente.ShowDialog();
             }
         }
     }

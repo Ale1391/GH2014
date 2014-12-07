@@ -269,7 +269,7 @@
             this.buttonFinalizar.Name = "buttonFinalizar";
             this.buttonFinalizar.Size = new System.Drawing.Size(111, 23);
             this.buttonFinalizar.TabIndex = 7;
-            this.buttonFinalizar.Text = "Guardar Edición";
+            this.buttonFinalizar.Text = "Guardar";
             this.buttonFinalizar.UseVisualStyleBackColor = true;
             this.buttonFinalizar.Click += new System.EventHandler(this.buttonFinalizar_Click);
             // 
