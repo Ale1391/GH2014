@@ -24,10 +24,12 @@ AS
 			   telefono bigint,
 			   cant_estrellas smallint,
 			   recarga_estrellas decimal(10,2),
+			   fecha_creacion smalldatetime,
+			   mail varchar(50),
 			   estado smallint,
 			   PRIMARY KEY (codigo))
 	
-		INSERT INTO GITAR_HEROES.Hotel (domicilio_calle, domicilio_numero, ciudad, pais, cant_estrellas, recarga_estrellas, estado)
+		INSERT INTO GITAR_HEROES.Hotel (domicilio_calle, domicilio_numero, ciudad, pais, cant_estrellas, recarga_estrellas, fecha_creacion, mail, estado)
 		SELECT DISTINCT
 			   Hotel_Calle,
 			   Hotel_Nro_Calle,
@@ -35,6 +37,8 @@ AS
 			   'Argentina',
 			   Hotel_CantEstrella,
 			   Hotel_Recarga_Estrella,
+			   NULL,						-- fecha_creacion
+			   NULL,						-- mail
 			   1							-- Consideramos por defecto a todos los hoteles habilitados
 		FROM gd_esquema.Maestra
 
@@ -74,6 +78,8 @@ AS
 			domicilio_numero int,
 			domicilio_piso smallint,
 			domicilio_depto char,
+			localidad varchar(60),
+			pais_origen varchar(50),
 			estado smallint,
 			FOREIGN KEY (tipo_doc) REFERENCES GITAR_HEROES.TipoDocumento)
 	
@@ -91,10 +97,13 @@ AS
 			Cliente_Nro_Calle,
 			Cliente_Piso,
 			Cliente_Depto,
-			1					-- Estado
+			NULL,				-- localidad
+			NULL,				-- pais_origen
+			1					-- estado
+		
 		FROM gd_esquema.Maestra
 
---Las restricciones de la tabla Cliente no se hacen a nivel de base de datos por inconsistencias en el sistema viejo
+-- ACLARACION: Las restricciones de la tabla Cliente no se hacen a nivel de base de datos por inconsistencias en el sistema viejo
 
 
 	-- /////////////// USUARIO ///////////////
@@ -333,6 +342,7 @@ AS
 			   piso smallint NOT NULL,
 			   tipo int NOT NULL,
 			   ubicacion varchar(60),
+			   descripcion_comodidades varchar(100),
 			   estado smallint NOT NULL,
 			   PRIMARY KEY (codigo_hotel, numero),
 			   FOREIGN KEY (codigo_hotel) REFERENCES GITAR_HEROES.Hotel,
@@ -344,7 +354,8 @@ AS
 			   Habitacion_Numero,
 			   Habitacion_Piso,
 			   Habitacion_Tipo_Codigo,
-			   CASE Habitacion_Frente WHEN 'S' THEN 'Vista al exterior' ELSE 'Interno' END,
+			   CASE Habitacion_Frente WHEN 'S' THEN 'Vista al exterior' ELSE 'Interno' END,		-- ubicacion
+			   NULL,					-- descripcion_comodidades
 			   1						-- Corresponde al estado que por defecto se encuentra "habilitado"
 
 		FROM gd_esquema.Maestra M
@@ -1069,7 +1080,7 @@ AS
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
 		DROP Procedure GITAR_HEROES.setearSuperUsuario
 		
-		DROP Procedure GITAR_HEROES.facturar
+		--DROP Procedure GITAR_HEROES.facturar
 		DROP Procedure GITAR_HEROES.finalizarCargaConsumibles
 		DROP Procedure GITAR_HEROES.modificarConsumible
 		DROP Procedure GITAR_HEROES.cargarConsumible
