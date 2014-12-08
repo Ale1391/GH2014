@@ -811,6 +811,42 @@ AS
 GO
 
 
+-- ////////////////////// ABM HOTEL //////////////////////
+
+CREATE Procedure GITAR_HEROES.cargarHotel (@nombre varchar(50), 
+									 	   @domicilio_calle varchar(60), 
+										   @domicilio_numero int,
+										   @ciudad varchar(50),
+										   @pais varchar(30),
+										   @telefono bigint,
+										   @cant_estrellas smallint,
+										   @recarga_estrellas decimal(10,2),
+										   @fecha_creacion smalldatetime,
+										   @mail varchar(50),
+										   @codigo_hotel int output)
+AS
+	BEGIN
+		SELECT codigo
+		INTO #hotelesAnteriores
+		FROM GITAR_HEROES.Hotel
+	
+		INSERT INTO GITAR_HEROES.Hotel
+		VALUES (@nombre, 
+				@domicilio_calle, 
+			    @domicilio_numero,
+			    @ciudad,
+			    @pais,
+			    @telefono,
+			    @cant_estrellas,
+			    @recarga_estrellas,
+			    @fecha_creacion,
+			    @mail,
+			    1)	-- estado (lo consideramos habilitado por defecto)
+			    
+		SET @codigo_hotel = (SELECT codigo FROM GITAR_HEROES.Hotel WHERE codigo NOT IN (SELECT codigo FROM #hotelesAnteriores))
+	
+	END
+
 -- ////////////////////// REGISTRAR ESTADIA //////////////////////
 
 CREATE Procedure GITAR_HEROES.ingresoEgresoEstadia (@codigo_reserva int, @username char(15))
@@ -1145,6 +1181,7 @@ AS
 		DROP Procedure GITAR_HEROES.cargarConsumible
 		DROP Procedure GITAR_HEROES.crearTablas
 		DROP Procedure GITAR_HEROES.ingresoEgresoEstadia
+		DROP Procedure GITAR_HEROES.cargarHotel
 		DROP Procedure GITAR_HEROES.limpiarUsuarioHotel
 		DROP Procedure GITAR_HEROES.agregarUsuarioHotel
 		DROP Procedure GITAR_HEROES.modificarUsuario
