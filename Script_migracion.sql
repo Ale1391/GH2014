@@ -847,6 +847,8 @@ AS
 	
 	END
 
+GO
+
 -- ////////////////////// REGISTRAR ESTADIA //////////////////////
 
 CREATE Procedure GITAR_HEROES.ingresoEgresoEstadia (@codigo_reserva int, @username char(15))
