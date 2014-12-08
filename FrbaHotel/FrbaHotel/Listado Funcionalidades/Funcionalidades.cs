@@ -11,6 +11,7 @@ using FrbaHotel.Cancelar_Reserva;
 using FrbaHotel.ABM_de_Usuario;
 using FrbaHotel.ABM_de_Rol;
 using FrbaHotel.ABM_de_Cliente;
+using FrbaHotel.ABM_de_Hotel;
 
 namespace FrbaHotel.Listado_Funcionalidades
 {
@@ -103,6 +104,14 @@ namespace FrbaHotel.Listado_Funcionalidades
                 Cliente abm_cliente = new Cliente();
                 abm_cliente.StartPosition = FormStartPosition.CenterScreen;
                 abm_cliente.ShowDialog();
+            }
+            else if (codigo_funcionalidad == 5)
+            {
+                //ABM HOTEL
+                this.Hide();
+                Hotel abm_hotel = new Hotel();
+                abm_hotel.StartPosition = FormStartPosition.CenterScreen;
+                abm_hotel.ShowDialog();
             }
         }
     }

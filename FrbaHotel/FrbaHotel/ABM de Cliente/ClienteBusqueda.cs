@@ -91,19 +91,19 @@ namespace FrbaHotel.ABM_de_Cliente
             }
             else if (textBoxNombre.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where nombre = '" + textBoxNombre.Text + "'" + (textBoxApellido.Text.Length > 0 ? " and apellido = '" + textBoxApellido.Text + "'" : "") + (textBoxNumeroDocumento.Text.Length > 0 ? " and nro_doc = " + textBoxNumeroDocumento.Text : "") + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
+                query = "select * from GITAR_HEROES.Cliente where nombre = '" + textBoxNombre.Text + "'" + (textBoxNumeroDocumento.Text.Length > 0 ? " and nro_doc = " + textBoxNumeroDocumento.Text : "") + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
             }
             else if (textBoxNumeroDocumento.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where nro_doc = '" + textBoxNumeroDocumento.Text + "'" + (textBoxNombre.Text.Length > 0 ? " and nombre = '" + textBoxNombre.Text + "'" : "") + (textBoxApellido.Text.Length > 0 ? " and apellido = " + textBoxApellido.Text : "") + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
+                query = "select * from GITAR_HEROES.Cliente where nro_doc = " + textBoxNumeroDocumento.Text + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
             }
             else if (comboBoxTipoDocumento.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] + (textBoxNombre.Text.Length > 0 ? " and nombre = '" + textBoxNombre.Text + "'" : "") + (textBoxNumeroDocumento.Text.Length > 0 ? " and nro_doc = " + textBoxNumeroDocumento.Text : "") + (textBoxApellido.Text.Length > 0 ? " and apellido = '" + textBoxApellido.Text + "'" : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
+                query = "select * from GITAR_HEROES.Cliente where tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
             }
             else if (textBoxEmail.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where mail = '" + textBoxEmail.Text + "'" + (textBoxNombre.Text.Length > 0 ? " and nombre = '" + textBoxNombre.Text + "'" : "") + (textBoxNumeroDocumento.Text.Length > 0 ? " and nro_doc = " + textBoxNumeroDocumento.Text : "") + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxApellido.Text.Length > 0 ? " and apellido = '" + textBoxApellido.Text + "'" : "");
+                query = "select * from GITAR_HEROES.Cliente where mail = '" + textBoxEmail.Text + "'";
             }
             else
             {          
