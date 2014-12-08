@@ -32,11 +32,6 @@ namespace FrbaHotel.ABM_de_Hotel
             pantalla_hotel.Show();
         }
 
-        private void ClienteBusqueda_Load(object sender, EventArgs e)
-        {
-            iniciarConexion();
-        }
-
         private void iniciarConexion()
         {
             connection = new System.Data.SqlClient.SqlConnection();
@@ -107,6 +102,11 @@ namespace FrbaHotel.ABM_de_Hotel
             textBoxNombre.Text = "";
             textBoxPais.Text = "";
             textBoxCiudad.Text = "";
+        }
+
+        private void HotelBusqueda_Load_1(object sender, EventArgs e)
+        {
+            iniciarConexion();
         }
     }
 }

@@ -183,7 +183,7 @@
             this.Controls.Add(this.linkLabel1);
             this.Name = "HotelBusqueda";
             this.Text = "ABM Hotel";
-            this.Load += new System.EventHandler(this.ClienteBusqueda_Load);
+            this.Load += new System.EventHandler(this.HotelBusqueda_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewHoteles)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

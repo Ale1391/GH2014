@@ -37,11 +37,11 @@ namespace FrbaHotel.ABM_de_Usuario
         {
             if (comboBoxFuncionalidad.Text == "Editar Usuario Existente")
             {
-                usuarioTextbox.Enabled = true;
+                textBoxUsuario.Enabled = true;
             }
             else if (comboBoxFuncionalidad.Text == "Crear Usuario Nuevo")
             {
-                usuarioTextbox.Enabled = false;
+                textBoxUsuario.Enabled = false;
             }
         }
 
@@ -51,7 +51,7 @@ namespace FrbaHotel.ABM_de_Usuario
             {
                 MessageBox.Show("Primero debes elegir una opción.");
             }
-            else if (comboBoxFuncionalidad.Text == "Editar Usuario Existente" && usuarioTextbox.Text.Length == 0)
+            else if (comboBoxFuncionalidad.Text == "Editar Usuario Existente" && textBoxUsuario.Text.Length == 0)
             {
                 MessageBox.Show("Primero debes ingresar un usuario valido.");
             }
@@ -71,7 +71,7 @@ namespace FrbaHotel.ABM_de_Usuario
                 {
                     connection.ConnectionString = Variables.connectionStr;
                     connection.Open();
-                    string query = "select * from GITAR_HEROES.Usuario where username = '" + usuarioTextbox.Text + "'";
+                    string query = "select * from GITAR_HEROES.Usuario where username = '" + textBoxUsuario.Text + "'";
                     command = new SqlCommand(query);
                     command.Connection = connection;
                     adapter = new SqlDataAdapter(command);
@@ -82,7 +82,7 @@ namespace FrbaHotel.ABM_de_Usuario
                     {
                         this.Hide();
                         UsuarioForm abm_usuario = new UsuarioForm();
-                        abm_usuario.nombre_usuario = usuarioTextbox.Text;
+                        abm_usuario.nombre_usuario = textBoxUsuario.Text;
                         abm_usuario.StartPosition = FormStartPosition.CenterScreen;
                         abm_usuario.ShowDialog();
                     }

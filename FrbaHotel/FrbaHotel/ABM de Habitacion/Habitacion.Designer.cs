@@ -1,6 +1,6 @@
-﻿namespace FrbaHotel.ABM_de_Usuario
+﻿namespace FrbaHotel.ABM_de_Habitacion
 {
-    partial class Usuario
+    partial class Habitacion
     {
         /// <summary>
         /// Required designer variable.
@@ -28,31 +28,39 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.textBoxNumeroHabitacion = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBoxFuncionalidad = new System.Windows.Forms.ComboBox();
+            this.comboBoxHabitacion = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.textBoxUsuario = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
+            // 
+            // textBoxNumeroHabitacion
+            // 
+            this.textBoxNumeroHabitacion.Enabled = false;
+            this.textBoxNumeroHabitacion.Location = new System.Drawing.Point(46, 132);
+            this.textBoxNumeroHabitacion.Name = "textBoxNumeroHabitacion";
+            this.textBoxNumeroHabitacion.Size = new System.Drawing.Size(194, 20);
+            this.textBoxNumeroHabitacion.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(43, 116);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.Size = new System.Drawing.Size(98, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Ingresar Usuario";
+            this.label1.Text = "Número Habitación";
             // 
-            // comboBoxFuncionalidad
+            // comboBoxHabitacion
             // 
-            this.comboBoxFuncionalidad.FormattingEnabled = true;
-            this.comboBoxFuncionalidad.Location = new System.Drawing.Point(46, 66);
-            this.comboBoxFuncionalidad.Name = "comboBoxFuncionalidad";
-            this.comboBoxFuncionalidad.Size = new System.Drawing.Size(194, 21);
-            this.comboBoxFuncionalidad.TabIndex = 2;
-            this.comboBoxFuncionalidad.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBoxHabitacion.FormattingEnabled = true;
+            this.comboBoxHabitacion.Location = new System.Drawing.Point(46, 66);
+            this.comboBoxHabitacion.Name = "comboBoxHabitacion";
+            this.comboBoxHabitacion.Size = new System.Drawing.Size(194, 21);
+            this.comboBoxHabitacion.TabIndex = 2;
+            this.comboBoxHabitacion.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // button1
             // 
@@ -84,26 +92,20 @@
             this.linkLabel1.Text = "Volver";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // textBoxUsuario
-            // 
-            this.textBoxUsuario.Location = new System.Drawing.Point(46, 138);
-            this.textBoxUsuario.Name = "textBoxUsuario";
-            this.textBoxUsuario.Size = new System.Drawing.Size(194, 20);
-            this.textBoxUsuario.TabIndex = 6;
-            // 
             // Usuario
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 273);
-            this.Controls.Add(this.textBoxUsuario);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.comboBoxFuncionalidad);
+            this.Controls.Add(this.comboBoxHabitacion);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.textBoxNumeroHabitacion);
             this.Name = "Usuario";
-            this.Text = "ABM Usuario";
+            this.Text = "ABM Habitación";
+            this.Load += new System.EventHandler(this.Usuario_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -111,11 +113,11 @@
 
         #endregion
 
+        private System.Windows.Forms.TextBox textBoxNumeroHabitacion;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBoxFuncionalidad;
+        private System.Windows.Forms.ComboBox comboBoxHabitacion;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.TextBox textBoxUsuario;
     }
 }

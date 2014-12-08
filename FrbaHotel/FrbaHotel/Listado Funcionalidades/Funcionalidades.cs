@@ -12,6 +12,7 @@ using FrbaHotel.ABM_de_Usuario;
 using FrbaHotel.ABM_de_Rol;
 using FrbaHotel.ABM_de_Cliente;
 using FrbaHotel.ABM_de_Hotel;
+using FrbaHotel.ABM_de_Habitacion;
 
 namespace FrbaHotel.Listado_Funcionalidades
 {
@@ -112,6 +113,14 @@ namespace FrbaHotel.Listado_Funcionalidades
                 Hotel abm_hotel = new Hotel();
                 abm_hotel.StartPosition = FormStartPosition.CenterScreen;
                 abm_hotel.ShowDialog();
+            }
+            else if (codigo_funcionalidad == 6)
+            {
+                //ABM HABITACION
+                this.Hide();
+                Habitacion abm_habitacion = new Habitacion();
+                abm_habitacion.StartPosition = FormStartPosition.CenterScreen;
+                abm_habitacion.ShowDialog();
             }
         }
     }
