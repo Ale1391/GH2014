@@ -115,16 +115,47 @@ namespace FrbaHotel.ABM_de_Hotel
         }
 
         private void insertarHotel()
-        {
-            string query = "INSERT INTO GITAR_HEROES.Hotel (nombre,mail,telefono,domicilio_calle,cant_estrellas,ciudad,pais,fecha_creacion) VALUES ('" + textBoxNombre.Text + "','" + textBoxMail.Text + "'," + textBoxTelefono.Text + ",'" + textBoxDireccion.Text + "'," + textBoxEstrellas.Text + ",'" + textBoxCiudad.Text + "','" + textBoxPais.Text + "','" + textBoxFechaCreacion.Text + " 00:00:00')";
-            command = new SqlCommand(query);
-            command.Connection = connection;
-            adapter = new SqlDataAdapter(command);
+        {/*
+            //string query = "INSERT INTO GITAR_HEROES.Hotel (nombre,mail,telefono,domicilio_calle,cant_estrellas,ciudad,pais,fecha_creacion) VALUES ('" + textBoxNombre.Text + "','" + textBoxMail.Text + "'," + textBoxTelefono.Text + ",'" + textBoxDireccion.Text + "'," + textBoxEstrellas.Text + ",'" + textBoxCiudad.Text + "','" + textBoxPais.Text + "','" + textBoxFechaCreacion.Text + " 00:00:00')";
+            //command = new SqlCommand(query);
+            //command.Connection = connection;
+            //adapter = new SqlDataAdapter(command);
             dataTable = new DataTable();
             adapter.Fill(dataTable);
             if (dataTable.HasErrors)
             {
                 MessageBox.Show("Error al realizar el insert del cliente.");
+            }*/
+
+            using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+            {
+                using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.cargarHotel", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@nombre", SqlDbType.VarChar).Value = textBoxNombre.Text;
+                    cmd.Parameters.Add("@domicilio_calle", SqlDbType.VarChar).Value = textBoxDireccion.Text;
+                    cmd.Parameters.Add("@domicilio_numero", SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@recarga_estrellas", SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@ciudad", SqlDbType.VarChar).Value = textBoxCiudad.Text;
+                    cmd.Parameters.Add("@pais", SqlDbType.VarChar).Value = textBoxPais.Text;
+                    cmd.Parameters.Add("@telefono", SqlDbType.Int).Value = Convert.ToUInt32(textBoxTelefono.Text);
+                    cmd.Parameters.Add("@cant_estrellas", SqlDbType.Int).Value = Convert.ToInt32(textBoxEstrellas.Text);
+
+                    string string_date = textBoxFechaCreacion.Text;
+                    DateTime dt = DateTime.Parse(string_date);
+                    cmd.Parameters.Add("@fecha_creacion", System.Data.SqlDbType.DateTime).Value = dt;
+                    cmd.Parameters.Add("@mail", SqlDbType.VarChar).Value = textBoxMail.Text;
+
+                    var returnParameter = cmd.Parameters.Add("@codigo_hotel", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.Output;
+                    
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    int id_creado = (int)returnParameter.Value;
+                    hotel_id = id_creado.ToString();
+                }
             }
         }
 
