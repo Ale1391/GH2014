@@ -361,6 +361,7 @@ AS
 		FROM gd_esquema.Maestra M
 		--ORDER BY 1, Habitacion_Numero
 
+
 	-- /////////////// HOTELINHABILITADO ///////////////
 
 		CREATE Table GITAR_HEROES.HotelInhabilitado
@@ -693,9 +694,42 @@ AS
 	WHERE Factura_Nro IS NOT NULL AND Consumible_Codigo IS NULL
 	ORDER BY Factura_Nro
 
+
+	-- /////////////// LISTADO ///////////////
+
+
+	CREATE Table GITAR_HEROES.Listado
+		  (codigo_listado int PRIMARY KEY,
+		   descripcion varchar(320))
+	
+	INSERT INTO GITAR_HEROES.Listado
+	VALUES (1, 'Hoteles con mayor cantidad de reservas canceladas')
+	
+	INSERT INTO GITAR_HEROES.Listado
+	VALUES (2, 'Hoteles con mayor cantidad de consumibles facturados')
+	
+	INSERT INTO GITAR_HEROES.Listado
+	VALUES (3, 'Hoteles con mayor cantidad de días fuera de servicio')
+	
+	INSERT INTO GITAR_HEROES.Listado
+	VALUES (4, 'Habitaciones con mayor cantidad de días y veces que fueron ocupadas, informando a demás a que hotel perteneces')
+	
+	INSERT INTO GITAR_HEROES.Listado
+	VALUES (5, 'Cliente con mayor cantidad de puntos, donde cada $10 en estadías vale 1 puntos y cada $5 de consumibles es 1 punto, de la sumatoria de todas las facturaciones que haya tenido dentro de un periodo independientemente del Hotel. Tener en cuenta que la facturación siempre es a quien haya realizado la reserva')
+
+	-- FIN crearTablas
 	END
 
+
 GO
+
+
+
+	
+	
+	
+	
+	
 
 -- ////////////////////// ABM USUARIO //////////////////////
 
@@ -1111,6 +1145,141 @@ AS
 
 GO
 
+
+-- ////////////////////// GENERAR LISTADO //////////////////////
+
+Create Procedure GITAR_HEROES.topCancelaciones 
+				(@anio int,
+				 @trimestre smallint)
+AS
+	BEGIN
+	
+		SELECT TOP 5 
+			   codigo_hotel,
+			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = R.codigo_hotel) AS descripcion_hotel,
+			   COUNT(codigo_hotel)
+		
+		--INTO ##listadoEstadistico
+		FROM GITAR_HEROES.Reserva R
+		WHERE codigo_estado IN (3, 4, 5)
+			  AND YEAR(fecha_inicio) = @anio
+			  --AND QUARTER(fecha_inicio) = @trimestre 
+		GROUP BY codigo_hotel
+		ORDER BY 3 DESC
+		
+	END
+
+GO
+
+Create Procedure GITAR_HEROES.topConsumicionesFacturadas 
+				(@anio int,
+				 @trimestre smallint)
+AS
+	BEGIN
+		
+		SELECT TOP 5
+			   Reserva.codigo_hotel,
+			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = Reserva.codigo_hotel) AS nombre_hotel,
+			   SUM(Item.cantidad) AS cantidad_consumibles
+		
+		INTO ##ListadoEstadistico
+		FROM GITAR_HEROES.ItemFacturaConsumible Item JOIN GITAR_HEROES.Reserva Reserva ON Reserva.codigo = Item.codigo_reserva
+		GROUP BY Reserva.codigo_hotel
+		ORDER BY 3 DESC
+		
+	END
+
+GO
+
+Create Procedure GITAR_HEROES.topSinServicio
+				(@anio int,
+				 @trimestre smallint)
+AS
+	BEGIN
+		
+		SELECT TOP 5
+			   codigo_hotel,
+			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = HI.codigo_hotel) AS nombre_hotel,
+			   SUM(DATEDIFF(DAY, fecha_inicio, fecha_fin)) AS cant_dias_inhabilitacion
+		INTO ##ListadoEstadistico
+		FROM GITAR_HEROES.HotelInhabilitado HI
+		GROUP BY codigo_hotel
+		ORDER BY 3 DESC		
+		
+	END
+
+GO
+
+Create Procedure GITAR_HEROES.topHabitacionesOcupadas
+				(@anio int,
+				 @trimestre smallint)
+AS
+	BEGIN
+		
+		SELECT TOP 5
+			   ResHab.codigo_hotel,
+			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = ResHab.codigo_hotel) AS nombre_hotel,
+			   ResHab.numero_habitacion,
+			   SUM(DATEDIFF(DAY, Reserva.fecha_inicio, Reserva.fecha_fin)) AS cant_dias_reservados,
+			   COUNT(*) AS cant_veces
+			   
+		INTO ##ListadoEstadistico
+		FROM GITAR_HEROES.ReservaHabitacion ResHab JOIN GITAR_HEROES.Reserva Reserva ON ResHab.codigo_reserva = Reserva.codigo
+		GROUP BY ResHab.codigo_hotel, ResHab.numero_habitacion
+		ORDER BY 4, 5 DESC
+		
+	END
+
+GO
+
+Create Procedure GITAR_HEROES.topPuntuacionClientes
+				(@anio int,
+				 @trimestre smallint)
+AS
+	BEGIN
+		
+		SELECT TOP 5
+			   --apellido,
+			   --nombre,
+			   Factura.tipo_doc_cliente,
+			   Factura.nro_doc_cliente,
+			   FLOOR(SUM((ItemE.monto) / 10 + (ItemC.monto) / 5)) AS puntos
+			   
+		INTO ##ListadoEstadistico
+		FROM GITAR_HEROES.Factura Factura JOIN GITAR_HEROES.ItemFacturaConsumible ItemC 
+			 ON Factura.numero_factura = ItemC.numero_factura
+			 JOIN GITAR_HEROES.ItemFacturaEstadia ItemE ON Factura.numero_factura = ItemE.numero_factura
+			 
+		--WHERE
+		GROUP BY Factura.tipo_doc_cliente, Factura.nro_doc_cliente
+		ORDER BY 3 DESC
+		
+
+	END
+
+GO
+
+Create Procedure GITAR_HEROES.generarListado (@anio int, @trimestre smallint, @codigo_listado int)
+AS
+	BEGIN
+	
+	-- Dependiendo del tipo de listado se ejecuta el procedimiento correspondiente
+	IF @codigo_listado = 1
+		EXEC GITAR_HEROES.topCancelaciones @anio, @trimestre
+	ELSE IF @codigo_listado = 2
+		EXEC GITAR_HEROES.topConsumicionesFacturadas @anio, @trimestre
+	ELSE IF @codigo_listado = 3
+		EXEC GITAR_HEROES.topSinServicio @anio, @trimestre
+	ELSE IF @codigo_listado = 4
+		EXEC GITAR_HEROES.topHabitacionesOcupadas @anio, @trimestre
+	ELSE IF @codigo_listado = 5
+		EXEC GITAR_HEROES.topPuntuacionClientes @anio, @trimestre	
+	
+	END
+
+GO
+
+
 -- ////////////////////// OTROS PROCEDIMIENTOS //////////////////////
 
 -- Asigna al username todos los hoteles existentes registrados
@@ -1145,7 +1314,7 @@ AS
 	BEGIN
 
 	-- BORRADO DE TABLAS		
-		
+		DROP Table GITAR_HEROES.Listado
 		DROP Table GITAR_HEROES.ItemFacturaEstadia
 		DROP Table GITAR_HEROES.ItemFacturaConsumible
 		DROP Table GITAR_HEROES.Factura
@@ -1175,8 +1344,13 @@ AS
 		DROP Table GITAR_HEROES.Hotel
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
+		DROP Procedure GITAR_HEROES.generarListado
+		DROP Procedure GITAR_HEROES.topCancelaciones
+		DROP Procedure GITAR_HEROES.topConsumicionesFacturadas
+		DROP Procedure GITAR_HEROES.topSinServicio
+		DROP Procedure GITAR_HEROES.topHabitacionesOcupadas
+		DROP Procedure GITAR_HEROES.topPuntuacionClientes
 		DROP Procedure GITAR_HEROES.setearSuperUsuario
-		
 		DROP Procedure GITAR_HEROES.facturar
 		DROP Procedure GITAR_HEROES.finalizarCargaConsumibles
 		DROP Procedure GITAR_HEROES.modificarConsumible
@@ -1189,6 +1363,8 @@ AS
 		DROP Procedure GITAR_HEROES.modificarUsuario
 		DROP Procedure GITAR_HEROES.generarUsuario
 		DROP Procedure GITAR_HEROES.borrarTablas
+		
+		--DROP Table ##ListadoEstadistico
 
 	-- BORRADO DE FUNCIONES
 		DROP Function GITAR_HEROES.obtenerSiguienteFactura
