@@ -88,11 +88,11 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             {
                 insertarCliente();
                 generarReserva();
-                MessageBox.Show("Cliente creado exitosamente.");
+                MessageBox.Show("Cliente y reserva generada exitosamente.");
             }
             catch (Exception exc)
             {
-                MessageBox.Show("No se pudo crear el nuevo cliente. Error: " + exc);
+                MessageBox.Show("Error en el proceso de generar el cliente y reserva. Error: " + exc);
             }
         }
 
@@ -113,7 +113,14 @@ namespace FrbaHotel.Generar_Modificar_Reserva
 
         private void generarReserva()
         {
-            string query = "";//INSERT INTO GITAR_HEROES.Reserva (codigo_hotel, numero, piso,tipo,ubicacion,descripcion_comodidades,estado) VALUES (" + codigo_hotel + "," + textBoxNumeroHabitacion.Text + "," + textBoxPiso.Text + "," + lista_codigos_habitaciones[comboBoxTipoHabitacion.SelectedIndex] + ",'" + textBoxUbicacion.Text + "','" + textBoxDescripcion.Text + "',1)";
+            string string_fechaDesde = fecha_inicio;
+            DateTime dt_desde = DateTime.Parse(string_fechaDesde);
+            
+            string string_fechaHasta = fecha_fin;
+            DateTime dt_hasta = DateTime.Parse(string_fechaHasta);
+            
+            int cant_dias = (int)(dt_hasta - dt_desde).TotalDays;
+            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo, fecha_reserva, fecha_inicio,fecha_fin,codigo_hotel,codigo_regimen,tipo_doc_cliente,nro_doc_cliente,costo_base,codigo_estado) VALUES (GITAR_HEROES.obtenerSiguienteReserva(),GETDATE(),'" + fecha_inicio + " 00:00:00','" + fecha_fin + " 00:00:00'," + codigo_hotel + "," + codigo_regimen + "," + lista_codigos_tipo_documento[comboBoxTipoDocumento.SelectedIndex] + "," + textBoxDocumento.Text + ",GITAR_HEROES.precioHabitacion("+codigo_regimen+","+codigo_hotel+","+codigo_tipo_habitacion+")*"+cant_dias.ToString()+",1)";
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
@@ -122,7 +129,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
 
             if (dataTable.HasErrors)
             {
-                MessageBox.Show("Error al crear la habitación");
+                MessageBox.Show("Error al generar la reserva.");
             }
         }
     }

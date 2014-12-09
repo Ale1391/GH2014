@@ -31,6 +31,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
         {
             this.Hide();
             ReservaBusqueda reserva_busqueda = new ReservaBusqueda();
+            reserva_busqueda.hotel_id = codigo_hotel;
             reserva_busqueda.StartPosition = FormStartPosition.CenterScreen;
             reserva_busqueda.Show();
         }
