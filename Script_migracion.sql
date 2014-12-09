@@ -888,6 +888,15 @@ GO
 
 -- ////////////////////// GENERAR O MODIFICAR RESERVA //////////////////////
 
+CREATE Function GITAR_HEROES.obtenerSiguienteReserva()
+RETURNS int
+AS
+	BEGIN
+	RETURN (SELECT TOP 1 codigo + 1 FROM GITAR_HEROES.Reserva ORDER BY codigo DESC)
+	END
+
+GO
+
 create procedure GITAR_HEROES.verificar_disponibilidad
 
 @fechaInicioNuevaReserva
@@ -1334,6 +1343,16 @@ Create Procedure GITAR_HEROES.topConsumicionesFacturadas
 AS
 	BEGIN
 		
+		-- Variables a ser utilizadas para filtrar la busqueda
+		DECLARE @mes1 smallint,
+				@mes2 smallint,
+				@mes3 smallint
+				
+		EXEC GITAR_HEROES.obtenerMeses @trimestre, @mes1 output
+
+		SET @mes2 = @mes1 + 1
+		SET @mes3 = @mes1 + 2
+
 		SELECT TOP 5
 			   Reserva.codigo_hotel,
 			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = Reserva.codigo_hotel) AS nombre_hotel,
@@ -1341,6 +1360,8 @@ AS
 		
 		INTO ##ListadoEstadistico
 		FROM GITAR_HEROES.ItemFacturaConsumible Item JOIN GITAR_HEROES.Reserva Reserva ON Reserva.codigo = Item.codigo_reserva
+		WHERE (SELECT YEAR(fecha) FROM GITAR_HEROES.Factura WHERE numero_factura = Item.numero_factura) = @anio 
+			  AND (SELECT MONTH(fecha) FROM GITAR_HEROES.Factura WHERE numero_factura = Item.numero_factura) IN (@mes1, @mes2, @mes3)
 		GROUP BY Reserva.codigo_hotel
 		ORDER BY 3 DESC
 		
