@@ -13,6 +13,7 @@ using FrbaHotel.ABM_de_Rol;
 using FrbaHotel.ABM_de_Cliente;
 using FrbaHotel.ABM_de_Hotel;
 using FrbaHotel.ABM_de_Habitacion;
+using FrbaHotel.Generar_Modificar_Reserva;
 
 namespace FrbaHotel.Listado_Funcionalidades
 {
@@ -121,6 +122,14 @@ namespace FrbaHotel.Listado_Funcionalidades
                 Habitacion abm_habitacion = new Habitacion();
                 abm_habitacion.StartPosition = FormStartPosition.CenterScreen;
                 abm_habitacion.ShowDialog();
+            }
+            else if (codigo_funcionalidad == 8)
+            {
+                //GENERAR O MODIFICAR RESERVA
+                this.Hide();
+                Reserva abm_reserva = new Reserva();
+                abm_reserva.StartPosition = FormStartPosition.CenterScreen;
+                abm_reserva.ShowDialog();
             }
         }
     }

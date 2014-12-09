@@ -1,6 +1,6 @@
 ﻿namespace FrbaHotel.Generar_Modificar_Reserva
 {
-    partial class Form1
+    partial class ReservaForm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Text = "Form1";
+            this.Text = "ReservaForm";
         }
 
         #endregion

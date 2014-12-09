@@ -136,7 +136,7 @@ namespace FrbaHotel.ABM_de_Hotel
                     cmd.Parameters.Add("@nombre", SqlDbType.VarChar).Value = textBoxNombre.Text;
                     cmd.Parameters.Add("@domicilio_calle", SqlDbType.VarChar).Value = textBoxDireccion.Text;
                     cmd.Parameters.Add("@domicilio_numero", SqlDbType.Int).Value = 0;
-                    cmd.Parameters.Add("@recarga_estrellas", SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@recarga_estrellas", SqlDbType.Int).Value = 10;
                     cmd.Parameters.Add("@ciudad", SqlDbType.VarChar).Value = textBoxCiudad.Text;
                     cmd.Parameters.Add("@pais", SqlDbType.VarChar).Value = textBoxPais.Text;
                     cmd.Parameters.Add("@telefono", SqlDbType.Int).Value = Convert.ToUInt32(textBoxTelefono.Text);

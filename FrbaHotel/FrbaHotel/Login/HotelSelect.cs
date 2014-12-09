@@ -36,5 +36,12 @@ namespace FrbaHotel.Login
                 comboBoxHotel.Items.Add(nombre);
             }
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            this.Hide();
+            Principal prinForm = new Principal();
+            prinForm.Show();
+        }
     }
 }

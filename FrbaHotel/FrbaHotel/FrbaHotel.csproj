@@ -132,6 +132,24 @@
     <Compile Include="Cancelar Reserva\CancelarReserva.Designer.cs">
       <DependentUpon>CancelarReserva.cs</DependentUpon>
     </Compile>
+    <Compile Include="Generar Modificar Reserva\Reserva.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\Reserva.Designer.cs">
+      <DependentUpon>Reserva.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\ReservaBusqueda.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\ReservaBusqueda.Designer.cs">
+      <DependentUpon>ReservaBusqueda.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\ReservaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\ReservaForm.Designer.cs">
+      <DependentUpon>ReservaForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Listado Funcionalidades\Funcionalidades.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -149,12 +167,6 @@
     </Compile>
     <Compile Include="Principal.Designer.cs">
       <DependentUpon>Principal.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Generar Modificar Reserva\Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Generar Modificar Reserva\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Listado Estadistico\Form1.cs">
       <SubType>Form</SubType>
@@ -208,6 +220,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Cancelar Reserva\CancelarReserva.resx">
       <DependentUpon>CancelarReserva.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generar Modificar Reserva\Reserva.resx">
+      <DependentUpon>Reserva.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generar Modificar Reserva\ReservaBusqueda.resx">
+      <DependentUpon>ReservaBusqueda.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Listado Funcionalidades\Funcionalidades.resx">
       <DependentUpon>Funcionalidades.cs</DependentUpon>
