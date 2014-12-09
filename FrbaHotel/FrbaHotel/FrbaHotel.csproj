@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BAFE3016-AC06-4C43-ABEF-87F21AB5699B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -132,6 +132,12 @@
     <Compile Include="Cancelar Reserva\CancelarReserva.Designer.cs">
       <DependentUpon>CancelarReserva.cs</DependentUpon>
     </Compile>
+    <Compile Include="Facturar Estadia\FacturarEstadia.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Facturar Estadia\FacturarEstadia.Designer.cs">
+      <DependentUpon>FacturarEstadia.cs</DependentUpon>
+    </Compile>
     <Compile Include="Generar Modificar Reserva\Reserva.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -232,6 +238,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Cancelar Reserva\CancelarReserva.resx">
       <DependentUpon>CancelarReserva.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Facturar Estadia\FacturarEstadia.resx">
+      <DependentUpon>FacturarEstadia.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Generar Modificar Reserva\Reserva.resx">
       <DependentUpon>Reserva.cs</DependentUpon>
