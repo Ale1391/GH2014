@@ -153,7 +153,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 reserva_cliente.fecha_inicio = textBoxFechaDesde.Text;
                 reserva_cliente.codigo_hotel = hotel_id;
                 reserva_cliente.codigo_tipo_habitacion = lista_codigos_tipo_habitacion[comboBoxTipoHabitacion.SelectedIndex].ToString();
-                reserva_cliente.codigo_regimen = e.RowIndex.ToString();
+                reserva_cliente.codigo_regimen = lista_codigos_regimenes[e.RowIndex].ToString();
                 reserva_cliente.StartPosition = FormStartPosition.CenterScreen;
                 reserva_cliente.Show();
             }

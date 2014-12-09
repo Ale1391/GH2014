@@ -120,7 +120,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
 
         private void dataGridViewClientes_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 6)
+            if (e.ColumnIndex == 7)
             {
                 try
                 {
