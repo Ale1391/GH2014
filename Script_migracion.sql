@@ -883,6 +883,126 @@ AS
 
 GO
 
+
+
+
+-- ////////////////////// GENERAR O MODIFICAR RESERVA //////////////////////
+
+create procedure GITAR_HEROES.verificar_disponibilidad
+
+@fechaInicioNuevaReserva
+datetime,
+
+@fechaFinNuevaReserva
+datetime,
+
+@hotelid
+int,
+
+@tipo_hab
+int,
+
+@num_hab
+int output
+
+as
+
+begin
+
+create
+table #fechas_requeridas
+
+(
+
+fecha datetime
+
+)
+
+declare
+@fechaaux datetime
+
+select
+@fechaaux = @fechaInicioNuevaReserva
+
+--insert into #fechas_requeridas values (@fechaaux)
+
+while
+(@fechaaux <= @fechaFinNuevaReserva)
+
+begin
+
+--incremento en un dia
+
+insert into #fechas_requeridas (fecha) values (@fechaaux)
+
+select @fechaaux = dateadd(day, 1, @fechaaux)
+
+end
+
+-- consulta que muestra todas las habitaciones de todos los hoteteles disponibles actualmente
+
+select
+@num_hab=i.numero
+
+from
+GITAR_HEROES.Habitacion i
+
+where
+not exists (
+
+select
+1 from #fechas_requeridas f, GITAR_HEROES.ReservaHabitacion join GITAR_HEROES.Reserva
+
+on
+GITAR_HEROES.ReservaHabitacion.codigo_reserva = GITAR_HEROES.Reserva.codigo
+
+and
+GITAR_HEROES.ReservaHabitacion.codigo_hotel = GITAR_HEROES.Reserva.codigo_hotel
+
+where
+
+GITAR_HEROES
+.Reserva.codigo_estado in (1, 2,6) --codigos de estado que indican que la habitacion esta ocupada
+
+and
+f.fecha between GITAR_HEROES.Reserva.fecha_inicio and GITAR_HEROES.Reserva.fecha_fin -- se aplica filtro de fecha
+
+and
+i.codigo_hotel = GITAR_HEROES.Reserva.codigo_hotel
+
+and
+i.numero = GITAR_HEROES.ReservaHabitacion.numero_habitacion
+
+)
+
+and
+i.codigo_hotel = @hotelid
+
+and
+i.estado = 1
+
+and
+i.tipo = @tipo_hab
+
+order
+by i.codigo_hotel, i.piso, i.numero
+
+drop
+table #fechas_requeridas
+
+if
+@num_hab is null
+
+begin
+
+set @num_hab = -1
+
+end
+
+end
+
+GO
+
 -- ////////////////////// REGISTRAR ESTADIA //////////////////////
 
 CREATE Procedure GITAR_HEROES.ingresoEgresoEstadia (@codigo_reserva int, @username char(15))
@@ -1148,22 +1268,59 @@ GO
 
 -- ////////////////////// GENERAR LISTADO //////////////////////
 
+--DROP Procedure GITAR_HEROES.obtenerMeses
+
+CREATE Procedure GITAR_HEROES.obtenerMeses (@trimestre smallint, @mes1 smallint output)
+AS
+	BEGIN
+	
+		IF @trimestre = 1
+		BEGIN
+			SET @mes1 = 1
+		END
+		ELSE IF @trimestre = 2
+		BEGIN
+			SET @mes1 = 4
+		END
+		ELSE IF @trimestre = 3
+		BEGIN
+			SET @mes1 = 7
+		END
+		ELSE IF @trimestre = 4
+		BEGIN
+			SET @mes1 = 10
+		END
+		
+	END
+
+GO
+
 Create Procedure GITAR_HEROES.topCancelaciones 
 				(@anio int,
 				 @trimestre smallint)
 AS
 	BEGIN
-	
+
+		-- Variables a ser utilizadas para filtrar la busqueda
+		DECLARE @mes1 smallint,
+				@mes2 smallint,
+				@mes3 smallint
+				
+		EXEC GITAR_HEROES.obtenerMeses @trimestre, @mes1 output
+
+		SET @mes2 = @mes1 + 1
+		SET @mes3 = @mes1 + 2
+
 		SELECT TOP 5 
 			   codigo_hotel,
 			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = R.codigo_hotel) AS descripcion_hotel,
 			   COUNT(codigo_hotel)
 		
-		--INTO ##listadoEstadistico
+		INTO ##listadoEstadistico
 		FROM GITAR_HEROES.Reserva R
 		WHERE codigo_estado IN (3, 4, 5)
 			  AND YEAR(fecha_inicio) = @anio
-			  --AND QUARTER(fecha_inicio) = @trimestre 
+			  AND MONTH(fecha_inicio) IN (@mes1, @mes2, @mes3) 
 		GROUP BY codigo_hotel
 		ORDER BY 3 DESC
 		
@@ -1309,6 +1466,27 @@ AS
 
 GO
 
+CREATE Function GITAR_HEROES.precioHabitacion (@codigo_regimen smallint, @codigo_hotel int, @tipo_habitacion int)
+RETURNS numeric(10,2)
+AS
+	BEGIN
+	
+		DECLARE @precio_base decimal(10,2),
+				@cant_estrellas smallint,
+				@recarga_estrellas decimal(10,2),
+				@porcentual decimal(4,2)
+
+		SET @precio_base = (SELECT precio_base FROM GITAR_HEROES.Regimen WHERE codigo = @codigo_regimen)
+		SET @cant_estrellas = (SELECT cant_estrellas FROM GITAR_HEROES.Hotel WHERE codigo = @codigo_hotel)
+		SET @recarga_estrellas = (SELECT recarga_estrellas FROM GITAR_HEROES.Hotel WHERE codigo = @codigo_hotel)
+		SET @porcentual = (SELECT porcentual FROM GITAR_HEROES.TipoHabitacion WHERE codigo = @tipo_habitacion)
+	
+	RETURN (@precio_base * @porcentual) + (@recarga_estrellas * @cant_estrellas)
+			
+	END
+
+GO
+
 CREATE Procedure GITAR_HEROES.borrarTablas
 AS
 	BEGIN
@@ -1344,6 +1522,7 @@ AS
 		DROP Table GITAR_HEROES.Hotel
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
+		DROP Procedure GITAR_HEROES.obtenerMeses
 		DROP Procedure GITAR_HEROES.generarListado
 		DROP Procedure GITAR_HEROES.topCancelaciones
 		DROP Procedure GITAR_HEROES.topConsumicionesFacturadas
@@ -1356,6 +1535,7 @@ AS
 		DROP Procedure GITAR_HEROES.modificarConsumible
 		DROP Procedure GITAR_HEROES.cargarConsumible
 		DROP Procedure GITAR_HEROES.crearTablas
+		DROP procedure GITAR_HEROES.verificar_disponibilidad
 		DROP Procedure GITAR_HEROES.ingresoEgresoEstadia
 		DROP Procedure GITAR_HEROES.cargarHotel
 		DROP Procedure GITAR_HEROES.limpiarUsuarioHotel
@@ -1368,6 +1548,7 @@ AS
 
 	-- BORRADO DE FUNCIONES
 		DROP Function GITAR_HEROES.obtenerSiguienteFactura
+		DROP Function GITAR_HEROES.precioHabitacion
 		--DROP Function GITAR_HEROES.obtenerCostoBase
 	
 	-- BORRADO DEL ESQUEMA		
