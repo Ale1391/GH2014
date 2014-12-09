@@ -42,6 +42,79 @@ AS
 			   1							-- Consideramos por defecto a todos los hoteles habilitados
 		FROM gd_esquema.Maestra
 
+		-- Se carga un nombre supuesto a cada hotel
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Congreso'
+		WHERE codigo = 1
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Roberto Goyeneche'
+		WHERE codigo = 2
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Israel'
+		WHERE codigo = 3
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Gaona'
+		WHERE codigo = 4
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Alicia Moreau de Justo'
+		WHERE codigo = 5
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Israel II'
+		WHERE codigo = 6
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Alvarez Jonte'
+		WHERE codigo = 7
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Dorrego'
+		WHERE codigo = 8
+
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Rivadavia'
+		WHERE codigo = 9
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Reconquista'
+		WHERE codigo = 10
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Figueroa Alcorta'
+		WHERE codigo = 11
+
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Monroe'
+		WHERE codigo = 12
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Jujuy'
+		WHERE codigo = 13
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'San Isidro Labrador'
+		WHERE codigo = 14
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'San Juan'
+		WHERE codigo = 15
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Galvan'
+		WHERE codigo = 16
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'Scalabrini Ortiz'
+		WHERE codigo = 17		
+		
+		UPDATE GITAR_HEROES.Hotel
+		SET nombre = 'La Rabida'
+		WHERE codigo = 18
+
 
 	-- //////////////////// TIPODOCUMENTO ////////////////////
 
@@ -1375,12 +1448,24 @@ Create Procedure GITAR_HEROES.topSinServicio
 AS
 	BEGIN
 		
+		-- Variables a ser utilizadas para filtrar la busqueda
+		DECLARE @mes1 smallint,
+				@mes2 smallint,
+				@mes3 smallint
+				
+		EXEC GITAR_HEROES.obtenerMeses @trimestre, @mes1 output
+
+		SET @mes2 = @mes1 + 1
+		SET @mes3 = @mes1 + 2
+		
 		SELECT TOP 5
 			   codigo_hotel,
 			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = HI.codigo_hotel) AS nombre_hotel,
 			   SUM(DATEDIFF(DAY, fecha_inicio, fecha_fin)) AS cant_dias_inhabilitacion
 		INTO ##ListadoEstadistico
 		FROM GITAR_HEROES.HotelInhabilitado HI
+		WHERE YEAR(fecha_inicio) = @anio
+			  AND MONTH(fecha_inicio) IN (@mes1, @mes2, @mes3)
 		GROUP BY codigo_hotel
 		ORDER BY 3 DESC		
 		
@@ -1394,6 +1479,16 @@ Create Procedure GITAR_HEROES.topHabitacionesOcupadas
 AS
 	BEGIN
 		
+		-- Variables a ser utilizadas para filtrar la busqueda
+		DECLARE @mes1 smallint,
+				@mes2 smallint,
+				@mes3 smallint
+				
+		EXEC GITAR_HEROES.obtenerMeses @trimestre, @mes1 output
+
+		SET @mes2 = @mes1 + 1
+		SET @mes3 = @mes1 + 2
+		
 		SELECT TOP 5
 			   ResHab.codigo_hotel,
 			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = ResHab.codigo_hotel) AS nombre_hotel,
@@ -1403,6 +1498,8 @@ AS
 			   
 		INTO ##ListadoEstadistico
 		FROM GITAR_HEROES.ReservaHabitacion ResHab JOIN GITAR_HEROES.Reserva Reserva ON ResHab.codigo_reserva = Reserva.codigo
+		WHERE YEAR(Reserva.fecha_inicio) = @anio
+			  AND MONTH(Reserva.fecha_inicio) IN (@mes1, @mes2, @mes3)
 		GROUP BY ResHab.codigo_hotel, ResHab.numero_habitacion
 		ORDER BY 4, 5 DESC
 		
@@ -1416,6 +1513,16 @@ Create Procedure GITAR_HEROES.topPuntuacionClientes
 AS
 	BEGIN
 		
+		-- Variables a ser utilizadas para filtrar la busqueda
+		DECLARE @mes1 smallint,
+				@mes2 smallint,
+				@mes3 smallint
+				
+		EXEC GITAR_HEROES.obtenerMeses @trimestre, @mes1 output
+
+		SET @mes2 = @mes1 + 1
+		SET @mes3 = @mes1 + 2
+		
 		SELECT TOP 5
 			   --apellido,
 			   --nombre,
@@ -1428,11 +1535,11 @@ AS
 			 ON Factura.numero_factura = ItemC.numero_factura
 			 JOIN GITAR_HEROES.ItemFacturaEstadia ItemE ON Factura.numero_factura = ItemE.numero_factura
 			 
-		--WHERE
+		WHERE YEAR(Factura.fecha) = @anio
+			  AND MONTH(Factura.fecha) IN (@mes1, @mes2, @mes3)
 		GROUP BY Factura.tipo_doc_cliente, Factura.nro_doc_cliente
 		ORDER BY 3 DESC
 		
-
 	END
 
 GO
@@ -1570,6 +1677,7 @@ AS
 		--DROP Table ##ListadoEstadistico
 
 	-- BORRADO DE FUNCIONES
+		DROP Function GITAR_HEROES.obtenerSiguienteReserva
 		DROP Function GITAR_HEROES.obtenerSiguienteFactura
 		DROP Function GITAR_HEROES.precioHabitacion
 		--DROP Function GITAR_HEROES.obtenerCostoBase
