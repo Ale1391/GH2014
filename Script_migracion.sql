@@ -436,7 +436,7 @@ AS
 			  (SELECT Cliente.nro_doc FROM GITAR_HEROES.Cliente Cliente 
 			   WHERE Cliente.nro_doc = Cliente_Pasaporte_Nro 
 			 		 AND Cliente.mail = Cliente_Mail),					-- nro_doc_cliente
-			   Regimen_Precio * Habitacion_Tipo_Porcentual + Hotel_CantEstrella * Hotel_Recarga_Estrella,		-- costo_base
+			   (Regimen_Precio * Habitacion_Tipo_Porcentual + Hotel_CantEstrella * Hotel_Recarga_Estrella) * M.Reserva_Cant_Noches,		-- costo_base
 		-- Si la reserva tiene factura se la considera de estado efectivizada sino simplemente correcta
 			   CASE WHEN EXISTS(SELECT 1 FROM gd_esquema.Maestra WHERE M.Reserva_Codigo = Reserva_Codigo AND Factura_Nro IS NOT NULL) 
 			   THEN 6 ELSE 1 END
@@ -1319,8 +1319,8 @@ AS
 		INTO ##listadoEstadistico
 		FROM GITAR_HEROES.Reserva R
 		WHERE codigo_estado IN (3, 4, 5)
-			  AND YEAR(fecha_inicio) = @anio
-			  AND MONTH(fecha_inicio) IN (@mes1, @mes2, @mes3) 
+			  AND (SELECT YEAR(fecha_inicio) FROM GITAR_HEROES.ReservaCancelada WHERE R.codigo = codigo_reserva) = @anio
+			  AND (SELECT MONTH(fecha_inicio) FROM GITAR_HEROES.ReservaCancelada WHERE R.codigo = codigo_reserva) IN (@mes1, @mes2, @mes3) 
 		GROUP BY codigo_hotel
 		ORDER BY 3 DESC
 		
@@ -1437,7 +1437,7 @@ AS
 GO
 
 
--- ////////////////////// OTROS PROCEDIMIENTOS //////////////////////
+-- ////////////////////// OTROS PROCEDIMIENTOS  Y FUNCIONES //////////////////////
 
 -- Asigna al username todos los hoteles existentes registrados
 CREATE Procedure GITAR_HEROES.setearSuperUsuario (@username char(15))
@@ -1466,8 +1466,10 @@ AS
 
 GO
 
+--DROP Function GITAR_HEROES.precioHabitacion
+
 CREATE Function GITAR_HEROES.precioHabitacion (@codigo_regimen smallint, @codigo_hotel int, @tipo_habitacion int)
-RETURNS numeric(10,2)
+RETURNS decimal(10,2)
 AS
 	BEGIN
 	
@@ -1481,7 +1483,7 @@ AS
 		SET @recarga_estrellas = (SELECT recarga_estrellas FROM GITAR_HEROES.Hotel WHERE codigo = @codigo_hotel)
 		SET @porcentual = (SELECT porcentual FROM GITAR_HEROES.TipoHabitacion WHERE codigo = @tipo_habitacion)
 	
-	RETURN (@precio_base * @porcentual) + (@recarga_estrellas * @cant_estrellas)
+	RETURN ((@precio_base * @porcentual) + (@recarga_estrellas * @cant_estrellas))
 			
 	END
 
