@@ -158,20 +158,5 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 reserva_cliente.Show();
             }
         }
-
-        /*private void generarReserva()
-        {
-            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo_hotel, numero, piso,tipo,ubicacion,descripcion_comodidades,estado) VALUES (" + Variables.hotel_id + "," + textBoxNumeroHabitacion.Text + "," + textBoxPiso.Text + "," + lista_codigos_habitaciones[comboBoxTipoHabitacion.SelectedIndex] + ",'" + textBoxUbicacion.Text + "','" + textBoxDescripcion.Text + "',1)";
-            command = new SqlCommand(query);
-            command.Connection = connection;
-            adapter = new SqlDataAdapter(command);
-            dataTable = new DataTable();
-            adapter.Fill(dataTable);
-
-            if (dataTable.HasErrors)
-            {
-                MessageBox.Show("Error al crear la habitación");
-            }
-        }*/
     }
 }
