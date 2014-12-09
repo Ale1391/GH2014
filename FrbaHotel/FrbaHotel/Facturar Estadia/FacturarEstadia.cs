@@ -37,5 +37,13 @@ namespace FrbaHotel.Facturar_Estadia
         {
 
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            this.Hide();
+            Funcionalidades funcionalidadesForm = new Funcionalidades();
+            funcionalidadesForm.StartPosition = FormStartPosition.CenterScreen;
+            funcionalidadesForm.Show();
+        }
     }
 }
