@@ -131,7 +131,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                     }
                     else
                     {
-                        string query = "select GITAR_HEROES.Regimen.descripcion, 10  as Precio_por_dia, GITAR_HEROES.Regimen.precio_base*"+cantidad_dias_reserva.ToString()+" as Precio_Estadia, '' as Seleccionar from GITAR_HEROES.Regimen inner join GITAR_HEROES.RegimenHotel on GITAR_HEROES.RegimenHotel.codigo_regimen = GITAR_HEROES.Regimen.codigo where GITAR_HEROES.RegimenHotel.codigo_hotel = "+ hotel_id + (comboBoxTipoRegimen.Text.Length > 0 ? "and GITAR_HEROES.Regimen.codigo = "+lista_codigos_regimenes[comboBoxTipoRegimen.SelectedIndex].ToString() : "");
+                        string query = "select GITAR_HEROES.Regimen.descripcion, GITAR_HEROES.precioHabitacion(GITAR_HEROES.Regimen.codigo,GITAR_HEROES.RegimenHotel.codigo_hotel," + lista_codigos_tipo_habitacion[comboBoxTipoHabitacion.SelectedIndex] + ") as Precio_por_dia, GITAR_HEROES.precioHabitacion(GITAR_HEROES.Regimen.codigo,GITAR_HEROES.RegimenHotel.codigo_hotel," + lista_codigos_tipo_habitacion[comboBoxTipoHabitacion.SelectedIndex] + ")*" + cantidad_dias_reserva.ToString() + " as Precio_Estadia, 'Haz Doble Click' as Seleccionar from GITAR_HEROES.Regimen inner join GITAR_HEROES.RegimenHotel on GITAR_HEROES.RegimenHotel.codigo_regimen = GITAR_HEROES.Regimen.codigo where GITAR_HEROES.RegimenHotel.codigo_hotel = " + hotel_id + (comboBoxTipoRegimen.Text.Length > 0 ? "and GITAR_HEROES.Regimen.codigo = " + lista_codigos_regimenes[comboBoxTipoRegimen.SelectedIndex].ToString() : "");
                         command = new SqlCommand(query);
                         command.Connection = connection;
                         adapter = new SqlDataAdapter(command);
@@ -142,5 +142,36 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 }
             }
         }
+
+        private void dataGridViewRegimenes_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 3)
+            {
+                this.Hide();
+                ReservaCliente reserva_cliente = new ReservaCliente();
+                reserva_cliente.fecha_fin = textBoxFechaHasta.Text;
+                reserva_cliente.fecha_inicio = textBoxFechaDesde.Text;
+                reserva_cliente.codigo_hotel = hotel_id;
+                reserva_cliente.codigo_tipo_habitacion = lista_codigos_tipo_habitacion[comboBoxTipoHabitacion.SelectedIndex].ToString();
+                reserva_cliente.codigo_regimen = e.RowIndex.ToString();
+                reserva_cliente.StartPosition = FormStartPosition.CenterScreen;
+                reserva_cliente.Show();
+            }
+        }
+
+        /*private void generarReserva()
+        {
+            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo_hotel, numero, piso,tipo,ubicacion,descripcion_comodidades,estado) VALUES (" + Variables.hotel_id + "," + textBoxNumeroHabitacion.Text + "," + textBoxPiso.Text + "," + lista_codigos_habitaciones[comboBoxTipoHabitacion.SelectedIndex] + ",'" + textBoxUbicacion.Text + "','" + textBoxDescripcion.Text + "',1)";
+            command = new SqlCommand(query);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            if (dataTable.HasErrors)
+            {
+                MessageBox.Show("Error al crear la habitación");
+            }
+        }*/
     }
 }

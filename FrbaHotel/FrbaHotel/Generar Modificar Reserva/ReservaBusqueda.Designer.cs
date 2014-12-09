@@ -132,11 +132,18 @@
             // 
             // dataGridViewRegimenes
             // 
+            this.dataGridViewRegimenes.AllowUserToAddRows = false;
+            this.dataGridViewRegimenes.AllowUserToDeleteRows = false;
+            this.dataGridViewRegimenes.AllowUserToResizeRows = false;
             this.dataGridViewRegimenes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewRegimenes.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataGridViewRegimenes.Location = new System.Drawing.Point(38, 174);
+            this.dataGridViewRegimenes.MultiSelect = false;
             this.dataGridViewRegimenes.Name = "dataGridViewRegimenes";
+            this.dataGridViewRegimenes.ReadOnly = true;
             this.dataGridViewRegimenes.Size = new System.Drawing.Size(331, 173);
             this.dataGridViewRegimenes.TabIndex = 5;
+            this.dataGridViewRegimenes.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRegimenes_CellDoubleClick);
             // 
             // label5
             // 
