@@ -1,6 +1,6 @@
 ﻿namespace FrbaHotel.Facturar_Estadia
 {
-    partial class Facturar_Estadia
+    partial class FacturarEstadia
     {
         /// <summary>
         /// Required designer variable.
@@ -110,7 +110,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Facturar_Estadia";
             this.Text = "Facturar_Estadia";
-            this.Load += new System.EventHandler(this.Facturar_Estadia_Load);
+            this.Load += new System.EventHandler(this.FacturarEstadia_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

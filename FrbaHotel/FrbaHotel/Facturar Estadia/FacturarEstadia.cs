@@ -6,10 +6,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 
 namespace FrbaHotel.Facturar_Estadia
 {
-    public partial class Facturar_Estadia : Form
+    public partial class FacturarEstadia : Form
     {
         // Genera conexion con la base de datos
         System.Data.SqlClient.SqlConnection connection;
@@ -18,7 +19,7 @@ namespace FrbaHotel.Facturar_Estadia
         private DataTable dataTable;
 
         
-        public Facturar_Estadia()
+        public FacturarEstadia()
         {
             InitializeComponent();
 
@@ -27,7 +28,7 @@ namespace FrbaHotel.Facturar_Estadia
 
         }
 
-        private void Facturar_Estadia_Load(object sender, EventArgs e)
+        private void FacturarEstadia_Load(object sender, EventArgs e)
         {
 
         }

@@ -137,7 +137,8 @@ namespace FrbaHotel.Listado_Funcionalidades
             {
                 //FACTURAR ESTADIA
                 this.Hide();
-                FacturarEstadia facturar_estadia = FormStartPosition.CenterScreen;
+                FacturarEstadia facturar_estadia = new FacturarEstadia();
+                facturar_estadia.StartPosition = FormStartPosition.CenterScreen;
                 facturar_estadia.ShowDialog();
 
             }
