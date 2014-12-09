@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using FrbaHotel.Listado_Funcionalidades;
 
 namespace FrbaHotel.Facturar_Estadia
 {
@@ -30,7 +31,7 @@ namespace FrbaHotel.Facturar_Estadia
 
         private void FacturarEstadia_Load(object sender, EventArgs e)
         {
-
+            iniciarConexion();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
