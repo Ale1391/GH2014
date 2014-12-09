@@ -45,5 +45,19 @@ namespace FrbaHotel.Facturar_Estadia
             funcionalidadesForm.StartPosition = FormStartPosition.CenterScreen;
             funcionalidadesForm.Show();
         }
+        private void iniciarConexion()
+        {
+            connection = new System.Data.SqlClient.SqlConnection();
+            try
+            {
+                connection.ConnectionString = Variables.connectionStr;
+                connection.Open();
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error: " + exc);
+            }
+        }
+
     }
 }
