@@ -120,7 +120,21 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             DateTime dt_hasta = DateTime.Parse(string_fechaHasta);
             
             int cant_dias = (int)(dt_hasta - dt_desde).TotalDays;
-            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo, fecha_reserva, fecha_inicio,fecha_fin,codigo_hotel,codigo_regimen,tipo_doc_cliente,nro_doc_cliente,costo_base,codigo_estado) VALUES (GITAR_HEROES.obtenerSiguienteReserva(),GETDATE(),'" + fecha_inicio + " 00:00:00','" + fecha_fin + " 00:00:00'," + codigo_hotel + "," + codigo_regimen + "," + lista_codigos_tipo_documento[comboBoxTipoDocumento.SelectedIndex] + "," + textBoxDocumento.Text + ",GITAR_HEROES.precioHabitacion("+codigo_regimen+","+codigo_hotel+","+codigo_tipo_habitacion+")*"+cant_dias.ToString()+",1)";
+
+            string queryId = "select GITAR_HEROES.obtenerSiguienteReserva() as id";
+            command = new SqlCommand(queryId);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            string id_codigo = "";
+            if (!dataTable.HasErrors)
+            {
+                id_codigo = dataTable.Rows[0]["id"].ToString();
+            }
+
+            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo, fecha_reserva, fecha_inicio,fecha_fin,codigo_hotel,codigo_regimen,tipo_doc_cliente,nro_doc_cliente,costo_base,codigo_estado) VALUES (" + id_codigo + ",GETDATE(),'" + fecha_inicio + " 00:00:00','" + fecha_fin + " 00:00:00'," + codigo_hotel + "," + codigo_regimen + "," + lista_codigos_tipo_documento[comboBoxTipoDocumento.SelectedIndex] + "," + textBoxDocumento.Text + ",GITAR_HEROES.precioHabitacion(" + codigo_regimen + "," + codigo_hotel + "," + codigo_tipo_habitacion + ")*" + cant_dias.ToString() + ",1)";
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
@@ -130,6 +144,16 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             if (dataTable.HasErrors)
             {
                 MessageBox.Show("Error al generar la reserva.");
+            }
+            else
+            {
+                string query2;
+                query2 = "insert into GITAR_HEROES.UsuarioReserva (codigo_reserva,username,descripción) values (" + id_codigo + ",'"+Variables.usuario+"','Generar reserva')";
+                command = new SqlCommand(query2);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
             }
         }
     }
