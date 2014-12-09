@@ -29,6 +29,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
 
         public ReservaClienteBusqueda()
         {
+            //
             InitializeComponent();
         }
 
