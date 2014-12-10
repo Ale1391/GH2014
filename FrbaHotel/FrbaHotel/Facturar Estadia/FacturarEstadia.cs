@@ -62,7 +62,7 @@ namespace FrbaHotel.Facturar_Estadia
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {
+        {  
             if (textBoxCodReserva.Text.Length == 0)
             {
                 MessageBox.Show("Faltan especificar Codigo de Reserva.");
@@ -73,6 +73,9 @@ namespace FrbaHotel.Facturar_Estadia
             }
             else
             {
+                
+
+
                 facturar();
             }
 
@@ -97,6 +100,7 @@ namespace FrbaHotel.Facturar_Estadia
                         {
                             cmd.Parameters.Add("@codigo_tipo_pago", SqlDbType.Int).Value = 1;
                             cmd.Parameters.Add("@nro_tarjeta", SqlDbType.Int).Value = 0;
+                            textBoxNumTarjeta.Enabled = false;
                             //MessageBox.Show("Tipo de pago en efectivo");
                         }
                         else if (comboBoxFormaPago.Text == "Tarjeta de Credito")
@@ -120,11 +124,16 @@ namespace FrbaHotel.Facturar_Estadia
             }
         }
 
+        private int trabajaSobreHotelReservado
+        {
+            //return 1
+        }
+
         private void textBoxNumTarjeta_TextChanged(object sender, EventArgs e)
         {
 
         }
-
+        
     }
 
 }
