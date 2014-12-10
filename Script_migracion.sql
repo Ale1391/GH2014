@@ -1215,12 +1215,13 @@ AS
 
 GO
 
-CREATE Procedure GITAR_HEROES.facturar (@codigo_reserva int, @codigo_tipo_pago int, @nro_tarjeta numeric (17,0))
+CREATE Procedure GITAR_HEROES.facturar (@codigo_hotel int, @codigo_reserva int, @codigo_tipo_pago int, @nro_tarjeta numeric (17,0))
 
 AS
 	BEGIN
 	-- IF no fue facturada previamente
-		IF (@codigo_reserva IN (SELECT codigo_reserva FROM GITAR_HEROES.Estadia)) 
+		IF (@codigo_reserva IN (SELECT codigo_reserva FROM GITAR_HEROES.Estadia) 
+			AND @codigo_hotel = (SELECT codigo_hotel FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)) 
 		BEGIN
 			-- ///////////////////
 			-- Variables para tabla Factura
@@ -1346,7 +1347,7 @@ AS
 		END
 		ELSE
 		BEGIN
-			RAISERROR('La reserva ingresada no existe o no fue efectivizada.', 16, 1)
+			RAISERROR('La reserva ingresada no existe o no fue efectivizada, o no pertenece al hotel en que se encuentra logueado.', 16, 1)
 		END
 	END
 

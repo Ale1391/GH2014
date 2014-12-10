@@ -37,7 +37,12 @@ namespace FrbaHotel.Facturar_Estadia
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (comboBoxFormaPago.Text == "Efectivo")
+                textBoxNumTarjeta.Enabled = false;
+            else
+            {
+                textBoxNumTarjeta.Enabled = true;
+            }
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -73,9 +78,6 @@ namespace FrbaHotel.Facturar_Estadia
             }
             else
             {
-                
-
-
                 facturar();
             }
 
@@ -93,14 +95,15 @@ namespace FrbaHotel.Facturar_Estadia
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        // Se pasa la reserva como primer parametro
+                        // Se pasa el hotel logueado y la reserva como primeros parametros
+                        cmd.Parameters.Add("@codigo_hotel", SqlDbType.Int).Value = Variables.hotel_id;
                         cmd.Parameters.Add("@codigo_reserva", SqlDbType.Int).Value = Convert.ToInt32(textBoxCodReserva.Text);
 
+                        // Dependiendo del contenido del combo se pasan los demas parametros
                         if (comboBoxFormaPago.Text == "Efectivo")
                         {
                             cmd.Parameters.Add("@codigo_tipo_pago", SqlDbType.Int).Value = 1;
                             cmd.Parameters.Add("@nro_tarjeta", SqlDbType.Int).Value = 0;
-                            textBoxNumTarjeta.Enabled = false;
                             //MessageBox.Show("Tipo de pago en efectivo");
                         }
                         else if (comboBoxFormaPago.Text == "Tarjeta de Credito")
@@ -122,11 +125,6 @@ namespace FrbaHotel.Facturar_Estadia
             {
                 MessageBox.Show(e.Message, "Error");
             }
-        }
-
-        private int trabajaSobreHotelReservado
-        {
-            //return 1
         }
 
         private void textBoxNumTarjeta_TextChanged(object sender, EventArgs e)
