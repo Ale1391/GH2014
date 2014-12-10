@@ -29,17 +29,17 @@
         private void InitializeComponent()
         {
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.comboBoxTipoDocumento = new System.Windows.Forms.ComboBox();
+            this.dataGridViewClientes = new System.Windows.Forms.DataGridView();
+            this.textBoxNumeroDocumento = new System.Windows.Forms.TextBox();
+            this.textBoxMail = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.buttonBuscar = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClientes)).BeginInit();
             this.SuspendLayout();
             // 
             // linkLabel1
@@ -53,35 +53,36 @@
             this.linkLabel1.Text = "Volver";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // comboBox1
+            // comboBoxTipoDocumento
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(16, 59);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 1;
+            this.comboBoxTipoDocumento.FormattingEnabled = true;
+            this.comboBoxTipoDocumento.Location = new System.Drawing.Point(16, 59);
+            this.comboBoxTipoDocumento.Name = "comboBoxTipoDocumento";
+            this.comboBoxTipoDocumento.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxTipoDocumento.TabIndex = 1;
             // 
-            // dataGridView1
+            // dataGridViewClientes
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(16, 162);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(446, 189);
-            this.dataGridView1.TabIndex = 2;
+            this.dataGridViewClientes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewClientes.Location = new System.Drawing.Point(16, 162);
+            this.dataGridViewClientes.Name = "dataGridViewClientes";
+            this.dataGridViewClientes.Size = new System.Drawing.Size(446, 189);
+            this.dataGridViewClientes.TabIndex = 2;
+            this.dataGridViewClientes.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewClientes_CellDoubleClick);
             // 
-            // textBox1
+            // textBoxNumeroDocumento
             // 
-            this.textBox1.Location = new System.Drawing.Point(151, 59);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(140, 20);
-            this.textBox1.TabIndex = 3;
+            this.textBoxNumeroDocumento.Location = new System.Drawing.Point(151, 59);
+            this.textBoxNumeroDocumento.Name = "textBoxNumeroDocumento";
+            this.textBoxNumeroDocumento.Size = new System.Drawing.Size(140, 20);
+            this.textBoxNumeroDocumento.TabIndex = 3;
             // 
-            // textBox2
+            // textBoxMail
             // 
-            this.textBox2.Location = new System.Drawing.Point(305, 59);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(157, 20);
-            this.textBox2.TabIndex = 3;
+            this.textBoxMail.Location = new System.Drawing.Point(305, 59);
+            this.textBoxMail.Name = "textBoxMail";
+            this.textBoxMail.Size = new System.Drawing.Size(157, 20);
+            this.textBoxMail.TabIndex = 3;
             // 
             // label1
             // 
@@ -118,6 +119,7 @@
             this.buttonLimpiar.TabIndex = 5;
             this.buttonLimpiar.Text = "Limpiar";
             this.buttonLimpiar.UseVisualStyleBackColor = true;
+            this.buttonLimpiar.Click += new System.EventHandler(this.buttonLimpiar_Click);
             // 
             // buttonBuscar
             // 
@@ -127,6 +129,7 @@
             this.buttonBuscar.TabIndex = 5;
             this.buttonBuscar.Text = "Buscar";
             this.buttonBuscar.UseVisualStyleBackColor = true;
+            this.buttonBuscar.Click += new System.EventHandler(this.buttonBuscar_Click);
             // 
             // label4
             // 
@@ -148,15 +151,15 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.textBoxMail);
+            this.Controls.Add(this.textBoxNumeroDocumento);
+            this.Controls.Add(this.dataGridViewClientes);
+            this.Controls.Add(this.comboBoxTipoDocumento);
             this.Controls.Add(this.linkLabel1);
             this.Name = "ReservaClienteBusqueda";
-            this.Text = "ReservaClienteBusqueda";
+            this.Text = "Cliente Existente";
             this.Load += new System.EventHandler(this.ReservaClienteBusqueda_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClientes)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -165,10 +168,10 @@
         #endregion
 
         private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.ComboBox comboBoxTipoDocumento;
+        private System.Windows.Forms.DataGridView dataGridViewClientes;
+        private System.Windows.Forms.TextBox textBoxNumeroDocumento;
+        private System.Windows.Forms.TextBox textBoxMail;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;

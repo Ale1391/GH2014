@@ -153,25 +153,10 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 reserva_cliente.fecha_inicio = textBoxFechaDesde.Text;
                 reserva_cliente.codigo_hotel = hotel_id;
                 reserva_cliente.codigo_tipo_habitacion = lista_codigos_tipo_habitacion[comboBoxTipoHabitacion.SelectedIndex].ToString();
-                reserva_cliente.codigo_regimen = e.RowIndex.ToString();
+                reserva_cliente.codigo_regimen = lista_codigos_regimenes[e.RowIndex].ToString();
                 reserva_cliente.StartPosition = FormStartPosition.CenterScreen;
                 reserva_cliente.Show();
             }
         }
-
-        /*private void generarReserva()
-        {
-            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo_hotel, numero, piso,tipo,ubicacion,descripcion_comodidades,estado) VALUES (" + Variables.hotel_id + "," + textBoxNumeroHabitacion.Text + "," + textBoxPiso.Text + "," + lista_codigos_habitaciones[comboBoxTipoHabitacion.SelectedIndex] + ",'" + textBoxUbicacion.Text + "','" + textBoxDescripcion.Text + "',1)";
-            command = new SqlCommand(query);
-            command.Connection = connection;
-            adapter = new SqlDataAdapter(command);
-            dataTable = new DataTable();
-            adapter.Fill(dataTable);
-
-            if (dataTable.HasErrors)
-            {
-                MessageBox.Show("Error al crear la habitación");
-            }
-        }*/
     }
 }
