@@ -32,7 +32,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxCodReserva = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBoxNumTarjeta = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.comboBoxFormaPago = new System.Windows.Forms.ComboBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -72,12 +72,13 @@
             this.textBoxCodReserva.Size = new System.Drawing.Size(121, 20);
             this.textBoxCodReserva.TabIndex = 3;
             // 
-            // textBox3
+            // textBoxNumTarjeta
             // 
-            this.textBox3.Location = new System.Drawing.Point(160, 91);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(121, 20);
-            this.textBox3.TabIndex = 5;
+            this.textBoxNumTarjeta.Location = new System.Drawing.Point(160, 91);
+            this.textBoxNumTarjeta.Name = "textBoxNumTarjeta";
+            this.textBoxNumTarjeta.Size = new System.Drawing.Size(121, 20);
+            this.textBoxNumTarjeta.TabIndex = 5;
+            this.textBoxNumTarjeta.TextChanged += new System.EventHandler(this.textBoxNumTarjeta_TextChanged);
             // 
             // button1
             // 
@@ -87,6 +88,7 @@
             this.button1.TabIndex = 6;
             this.button1.Text = "Facturar";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // comboBoxFormaPago
             // 
@@ -116,13 +118,12 @@
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.comboBoxFormaPago);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.textBoxNumTarjeta);
             this.Controls.Add(this.textBoxCodReserva);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "FacturarEstadia";
-            this.Text = "Facturar_Estadia";
             this.Load += new System.EventHandler(this.FacturarEstadia_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -135,7 +136,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBoxCodReserva;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBoxNumTarjeta;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ComboBox comboBoxFormaPago;
         private System.Windows.Forms.LinkLabel linkLabel1;
