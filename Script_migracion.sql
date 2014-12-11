@@ -1407,8 +1407,8 @@ AS
 	END
 
 GO
-
-Create Procedure GITAR_HEROES.topCancelaciones 
+--DROP Procedure GITAR_HEROES.topCancelaciones 
+CREATE Procedure GITAR_HEROES.topCancelaciones 
 				(@anio int,
 				 @trimestre smallint)
 AS
@@ -1425,11 +1425,11 @@ AS
 		SET @mes3 = @mes1 + 2
 
 		SELECT TOP 5 
-			   codigo_hotel,
+			   R.codigo_hotel,
 			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = R.codigo_hotel) AS descripcion_hotel,
-			   COUNT(codigo_hotel)
+			   COUNT(R.codigo_hotel) AS cantidad
 		
-		INTO ##listadoEstadistico
+		INTO GITAR_HEROES.listadoEstadistico--##listadoEstadistico
 		FROM GITAR_HEROES.Reserva R
 		WHERE codigo_estado IN (3, 4, 5)
 			  AND (SELECT YEAR(fecha_inicio) FROM GITAR_HEROES.ReservaCancelada WHERE R.codigo = codigo_reserva) = @anio
@@ -1462,7 +1462,7 @@ AS
 			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = Reserva.codigo_hotel) AS nombre_hotel,
 			   SUM(Item.cantidad) AS cantidad_consumibles
 		
-		INTO ##ListadoEstadistico
+		INTO GITAR_HEROES.listadoEstadistico--##ListadoEstadistico
 		FROM GITAR_HEROES.ItemFacturaConsumible Item JOIN GITAR_HEROES.Reserva Reserva ON Reserva.codigo = Item.codigo_reserva
 		WHERE (SELECT YEAR(fecha) FROM GITAR_HEROES.Factura WHERE numero_factura = Item.numero_factura) = @anio 
 			  AND (SELECT MONTH(fecha) FROM GITAR_HEROES.Factura WHERE numero_factura = Item.numero_factura) IN (@mes1, @mes2, @mes3)
@@ -1493,7 +1493,7 @@ AS
 			   codigo_hotel,
 			  (SELECT nombre FROM GITAR_HEROES.Hotel WHERE codigo = HI.codigo_hotel) AS nombre_hotel,
 			   SUM(DATEDIFF(DAY, fecha_inicio, fecha_fin)) AS cant_dias_inhabilitacion
-		INTO ##ListadoEstadistico
+		INTO GITAR_HEROES.listadoEstadistico--##ListadoEstadistico
 		FROM GITAR_HEROES.HotelInhabilitado HI
 		WHERE YEAR(fecha_inicio) = @anio
 			  AND MONTH(fecha_inicio) IN (@mes1, @mes2, @mes3)
@@ -1527,7 +1527,7 @@ AS
 			   SUM(DATEDIFF(DAY, Reserva.fecha_inicio, Reserva.fecha_fin)) AS cant_dias_reservados,
 			   COUNT(*) AS cant_veces
 			   
-		INTO ##ListadoEstadistico
+		INTO GITAR_HEROES.listadoEstadistico--##ListadoEstadistico
 		FROM GITAR_HEROES.ReservaHabitacion ResHab JOIN GITAR_HEROES.Reserva Reserva ON ResHab.codigo_reserva = Reserva.codigo
 		WHERE YEAR(Reserva.fecha_inicio) = @anio
 			  AND MONTH(Reserva.fecha_inicio) IN (@mes1, @mes2, @mes3)
@@ -1561,7 +1561,7 @@ AS
 			   Factura.nro_doc_cliente,
 			   FLOOR(SUM((ItemE.monto) / 10 + (ItemC.monto) / 5)) AS puntos
 			   
-		INTO ##ListadoEstadistico
+		INTO GITAR_HEROES.listadoEstadistico--##ListadoEstadistico
 		FROM GITAR_HEROES.Factura Factura JOIN GITAR_HEROES.ItemFacturaConsumible ItemC 
 			 ON Factura.numero_factura = ItemC.numero_factura
 			 JOIN GITAR_HEROES.ItemFacturaEstadia ItemE ON Factura.numero_factura = ItemE.numero_factura
@@ -1575,22 +1575,25 @@ AS
 
 GO
 
-Create Procedure GITAR_HEROES.generarListado (@anio int, @trimestre smallint, @codigo_listado int)
+CREATE Procedure GITAR_HEROES.generarListado (@anio int, @trimestre smallint, @codigo_listado int)
 AS
 	BEGIN
-	
-	-- Dependiendo del tipo de listado se ejecuta el procedimiento correspondiente
-	IF @codigo_listado = 1
-		EXEC GITAR_HEROES.topCancelaciones @anio, @trimestre
-	ELSE IF @codigo_listado = 2
-		EXEC GITAR_HEROES.topConsumicionesFacturadas @anio, @trimestre
-	ELSE IF @codigo_listado = 3
-		EXEC GITAR_HEROES.topSinServicio @anio, @trimestre
-	ELSE IF @codigo_listado = 4
-		EXEC GITAR_HEROES.topHabitacionesOcupadas @anio, @trimestre
-	ELSE IF @codigo_listado = 5
-		EXEC GITAR_HEROES.topPuntuacionClientes @anio, @trimestre	
-	
+		IF (@anio <= YEAR(GETDATE()) AND @trimestre IN (1, 2, 3, 4))
+		BEGIN	
+			-- Dependiendo del tipo de listado se ejecuta el procedimiento correspondiente
+			IF @codigo_listado = 1
+				EXEC GITAR_HEROES.topCancelaciones @anio, @trimestre
+			ELSE IF @codigo_listado = 2
+				EXEC GITAR_HEROES.topConsumicionesFacturadas @anio, @trimestre
+			ELSE IF @codigo_listado = 3
+				EXEC GITAR_HEROES.topSinServicio @anio, @trimestre
+			ELSE IF @codigo_listado = 4
+				EXEC GITAR_HEROES.topHabitacionesOcupadas @anio, @trimestre
+			ELSE IF @codigo_listado = 5
+				EXEC GITAR_HEROES.topPuntuacionClientes @anio, @trimestre	
+		END
+		ELSE
+			RAISERROR ('Año y/o trimestre ingresado inválido.', 16, 1)
 	END
 
 GO

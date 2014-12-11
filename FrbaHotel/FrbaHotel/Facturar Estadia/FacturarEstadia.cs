@@ -65,11 +65,11 @@ namespace FrbaHotel.Facturar_Estadia
         {  
             if (textBoxCodReserva.Text.Length == 0)
             {
-                MessageBox.Show("Faltan especificar Codigo de Reserva.");
+                MessageBox.Show("Falta especificar Codigo de Reserva.");
             }
             else if (comboBoxFormaPago.Text.Length == 0)
             {
-                MessageBox.Show("Faltan especificar Tipo de Pago.");
+                MessageBox.Show("Falta especificar Tipo de Pago.");
             }
             else
             {

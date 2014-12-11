@@ -31,15 +31,103 @@ namespace FrbaHotel.Listado_Estadistico
 
         private void ListadoEstadistico_Load(object sender, EventArgs e)
         {
-            iniciarConexion();
-            connection = new System.Data.SqlClient.SqlConnection();
-
+            //iniciarConexion();
+            
             cargarComboBoxListado();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (comboBoxListado.Text.Length == 0)
+            {
+                MessageBox.Show("Falta especificar listado a generarse.");
+            }
+            else
+            {
+                int error = generarListado();
 
+                if (error != 1)
+                {
+                    cargarGrilla();
+                    borrarTablaListado();
+                }
+            }
+        }
+
+        private int generarListado()
+        {
+            try
+            {
+                // Se utilizan las variables grobales definidas en Variables.cs
+                using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+                {
+                    using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.generarListado", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        // Se pasa el hotel logueado y la reserva como primeros parametros
+                        cmd.Parameters.Add("@anio", SqlDbType.Int).Value = Convert.ToInt32(textBoxAnio.Text);
+                        cmd.Parameters.Add("@trimestre", SqlDbType.SmallInt).Value = Convert.ToInt32(textBoxTrimestre.Text);
+                        cmd.Parameters.Add("@codigo_listado", SqlDbType.SmallInt).Value = codigo_listado;
+                        
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                MessageBox.Show("Listado generado correctamente.");
+                return 0;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error");
+                return 1;
+            }
+        }
+
+        private void cargarGrilla()
+        {
+            connection = new System.Data.SqlClient.SqlConnection();
+            try
+            {
+                connection.ConnectionString = Variables.connectionStr;
+                connection.Open();
+
+                string query = "SELECT * FROM GITAR_HEROES.ListadoEstadistico";
+                command = new SqlCommand(query);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                // Se carga en la grilla
+                dataGridViewListado.DataSource = dataTable;
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error: " + exc);
+            }
+        }
+
+        private void borrarTablaListado()
+        {
+            connection = new System.Data.SqlClient.SqlConnection();
+            try
+            {
+                connection.ConnectionString = Variables.connectionStr;
+                connection.Open();
+
+                string query = "DROP Table GITAR_HEROES.ListadoEstadistico";
+                command = new SqlCommand(query);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
+                
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error: " + exc);
+            }
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -69,30 +157,36 @@ namespace FrbaHotel.Listado_Estadistico
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             codigo_listado = lista_codigo_listado[comboBoxListado.SelectedIndex];
+
+            
+
         }
 
         private void cargarComboBoxListado()
         {
-        try
-        {
-            
-            command = new SqlCommand("SELECT * FROM GITAR_HEROES.Listado");
-            command.Connection = connection;
-            adapter = new SqlDataAdapter(command);
-            dataTable = new DataTable();
-            adapter.Fill(dataTable);
-
-            foreach (DataRow row in dataTable.Rows)
+            connection = new System.Data.SqlClient.SqlConnection();
+            try
             {
-                comboBoxListado.Items.Add(row["descripcion"].ToString());
-                lista_codigo_listado.Add(Convert.ToInt32(row["codigo"]));
-            }
-        }
-        catch (Exception exc)
-        {
-            MessageBox.Show("Error: " + exc);
-        }
+                connection.ConnectionString = Variables.connectionStr;
+                connection.Open();
 
+                string query = "SELECT * FROM GITAR_HEROES.Listado";
+                command = new SqlCommand(query);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    comboBoxListado.Items.Add(row["descripcion"].ToString());
+                    lista_codigo_listado.Add(Convert.ToInt32(row["codigo_listado"]));
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error: " + exc);
+            }
         }
     }
 }
