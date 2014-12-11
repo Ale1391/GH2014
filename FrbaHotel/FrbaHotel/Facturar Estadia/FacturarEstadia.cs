@@ -12,21 +12,13 @@ using FrbaHotel.Listado_Funcionalidades;
 namespace FrbaHotel.Facturar_Estadia
 {
     public partial class FacturarEstadia : Form
-    {
-        // Genera conexion con la base de datos
-        System.Data.SqlClient.SqlConnection connection;
-        private SqlCommand command;
-        private SqlDataAdapter adapter;
-        private DataTable dataTable;
-
-        
+    {               
         public FacturarEstadia()
         {
             InitializeComponent();
 
             comboBoxFormaPago.Items.Add("Efectivo");
             comboBoxFormaPago.Items.Add("Tarjeta de Credito");
-
         }
 
         private void FacturarEstadia_Load(object sender, EventArgs e)
@@ -52,8 +44,11 @@ namespace FrbaHotel.Facturar_Estadia
             funcionalidadesForm.StartPosition = FormStartPosition.CenterScreen;
             funcionalidadesForm.Show();
         }
+
         private void iniciarConexion()
         {
+            // Genera conexion con la base de datos
+            System.Data.SqlClient.SqlConnection connection;
             connection = new System.Data.SqlClient.SqlConnection();
             try
             {

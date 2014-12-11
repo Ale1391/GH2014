@@ -14,7 +14,9 @@ using FrbaHotel.ABM_de_Cliente;
 using FrbaHotel.ABM_de_Hotel;
 using FrbaHotel.ABM_de_Habitacion;
 using FrbaHotel.Generar_Modificar_Reserva;
+using FrbaHotel.Registrar_Estadia;
 using FrbaHotel.Facturar_Estadia;
+using FrbaHotel.Listado_Estadistico;
 
 namespace FrbaHotel.Listado_Funcionalidades
 {
@@ -132,6 +134,15 @@ namespace FrbaHotel.Listado_Funcionalidades
                 abm_reserva.StartPosition = FormStartPosition.CenterScreen;
                 abm_reserva.ShowDialog();
             }
+            else if (codigo_funcionalidad == 10)
+            {
+                //REGISTRAR ESTADIA
+                this.Hide();
+                RegistrarEstadia registrar_estadia = new RegistrarEstadia();
+                registrar_estadia.StartPosition = FormStartPosition.CenterScreen;
+                registrar_estadia.ShowDialog();
+
+            }
             
             else if (codigo_funcionalidad == 12)
             {
@@ -141,6 +152,14 @@ namespace FrbaHotel.Listado_Funcionalidades
                 facturar_estadia.StartPosition = FormStartPosition.CenterScreen;
                 facturar_estadia.ShowDialog();
 
+            }
+            else if (codigo_funcionalidad == 13)
+            {
+                //LISTADO ESTADISTICO
+                this.Hide();
+                ListadoEstadistico listado_estadistico = new ListadoEstadistico();
+                listado_estadistico.StartPosition = FormStartPosition.CenterScreen;
+                listado_estadistico.ShowDialog();
             }
         }
     }

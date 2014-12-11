@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BAFE3016-AC06-4C43-ABEF-87F21AB5699B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -186,11 +186,11 @@
     <Compile Include="Principal.Designer.cs">
       <DependentUpon>Principal.cs</DependentUpon>
     </Compile>
-    <Compile Include="Listado Estadistico\Form1.cs">
+    <Compile Include="Listado Estadistico\ListadoEstadistico.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Listado Estadistico\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Listado Estadistico\ListadoEstadistico.Designer.cs">
+      <DependentUpon>ListadoEstadistico.cs</DependentUpon>
     </Compile>
     <Compile Include="Login\LoginForm.cs">
       <SubType>Form</SubType>
@@ -258,6 +258,10 @@
     <EmbeddedResource Include="Generar Modificar Reserva\ReservaClienteForm.resx">
       <DependentUpon>ReservaClienteForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Listado Estadistico\ListadoEstadistico.resx">
+      <DependentUpon>ListadoEstadistico.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Listado Funcionalidades\Funcionalidades.resx">
       <DependentUpon>Funcionalidades.cs</DependentUpon>
     </EmbeddedResource>
@@ -273,6 +277,10 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Registrar Estadia\RegistrarEstadia.resx">
+      <DependentUpon>RegistrarEstadia.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -294,11 +302,11 @@
     <Compile Include="Registrar Consumible\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Registrar Estadia\Form1.cs">
+    <Compile Include="Registrar Estadia\RegistrarEstadia.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Registrar Estadia\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Registrar Estadia\RegistrarEstadia.Designer.cs">
+      <DependentUpon>RegistrarEstadia.cs</DependentUpon>
     </Compile>
     <Compile Include="Variables.cs" />
   </ItemGroup>
