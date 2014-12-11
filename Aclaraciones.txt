@@ -1,3 +1,5 @@
+///////////////// BASE DE DATOS /////////////////
+
 1. En la tabla Cliente no se crea FK debido a datos repetidos para tipo_doc y nro_doc. Las restricciones se resolverán a nivel de aplicación.
 
 2. En la tabla Reserva se tomará por defecto el régimen "Room Only" para aquellos usuarios que no ingresen uno.
@@ -45,3 +47,20 @@
 11. FacturarEstadia:
 	a. Falta corroborar si existe facturación previa.
 
+
+///////////////// FUNCIONALIDADES /////////////////
+
+ABM Rol
+- Corregir "Elegir usuario" por "Elegir rol"
+
+Login y seguridad
+- Falta la inhabilitación por error de logueo, considerar generar una tabla en la base de datos (leer enunciado)
+- Seleccionar rol al iniciar
+
+ABM Usuario
+- No debe poder modificarse el usuario guest ya que no es considerado un usuario en sí mismo sino que fue creado para modelar en el sistema la existencia de clientes sin usuario específico
+Funcionalidad Registrar estadía
+- Campo Fecha
+
+ABM Hotel
+- Falta la inhabilitación
