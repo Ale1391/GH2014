@@ -273,7 +273,7 @@ AS
 		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
 		VALUES (12, 'Facturar Estadia')
 		
-				INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
+		INSERT INTO GITAR_HEROES.Funcionalidad (codigo, descripcion)
 		VALUES (13, 'Listado Estadistico')
 
 
@@ -770,7 +770,6 @@ AS
 
 	-- /////////////// LISTADO ///////////////
 
-
 	CREATE Table GITAR_HEROES.Listado
 		  (codigo_listado int PRIMARY KEY,
 		   descripcion varchar(320))
@@ -785,10 +784,10 @@ AS
 	VALUES (3, 'Hoteles con mayor cantidad de días fuera de servicio')
 	
 	INSERT INTO GITAR_HEROES.Listado
-	VALUES (4, 'Habitaciones con mayor cantidad de días y veces que fueron ocupadas, informando a demás a que hotel perteneces')
+	VALUES (4, 'Habitaciones con mayor cantidad de días y veces que fueron ocupadas')
 	
 	INSERT INTO GITAR_HEROES.Listado
-	VALUES (5, 'Cliente con mayor cantidad de puntos, donde cada $10 en estadías vale 1 puntos y cada $5 de consumibles es 1 punto, de la sumatoria de todas las facturaciones que haya tenido dentro de un periodo independientemente del Hotel. Tener en cuenta que la facturación siempre es a quien haya realizado la reserva')
+	VALUES (5, 'Cliente con mayor cantidad de puntos')
 
 	-- FIN crearTablas
 	END
@@ -1087,24 +1086,49 @@ GO
 
 -- ////////////////////// REGISTRAR ESTADIA //////////////////////
 
-CREATE Procedure GITAR_HEROES.ingresoEgresoEstadia (@codigo_reserva int, @username char(15))
+CREATE Procedure GITAR_HEROES.ingresoEgresoEstadia (@codigo_hotel int, @codigo_reserva int, @fecha smalldatetime, @username char(15))
 AS
 	BEGIN
-	
-		IF NOT EXISTS (SELECT 1 FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva)
-		-- Check in de la estadia
+		IF EXISTS (SELECT 1 FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva AND codigo_hotel = @codigo_hotel)
 		BEGIN
-			INSERT INTO GITAR_HEROES.Estadia
-			VALUES (@codigo_reserva, GETDATE(), @username, NULL, NULL)
+			IF NOT EXISTS (SELECT 1 FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva)
+			-- Check in de la estadia
+			BEGIN
+				-- Se obtiene la fecha de inicio de la reserva
+				DECLARE @fecha_inicio_reserva smalldatetime
+				SET @fecha_inicio_reserva = (SELECT fecha_inicio FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
+				
+				-- Se corrobora que la fecha de inicio para la estadia sea igual a la estipulada en la reserva
+				IF (@fecha_inicio_reserva = @fecha)
+				BEGIN
+					INSERT INTO GITAR_HEROES.Estadia
+					VALUES (@codigo_reserva, @fecha_inicio_reserva, @username, NULL, NULL)
+				END
+				ELSE
+					RAISERROR('La fecha ingresada es distinta a la de inicio de la reserva.', 16, 1)
+			END
+			ELSE IF (SELECT fecha_egreso FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva) IS NULL
+			-- Check out de la estadia
+			BEGIN
+				-- Se obtiene la fecha de finalizacion de la reserva
+				DECLARE @fecha_fin_reserva smalldatetime
+				SET @fecha_fin_reserva = (SELECT fecha_fin FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva)
+				
+				-- Se corrobora que la fecha de egreso para la estadia no supere a la estipulada en la reserva
+				IF (@fecha <= @fecha_fin_reserva)	
+				BEGIN		
+					UPDATE GITAR_HEROES.Estadia
+					SET fecha_egreso = @fecha, username_egreso = @username
+					WHERE codigo_reserva = @codigo_reserva
+				END
+				ELSE
+					RAISERROR('La fecha ingresada excede la fecha de finalizacion de la reserva.', 16, 1)
+			END
+			ELSE
+				RAISERROR ('El check out de la estadia ya fue realizado.', 16,1)
 		END
 		ELSE
-		-- Check out de la estadia
-		BEGIN
-			UPDATE GITAR_HEROES.Estadia
-			SET fecha_egreso = GETDATE(), username_egreso = @username
-			WHERE codigo_reserva = @codigo_reserva
-		END
-	
+			RAISERROR('El codigo de reserva ingresado no existe o no corresponde al hotel logueado.', 16, 1)	
 	END
 
 GO
