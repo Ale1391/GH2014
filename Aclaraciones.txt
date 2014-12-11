@@ -64,3 +64,8 @@ Funcionalidad Registrar estadía
 
 ABM Hotel
 - Falta la inhabilitación
+
+Generar o Modificar Reserva
+- El comboBox de Hotel está al pedo
+- Falta la modificación de la reserva
+- Falta cambiar el estado de las reservas no efectivizadas al momento de reservar, por canceladas por No Show
