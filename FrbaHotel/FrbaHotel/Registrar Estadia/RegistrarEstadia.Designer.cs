@@ -36,6 +36,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.linkLabelReservar = new System.Windows.Forms.LinkLabel();
+            this.linkLabelClientes = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // label1
@@ -112,11 +115,46 @@
             this.linkLabel1.Text = "Volver";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(66, 207);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(81, 13);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "Otras acciones:";
+            // 
+            // linkLabelReservar
+            // 
+            this.linkLabelReservar.AutoSize = true;
+            this.linkLabelReservar.Location = new System.Drawing.Point(66, 233);
+            this.linkLabelReservar.Name = "linkLabelReservar";
+            this.linkLabelReservar.Size = new System.Drawing.Size(137, 13);
+            this.linkLabelReservar.TabIndex = 9;
+            this.linkLabelReservar.TabStop = true;
+            this.linkLabelReservar.Text = "Generar una nueva reserva";
+            this.linkLabelReservar.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelReservar_LinkClicked);
+            // 
+            // linkLabelClientes
+            // 
+            this.linkLabelClientes.AutoSize = true;
+            this.linkLabelClientes.Location = new System.Drawing.Point(66, 259);
+            this.linkLabelClientes.Name = "linkLabelClientes";
+            this.linkLabelClientes.Size = new System.Drawing.Size(130, 13);
+            this.linkLabelClientes.TabIndex = 11;
+            this.linkLabelClientes.TabStop = true;
+            this.linkLabelClientes.Text = "Registrar otros huespedes";
+            this.linkLabelClientes.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelClientes_LinkClicked);
+            // 
             // RegistrarEstadia
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(614, 420);
+            this.Controls.Add(this.linkLabelClientes);
+            this.Controls.Add(this.linkLabelReservar);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -143,5 +181,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.LinkLabel linkLabelReservar;
+        private System.Windows.Forms.LinkLabel linkLabelClientes;
     }
 }

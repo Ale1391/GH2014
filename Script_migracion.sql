@@ -1086,7 +1086,7 @@ GO
 
 -- ////////////////////// REGISTRAR ESTADIA //////////////////////
 
-CREATE Procedure GITAR_HEROES.ingresoEgresoEstadia (@codigo_hotel int, @codigo_reserva int, @fecha smalldatetime, @username char(15))
+CREATE Procedure GITAR_HEROES.ingresoEgresoEstadia (@codigo_hotel int, @codigo_reserva int, @fecha smalldatetime, @username char(15), @estado_registro smallint output)
 AS
 	BEGIN
 		IF EXISTS (SELECT 1 FROM GITAR_HEROES.Reserva WHERE codigo = @codigo_reserva AND codigo_hotel = @codigo_hotel)
@@ -1103,9 +1103,12 @@ AS
 				BEGIN
 					INSERT INTO GITAR_HEROES.Estadia
 					VALUES (@codigo_reserva, @fecha_inicio_reserva, @username, NULL, NULL)
+					
+					SET @estado_registro = 1		-- Corresponde a Check in
 				END
 				ELSE
-					RAISERROR('La fecha ingresada es distinta a la de inicio de la reserva.', 16, 1)
+					SET @estado_registro = -1		-- Corresponde a error, habilita crear una nueva reserva
+					--RAISERROR('La fecha ingresada es distinta a la de inicio de la reserva.', 16, 1)
 			END
 			ELSE IF (SELECT fecha_egreso FROM GITAR_HEROES.Estadia WHERE codigo_reserva = @codigo_reserva) IS NULL
 			-- Check out de la estadia
@@ -1120,6 +1123,8 @@ AS
 					UPDATE GITAR_HEROES.Estadia
 					SET fecha_egreso = @fecha, username_egreso = @username
 					WHERE codigo_reserva = @codigo_reserva
+					
+					SET @estado_registro = 0		-- Corresponde a Check out
 				END
 				ELSE
 					RAISERROR('La fecha ingresada excede la fecha de finalizacion de la reserva.', 16, 1)

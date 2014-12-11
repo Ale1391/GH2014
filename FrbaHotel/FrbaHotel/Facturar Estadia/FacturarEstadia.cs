@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using FrbaHotel.Listado_Funcionalidades;
+using FrbaHotel.Generar_Modificar_Reserva;
 
 namespace FrbaHotel.Facturar_Estadia
 {
@@ -23,6 +24,9 @@ namespace FrbaHotel.Facturar_Estadia
 
         private void FacturarEstadia_Load(object sender, EventArgs e)
         {
+            // Se deshabilitan por defecto otras acciones
+            linkLabelReservar.Enabled = false;
+
             // Se conecta con la base de datos
             iniciarConexion();
         }
@@ -74,6 +78,14 @@ namespace FrbaHotel.Facturar_Estadia
             else
             {
                 facturar();
+
+                // Se limpia el contenido de los campos
+                textBoxCodReserva.Text = "";
+                comboBoxFormaPago.Text = "";
+                textBoxNumTarjeta.Text = "";
+
+                // Se habilita la posibilidad de reservar mas dias
+                linkLabelReservar.Enabled = true;
             }
 
         }
@@ -124,6 +136,15 @@ namespace FrbaHotel.Facturar_Estadia
 
         private void textBoxNumTarjeta_TextChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void linkLabelReservar_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            this.Hide();
+            Reserva reserva = new Reserva();
+            reserva.StartPosition = FormStartPosition.CenterScreen;
+            reserva.Show();
 
         }
         
