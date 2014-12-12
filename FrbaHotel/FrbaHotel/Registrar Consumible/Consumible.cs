@@ -42,7 +42,7 @@ namespace FrbaHotel.Registrar_Consumible
             {
                 MessageBox.Show("Primero debes elegir una opción.");
             }
-            else if (comboBoxConsumible.Text == "Registrar Consumible")
+            else if (comboBoxConsumible.Text == "Registrar Consumible/Finalizar Carga")
             {
                 this.Hide();
                 ConsumibleForm consumible_form = new ConsumibleForm();
@@ -67,7 +67,7 @@ namespace FrbaHotel.Registrar_Consumible
         {
             iniciarConexion();
 
-            comboBoxConsumible.Items.Add("Registrar Consumible");
+            comboBoxConsumible.Items.Add("Registrar Consumible/Finalizar Carga");
             comboBoxConsumible.Items.Add("Modificar Consumible");
 
             textBoxNumeroReserva.Enabled = false;
@@ -126,7 +126,7 @@ namespace FrbaHotel.Registrar_Consumible
                 button2.Enabled = true;
                 button1.Enabled = false;
             }
-            else if (comboBoxConsumible.Text == "Registrar Consumible")
+            else if (comboBoxConsumible.Text == "Registrar Consumible/Finalizar Carga")
             {
                 textBoxNumeroReserva.Enabled = false;
                 comboBoxConsu.Enabled = false;

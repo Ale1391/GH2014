@@ -12,6 +12,7 @@ namespace FrbaHotel.ABM_de_Hotel
 {
     public partial class HotelForm : Form
     {
+        private string estado = "-1";
         public string hotel_id;
         private List<int> lista_codigos_regimenes = new List<int>();
         private List<string> lista_nombres_regimenes = new List<string>();
@@ -29,9 +30,9 @@ namespace FrbaHotel.ABM_de_Hotel
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             this.Hide();
-            Hotel pantalla_cliente = new Hotel();
-            pantalla_cliente.StartPosition = FormStartPosition.CenterScreen;
-            pantalla_cliente.Show();
+            Hotel pantalla_hotel = new Hotel();
+            pantalla_hotel.StartPosition = FormStartPosition.CenterScreen;
+            pantalla_hotel.Show();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -101,32 +102,30 @@ namespace FrbaHotel.ABM_de_Hotel
 
         private void editarHotel()
         {
-            string query = "UPDATE GITAR_HEROES.Hotel SET nombre = '"+textBoxNombre.Text+"', mail = '"+textBoxMail.Text+"', telefono = "+textBoxTelefono.Text+", domicilio_calle = '"+textBoxDireccion.Text+"', cant_estrellas = "+textBoxEstrellas.Text+", ciudad = '"+textBoxCiudad.Text+"', pais = '"+textBoxPais.Text+"', fecha_creacion = '"+textBoxFechaCreacion.Text+" 00:00:00' WHERE codigo = "+hotel_id;
+            string query = "UPDATE GITAR_HEROES.Hotel SET nombre = '"+textBoxNombre.Text+"', mail = '"+textBoxMail.Text+"', telefono = "+textBoxTelefono.Text+", domicilio_calle = '"+textBoxDireccion.Text+"', cant_estrellas = "+textBoxEstrellas.Text+", ciudad = '"+textBoxCiudad.Text+"', pais = '"+textBoxPais.Text+"', fecha_creacion = '"+textBoxFechaCreacion.Text+" 00:00:00',estado = "+(checkBoxEstado.Checked?"1":"0")+" WHERE codigo = "+hotel_id;
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
             dataTable = new DataTable();
             adapter.Fill(dataTable);
-
+            
             if (dataTable.HasErrors)
             {
-                MessageBox.Show("Error al editar el cliente.");
+                MessageBox.Show("Error al editar el hotel.");
+            }
+
+            if (estado == "0" && checkBoxEstado.Checked == true)
+            {
+                altaHotel();
+            }
+            else if (estado == "1" && checkBoxEstado.Checked == false)
+            {
+                bajaHotel();
             }
         }
 
         private void insertarHotel()
-        {/*
-            //string query = "INSERT INTO GITAR_HEROES.Hotel (nombre,mail,telefono,domicilio_calle,cant_estrellas,ciudad,pais,fecha_creacion) VALUES ('" + textBoxNombre.Text + "','" + textBoxMail.Text + "'," + textBoxTelefono.Text + ",'" + textBoxDireccion.Text + "'," + textBoxEstrellas.Text + ",'" + textBoxCiudad.Text + "','" + textBoxPais.Text + "','" + textBoxFechaCreacion.Text + " 00:00:00')";
-            //command = new SqlCommand(query);
-            //command.Connection = connection;
-            //adapter = new SqlDataAdapter(command);
-            dataTable = new DataTable();
-            adapter.Fill(dataTable);
-            if (dataTable.HasErrors)
-            {
-                MessageBox.Show("Error al realizar el insert del cliente.");
-            }*/
-
+        {
             using (SqlConnection con = new SqlConnection(Variables.connectionStr))
             {
                 using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.cargarHotel", con))
@@ -170,6 +169,9 @@ namespace FrbaHotel.ABM_de_Hotel
 
             if (!dataTable.HasErrors)
             {
+                estado = dataTable.Rows[0]["estado"].ToString();
+                textBoxDescripcion.Enabled = (dataTable.Rows[0]["estado"].ToString() == "1" && estado != "0") ? true : false;
+                checkBoxEstado.Checked = (dataTable.Rows[0]["estado"].ToString() == "1") ? true : false;
                 textBoxNombre.Text = dataTable.Rows[0]["nombre"].ToString();
                 textBoxMail.Text = dataTable.Rows[0]["mail"].ToString();
                 textBoxEstrellas.Text = dataTable.Rows[0]["cant_estrellas"].ToString();
@@ -183,6 +185,36 @@ namespace FrbaHotel.ABM_de_Hotel
                     DateTime dt = DateTime.Parse(fecha_creacion);
                     textBoxFechaCreacion.Text = (dt.Day.ToString().Length == 1 ? "0" : "") + dt.Day.ToString() + "-" + (dt.Month.ToString().Length == 1 ? "0" : "") + dt.Month.ToString() + "-" + dt.Year.ToString();
                 }
+            }
+        }
+
+        private void bajaHotel()
+        {
+            string query = "insert into GITAR_HEROES.HotelInhabilitado (codigo_hotel,fecha_inicio,descripcion) values ("+hotel_id+",GETDATE(),'"+textBoxDescripcion.Text+"')";
+            command = new SqlCommand(query);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            if (dataTable.HasErrors)
+            {
+                MessageBox.Show("Error al editar el hotel.");
+            }
+        }
+
+        private void altaHotel()
+        {
+            string query = "update GITAR_HEROES.HotelInhabilitado set fecha_fin = GETDATE() where codigo_hotel = " + hotel_id + "and fecha_fin is null";
+            command = new SqlCommand(query);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            if (dataTable.HasErrors)
+            {
+                MessageBox.Show("Error al editar el hotel.");
             }
         }
 
@@ -208,6 +240,12 @@ namespace FrbaHotel.ABM_de_Hotel
             {
                 llenarCampos();
                 tildarRegimenes();
+            }
+            else
+            {
+                checkBoxEstado.Checked = true;
+                checkBoxEstado.Enabled = false;
+                textBoxDescripcion.Enabled = false;
             }
         }
 
@@ -248,6 +286,12 @@ namespace FrbaHotel.ABM_de_Hotel
                     }
                 }
             }
+        }
+
+        private void checkBoxEstado_CheckedChanged(object sender, EventArgs e)
+        {
+            textBoxDescripcion.Enabled = (checkBoxEstado.Checked || estado == "0") ? false : true;
+            textBoxDescripcion.Text = "";
         }
     }
 }

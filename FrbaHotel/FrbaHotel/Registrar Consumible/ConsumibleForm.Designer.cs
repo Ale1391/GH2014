@@ -81,6 +81,7 @@
             this.comboBoxConsumible.Name = "comboBoxConsumible";
             this.comboBoxConsumible.Size = new System.Drawing.Size(121, 21);
             this.comboBoxConsumible.TabIndex = 3;
+            this.comboBoxConsumible.SelectedIndexChanged += new System.EventHandler(this.comboBoxConsumible_SelectedIndexChanged);
             // 
             // label3
             // 

@@ -48,11 +48,14 @@ namespace FrbaHotel.ABM_de_Hotel
 
         private void dataGridViewClientes_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            this.Hide();
-            HotelForm hotel_form = new HotelForm();
-            hotel_form.hotel_id = lista_codigos_hotel[e.RowIndex].ToString();
-            hotel_form.StartPosition = FormStartPosition.CenterScreen;
-            hotel_form.ShowDialog();
+            if (e.ColumnIndex == 11)
+            {
+                this.Hide();
+                HotelForm hotel_form = new HotelForm();
+                hotel_form.hotel_id = lista_codigos_hotel[e.RowIndex].ToString();
+                hotel_form.StartPosition = FormStartPosition.CenterScreen;
+                hotel_form.ShowDialog();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -62,23 +65,23 @@ namespace FrbaHotel.ABM_de_Hotel
             string query = "";
             if (textBoxNombre.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Hotel where nombre = '" + textBoxNombre.Text + "'" + (textBoxEstrellas.Text.Length > 0 ? " and cant_estrellas = " + textBoxEstrellas.Text : "") + (textBoxCiudad.Text.Length > 0 ? " and ciudad = '" + textBoxCiudad.Text+ "'" : "") + (textBoxPais.Text.Length > 0 ? " and pais = '" + textBoxPais.Text + "'" : "");
+                query = "select GITAR_HEROES.Hotel.codigo,GITAR_HEROES.Hotel.nombre,GITAR_HEROES.Hotel.domicilio_calle,GITAR_HEROES.Hotel.ciudad,GITAR_HEROES.Hotel.pais,GITAR_HEROES.Hotel.telefono,GITAR_HEROES.Hotel.cant_estrellas,GITAR_HEROES.Hotel.recarga_estrellas,GITAR_HEROES.Hotel.fecha_creacion,GITAR_HEROES.Hotel.mail,GITAR_HEROES.Hotel.estado, 'Haz Doble Click' as Seleccionar from GITAR_HEROES.Hotel where nombre = '" + textBoxNombre.Text + "'" + (textBoxEstrellas.Text.Length > 0 ? " and cant_estrellas = " + textBoxEstrellas.Text : "") + (textBoxCiudad.Text.Length > 0 ? " and ciudad = '" + textBoxCiudad.Text + "'" : "") + (textBoxPais.Text.Length > 0 ? " and pais = '" + textBoxPais.Text + "'" : "");
             }
             else if (textBoxEstrellas.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Hotel where cant_estrellas = " + textBoxEstrellas.Text + (textBoxCiudad.Text.Length > 0 ? " and ciudad = '" + textBoxCiudad.Text + "'" : "") + (textBoxPais.Text.Length > 0 ? " and pais = '" + textBoxPais.Text + "'" : "");
+                query = "select GITAR_HEROES.Hotel.codigo,GITAR_HEROES.Hotel.nombre,GITAR_HEROES.Hotel.domicilio_calle,GITAR_HEROES.Hotel.ciudad,GITAR_HEROES.Hotel.pais,GITAR_HEROES.Hotel.telefono,GITAR_HEROES.Hotel.cant_estrellas,GITAR_HEROES.Hotel.recarga_estrellas,GITAR_HEROES.Hotel.fecha_creacion,GITAR_HEROES.Hotel.mail,GITAR_HEROES.Hotel.estado, 'Haz Doble Click' as Seleccionar from GITAR_HEROES.Hotel where cant_estrellas = " + textBoxEstrellas.Text + (textBoxCiudad.Text.Length > 0 ? " and ciudad = '" + textBoxCiudad.Text + "'" : "") + (textBoxPais.Text.Length > 0 ? " and pais = '" + textBoxPais.Text + "'" : "");
             }
             else if (textBoxCiudad.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Hotel where ciudad = '" + textBoxCiudad.Text + "'" + (textBoxPais.Text.Length > 0 ? " and pais = '" + textBoxPais.Text + "'" : "");                
+                query = "select GITAR_HEROES.Hotel.codigo,GITAR_HEROES.Hotel.nombre,GITAR_HEROES.Hotel.domicilio_calle,GITAR_HEROES.Hotel.ciudad,GITAR_HEROES.Hotel.pais,GITAR_HEROES.Hotel.telefono,GITAR_HEROES.Hotel.cant_estrellas,GITAR_HEROES.Hotel.recarga_estrellas,GITAR_HEROES.Hotel.fecha_creacion,GITAR_HEROES.Hotel.mail,GITAR_HEROES.Hotel.estado, 'Haz Doble Click' as Seleccionar from GITAR_HEROES.Hotel where ciudad = '" + textBoxCiudad.Text + "'" + (textBoxPais.Text.Length > 0 ? " and pais = '" + textBoxPais.Text + "'" : "");                
             }
             else if (textBoxPais.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Hotel where pais = '" + textBoxPais.Text + "'";
+                query = "select GITAR_HEROES.Hotel.codigo,GITAR_HEROES.Hotel.nombre,GITAR_HEROES.Hotel.domicilio_calle,GITAR_HEROES.Hotel.ciudad,GITAR_HEROES.Hotel.pais,GITAR_HEROES.Hotel.telefono,GITAR_HEROES.Hotel.cant_estrellas,GITAR_HEROES.Hotel.recarga_estrellas,GITAR_HEROES.Hotel.fecha_creacion,GITAR_HEROES.Hotel.mail,GITAR_HEROES.Hotel.estado, 'Haz Doble Click' as Seleccionar from GITAR_HEROES.Hotel where pais = '" + textBoxPais.Text + "'";
             }
             else
-            {          
-                query = "select * from GITAR_HEROES.Hotel";
+            {
+                query = "select GITAR_HEROES.Hotel.codigo,GITAR_HEROES.Hotel.nombre,GITAR_HEROES.Hotel.domicilio_calle,GITAR_HEROES.Hotel.ciudad,GITAR_HEROES.Hotel.pais,GITAR_HEROES.Hotel.telefono,GITAR_HEROES.Hotel.cant_estrellas,GITAR_HEROES.Hotel.recarga_estrellas,GITAR_HEROES.Hotel.fecha_creacion,GITAR_HEROES.Hotel.mail,GITAR_HEROES.Hotel.estado, 'Haz Doble Click' as Seleccionar from GITAR_HEROES.Hotel";
             }
             command = new SqlCommand(query);
             command.Connection = connection;
