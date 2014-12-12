@@ -791,20 +791,43 @@ AS
 	INSERT INTO GITAR_HEROES.Listado
 	VALUES (5, 'Cliente con mayor cantidad de puntos')
 
+
+	-- /////////////// LOGIN ///////////////
+
+	CREATE Table GITAR_HEROES.Login
+				(username char(15) PRIMARY KEY,
+				 cant_intentos smallint,
+				 FOREIGN KEY (username) REFERENCES GITAR_HEROES.Usuario)
+	
 	-- FIN crearTablas
 	END
 
-
 GO
 
+-- ///////////////////////////////////////////////////////////////
+-- /////////////////////// FUNCIONALIDADES ///////////////////////	
+-- ///////////////////////////////////////////////////////////////
 
+-- ////////////////////// LOGIN Y SEGURIDAD //////////////////////	
+/*
+CREATE Procedure GITAR_HEROES.errorLogin (@username char(15))	
+AS
+	BEGIN
+		DECLARE @cant_anterior smallint
+		SET @cant_anterior = (SELECT * FROM GITAR_HEROES.)
+		
+		
+	END
+	
+GO
 
+CREATE Procedure GITAR_HEROES.limpiarLogin (@username char(15))	
+AS
+	BEGIN
 	
+	END
 	
-	
-	
-	
-
+*/
 -- ////////////////////// ABM USUARIO //////////////////////
 
 CREATE Procedure GITAR_HEROES.generarUsuario 
@@ -978,7 +1001,7 @@ AS
 		SELECT codigo
 		INTO #ReservasPerdidas
 		FROM GITAR_HEROES.Reserva
-		WHERE codigo NOT IN (SELECT codigo_reserva FROM GITAR_HEROES.Estadia)
+		WHERE codigo_estado NOT IN (3, 4, 5, 6)		-- No fueron canceladas ni efectivizadas
 			  AND fecha_inicio > @fecha
 		
 		-- Se cambia el campo codigo_estado para las reservas perdidas
@@ -1695,6 +1718,7 @@ AS
 	BEGIN
 
 	-- BORRADO DE TABLAS		
+		DROP Table GITAR_HEROES.Login
 		DROP Table GITAR_HEROES.Listado
 		DROP Table GITAR_HEROES.ItemFacturaEstadia
 		DROP Table GITAR_HEROES.ItemFacturaConsumible
