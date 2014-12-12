@@ -174,6 +174,12 @@
     <Compile Include="Listado Funcionalidades\Funcionalidades.Designer.cs">
       <DependentUpon>Funcionalidades.cs</DependentUpon>
     </Compile>
+    <Compile Include="Login\SeleccionRol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login\SeleccionRol.Designer.cs">
+      <DependentUpon>SeleccionRol.cs</DependentUpon>
+    </Compile>
     <Compile Include="Login\HotelSelect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -202,42 +208,55 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ABM de Cliente\Cliente.resx">
       <DependentUpon>Cliente.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Cliente\ClienteBusqueda.resx">
       <DependentUpon>ClienteBusqueda.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Cliente\ClienteForm.resx">
       <DependentUpon>ClienteForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Habitacion\Habitacion.resx">
       <DependentUpon>Habitacion.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Habitacion\HabitacionForm.resx">
       <DependentUpon>HabitacionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Hotel\Hotel.resx">
       <DependentUpon>Hotel.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Hotel\HotelBusqueda.resx">
       <DependentUpon>HotelBusqueda.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Hotel\HotelForm.resx">
       <DependentUpon>HotelForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Rol\Rol.resx">
       <DependentUpon>Rol.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Rol\RolForm.resx">
       <DependentUpon>RolForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Usuario\Usuario.resx">
       <DependentUpon>Usuario.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ABM de Usuario\UsuarioForm.resx">
       <DependentUpon>UsuarioForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Cancelar Reserva\CancelarReserva.resx">
       <DependentUpon>CancelarReserva.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Facturar Estadia\FacturarEstadia.resx">
       <DependentUpon>FacturarEstadia.cs</DependentUpon>
@@ -245,18 +264,23 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Generar Modificar Reserva\Reserva.resx">
       <DependentUpon>Reserva.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Generar Modificar Reserva\ReservaBusqueda.resx">
       <DependentUpon>ReservaBusqueda.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Generar Modificar Reserva\ReservaCliente.resx">
       <DependentUpon>ReservaCliente.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Generar Modificar Reserva\ReservaClienteBusqueda.resx">
       <DependentUpon>ReservaClienteBusqueda.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Generar Modificar Reserva\ReservaClienteForm.resx">
       <DependentUpon>ReservaClienteForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Listado Estadistico\ListadoEstadistico.resx">
       <DependentUpon>ListadoEstadistico.cs</DependentUpon>
@@ -264,15 +288,23 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Listado Funcionalidades\Funcionalidades.resx">
       <DependentUpon>Funcionalidades.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Login\HotelSelect.resx">
       <DependentUpon>HotelSelect.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Login\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login\SeleccionRol.resx">
+      <DependentUpon>SeleccionRol.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Principal.resx">
       <DependentUpon>Principal.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -281,9 +313,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Registrar Consumible\Consumible.resx">
       <DependentUpon>Consumible.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Registrar Consumible\ConsumibleForm.resx">
       <DependentUpon>ConsumibleForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Registrar Estadia\RegistrarEstadia.resx">
       <DependentUpon>RegistrarEstadia.cs</DependentUpon>
