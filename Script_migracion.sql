@@ -196,6 +196,7 @@ AS
 			telefono bigint NULL,
 			estado smallint NOT NULL,
 			estado_sistema smallint NOT NULL,
+			cant_intentos smallint,
 			PRIMARY KEY (username),
 			FOREIGN KEY (tipo_doc) REFERENCES GITAR_HEROES.TipoDocumento)
 		
@@ -791,14 +792,6 @@ AS
 	INSERT INTO GITAR_HEROES.Listado
 	VALUES (5, 'Cliente con mayor cantidad de puntos')
 
-
-	-- /////////////// LOGIN ///////////////
-
-	CREATE Table GITAR_HEROES.Login
-				(username char(15) PRIMARY KEY,
-				 cant_intentos smallint,
-				 FOREIGN KEY (username) REFERENCES GITAR_HEROES.Usuario)
-	
 	-- FIN crearTablas
 	END
 
@@ -809,25 +802,35 @@ GO
 -- ///////////////////////////////////////////////////////////////
 
 -- ////////////////////// LOGIN Y SEGURIDAD //////////////////////	
-/*
+
 CREATE Procedure GITAR_HEROES.errorLogin (@username char(15))	
 AS
 	BEGIN
 		DECLARE @cant_anterior smallint
-		SET @cant_anterior = (SELECT * FROM GITAR_HEROES.)
+		SET @cant_anterior = (SELECT cant_intentos FROM GITAR_HEROES.Usuario)
 		
+		UPDATE GITAR_HEROES.Usuario
+		SET cant_intentos = @cant_anterior + 1
+		WHERE username = @username
 		
+		-- Se verifica si queda bloqueado, en tal caso actualiza el campo estado_sistema de la tabla
+		IF (@cant_anterior + 1 = 3)
+		BEGIN	
+			UPDATE GITAR_HEROES.Usuario
+			SET estado_sistema = 0		
+			WHERE username = @username
+		END
 	END
 	
 GO
-
+/*
 CREATE Procedure GITAR_HEROES.limpiarLogin (@username char(15))	
 AS
 	BEGIN
 	
 	END
-	
-*/
+*/	
+
 -- ////////////////////// ABM USUARIO //////////////////////
 
 CREATE Procedure GITAR_HEROES.generarUsuario 
@@ -862,7 +865,8 @@ AS
 						@mail,
 						@telefono,
 						1,			-- estado
-						1)			-- estado_sistema
+						1,			-- estado_sistema
+						0)			-- cant_intentos
 				
 				INSERT INTO GITAR_HEROES.RolUsuario
 				VALUES (@codigo_rol, @username)
@@ -905,7 +909,7 @@ AS
 					domicilio = @domicilio,
 					mail = @mail,
 					telefono = @telefono,
-				 	estado_sistema = @codigo_estado_sistema
+				 	estado = @codigo_estado_sistema
 					
 				WHERE username = @username
 				
@@ -1002,7 +1006,7 @@ AS
 		INTO #ReservasPerdidas
 		FROM GITAR_HEROES.Reserva
 		WHERE codigo_estado NOT IN (3, 4, 5, 6)		-- No fueron canceladas ni efectivizadas
-			  AND fecha_inicio > @fecha
+			  AND fecha_inicio < @fecha
 		
 		-- Se cambia el campo codigo_estado para las reservas perdidas
 		UPDATE GITAR_HEROES.Reserva
@@ -1718,7 +1722,6 @@ AS
 	BEGIN
 
 	-- BORRADO DE TABLAS		
-		DROP Table GITAR_HEROES.Login
 		DROP Table GITAR_HEROES.Listado
 		DROP Table GITAR_HEROES.ItemFacturaEstadia
 		DROP Table GITAR_HEROES.ItemFacturaConsumible
@@ -1749,6 +1752,7 @@ AS
 		DROP Table GITAR_HEROES.Hotel
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
+		DROP Procedure GITAR_HEROES.errorLogin
 		DROP Procedure GITAR_HEROES.obtenerMeses
 		DROP Procedure GITAR_HEROES.generarListado
 		DROP Procedure GITAR_HEROES.topCancelaciones
