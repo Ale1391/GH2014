@@ -279,6 +279,12 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Registrar Consumible\Consumible.resx">
+      <DependentUpon>Consumible.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Registrar Consumible\ConsumibleForm.resx">
+      <DependentUpon>ConsumibleForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Registrar Estadia\RegistrarEstadia.resx">
       <DependentUpon>RegistrarEstadia.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -296,11 +302,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Registrar Consumible\Form1.cs">
+    <Compile Include="Registrar Consumible\Consumible.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Registrar Consumible\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Registrar Consumible\Consumible.Designer.cs">
+      <DependentUpon>Consumible.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Registrar Consumible\ConsumibleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Registrar Consumible\ConsumibleForm.Designer.cs">
+      <DependentUpon>ConsumibleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Registrar Estadia\RegistrarEstadia.cs">
       <SubType>Form</SubType>
@@ -308,7 +320,8 @@
     <Compile Include="Registrar Estadia\RegistrarEstadia.Designer.cs">
       <DependentUpon>RegistrarEstadia.cs</DependentUpon>
     </Compile>
-    <Compile Include="Variables.cs" />
+    <Compile Include="Variables.cs">
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
