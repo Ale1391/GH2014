@@ -618,7 +618,7 @@ AS
 			(codigo_consumible int,
 			codigo_reserva int,
 			cantidad int,
-			leyenda varchar(32),
+			leyenda varchar(70),
 			PRIMARY KEY (codigo_consumible, codigo_reserva),
 			FOREIGN KEY (codigo_consumible) REFERENCES GITAR_HEROES.TipoConsumible,
 			FOREIGN KEY (codigo_reserva) REFERENCES GITAR_HEROES.Estadia)
@@ -967,6 +967,33 @@ RETURNS int
 AS
 	BEGIN
 	RETURN (SELECT TOP 1 codigo + 1 FROM GITAR_HEROES.Reserva ORDER BY codigo DESC)
+	END
+
+GO
+
+CREATE Procedure GITAR_HEROES.finalizarReservasPerdidas (@fecha smalldatetime)
+AS
+	BEGIN
+		-- Se crea una tabla temporal con el codigo de las reservas afectadas
+		SELECT codigo
+		INTO #ReservasPerdidas
+		FROM GITAR_HEROES.Reserva
+		WHERE codigo NOT IN (SELECT codigo_reserva FROM GITAR_HEROES.Estadia)
+			  AND fecha_inicio > @fecha
+		
+		-- Se cambia el campo codigo_estado para las reservas perdidas
+		UPDATE GITAR_HEROES.Reserva
+		SET codigo_estado = 6
+		WHERE codigo IN (SELECT codigo FROM #ReservasPerdidas)
+			  
+		-- Se insertan las reservas canceladas por No Show
+		INSERT INTO GITAR_HEROES.ReservaCancelada
+		SELECT codigo,
+			   @fecha,
+			   'Reserva cancelada por No Show',
+			   NULL
+		FROM #ReservasPerdidas
+		
 	END
 
 GO
@@ -1719,6 +1746,7 @@ AS
 		DROP Procedure GITAR_HEROES.modificarUsuario
 		DROP Procedure GITAR_HEROES.generarUsuario
 		DROP Procedure GITAR_HEROES.borrarTablas
+		DROP Procedure GITAR_HEROES.finalizarReservasPerdidas
 		
 		--DROP Table ##ListadoEstadistico
 
