@@ -1106,6 +1106,11 @@ AS
 					INSERT INTO GITAR_HEROES.Estadia
 					VALUES (@codigo_reserva, @fecha_inicio_reserva, @username, NULL, NULL)
 					
+					-- Se actualiza el estado de la reserva
+					UPDATE GITAR_HEROES.Reserva
+					SET codigo_estado = 6
+					WHERE codigo = @codigo_reserva
+					
 					SET @estado_registro = 1		-- Corresponde a Check in
 				END
 				ELSE
