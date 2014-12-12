@@ -15,6 +15,7 @@ using FrbaHotel.ABM_de_Hotel;
 using FrbaHotel.ABM_de_Habitacion;
 using FrbaHotel.Generar_Modificar_Reserva;
 using FrbaHotel.Facturar_Estadia;
+using FrbaHotel.Registrar_Consumible;
 
 namespace FrbaHotel.Listado_Funcionalidades
 {
@@ -132,7 +133,15 @@ namespace FrbaHotel.Listado_Funcionalidades
                 abm_reserva.StartPosition = FormStartPosition.CenterScreen;
                 abm_reserva.ShowDialog();
             }
-            
+            else if (codigo_funcionalidad == 11)
+            {
+                //REGISTRAR CONSUMIBLE
+                this.Hide();
+                Consumible registrarConsumible = new Consumible();
+                registrarConsumible.StartPosition = FormStartPosition.CenterScreen;
+                registrarConsumible.ShowDialog();
+
+            }
             else if (codigo_funcionalidad == 12)
             {
                 //FACTURAR ESTADIA
