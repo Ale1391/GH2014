@@ -34,7 +34,6 @@ namespace FrbaHotel.Registrar_Consumible
         {
             iniciarConexion();
 
-
             if (nro_reserva.Length > 0)
             {
                 textBoxNumeroReserva.Text = nro_reserva;
@@ -62,11 +61,84 @@ namespace FrbaHotel.Registrar_Consumible
         {
             if (nro_reserva.Length>0)
             {
-                //editarConsumible();
+                try
+                {
+                    editarConsumible();
+                    MessageBox.Show("Se edito exitosamente el consumible.");
+                }
+                catch (Exception exc)
+                {
+                    MessageBox.Show("Error: " + exc);
+                }
             }
             else
             {
-                //registrarConsumible();
+                try
+                {
+                    registrarConsumible();
+                }
+                catch (Exception exc)
+                {
+                    MessageBox.Show("Error: " + exc);
+                }
+            }
+        }
+
+        private void editarConsumible()
+        {
+            using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+            {
+                using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.modificarConsumible", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@descripcion_consumible", SqlDbType.VarChar).Value = comboBoxConsumible.Text;
+                    cmd.Parameters.Add("@codigo_reserva", SqlDbType.Int).Value = Convert.ToUInt32(textBoxNumeroReserva.Text);
+                    cmd.Parameters.Add("@cantidad", SqlDbType.Int).Value = Convert.ToUInt32(textBoxCantidad.Text);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void registrarConsumible()
+        {
+            if (comboBoxConsumible.Text == "Finalizacion carga consumibles")
+            {
+                using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+                {
+                    using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.finalizarCargaConsumibles", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add("@codigo_reserva", SqlDbType.Int).Value = Convert.ToUInt32(textBoxNumeroReserva.Text);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        MessageBox.Show("Se finalizo exitosamente el ingreso de consumibles.");
+                    }
+                }
+            }
+            else
+            {
+                using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+                {
+                    using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.cargarConsumible", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add("@descripcion_consumible", SqlDbType.VarChar).Value = comboBoxConsumible.Text;
+                        cmd.Parameters.Add("@codigo_reserva", SqlDbType.Int).Value = Convert.ToUInt32(textBoxNumeroReserva.Text);
+                        cmd.Parameters.Add("@cantidad", SqlDbType.Int).Value = Convert.ToUInt32(textBoxCantidad.Text);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        MessageBox.Show("Se ingreso exitosamente el consumible.");
+                    }
+                }
             }
         }
 
@@ -98,6 +170,19 @@ namespace FrbaHotel.Registrar_Consumible
             catch (Exception exc)
             {
                 MessageBox.Show("Error: " + exc);
+            }
+        }
+
+        private void comboBoxConsumible_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxConsumible.Text == "Finalizacion carga consumibles")
+            {
+                textBoxCantidad.Enabled = false;
+                textBoxCantidad.Text = "";
+            }
+            else
+            {
+                textBoxCantidad.Enabled = true;
             }
         }
     }

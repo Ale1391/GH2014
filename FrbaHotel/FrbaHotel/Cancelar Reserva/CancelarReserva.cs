@@ -85,14 +85,11 @@ namespace FrbaHotel.Cancelar_Reserva
                                 {
                                     query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 3 WHERE codigo = " + numero_reserva.Text;
                                 }
-                                else if (Variables.tipo_usuario == "Guest")
+                                else// if (Variables.tipo_usuario == "Guest")
                                 {
                                     query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 4 WHERE codigo = " + numero_reserva.Text;
                                 }
-                                else
-                                {
-                                    query = "UPDATE GITAR_HEROES.Reserva SET codigo_estado = 5 WHERE codigo = " + numero_reserva.Text;
-                                }
+                                
                                 command = new SqlCommand(query);
                                 command.Connection = connection;
                                 adapter = new SqlDataAdapter(command);

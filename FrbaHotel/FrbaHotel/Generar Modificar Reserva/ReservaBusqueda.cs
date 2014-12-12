@@ -100,6 +100,21 @@ namespace FrbaHotel.Generar_Modificar_Reserva
         {
             using (SqlConnection con = new SqlConnection(Variables.connectionStr))
             {
+                using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.finalizarReservasPerdidas", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    
+                    string currentDate = DateTime.Now.ToString("dd-MM-yyyy");
+                    DateTime dt = DateTime.Parse(currentDate);
+                    cmd.Parameters.Add("@fecha", System.Data.SqlDbType.DateTime).Value = dt;
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+            {
                 using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.verificar_disponibilidad", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
