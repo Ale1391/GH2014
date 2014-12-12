@@ -803,6 +803,7 @@ GO
 
 -- ////////////////////// LOGIN Y SEGURIDAD //////////////////////	
 
+-- Incrementa en uno la cantidad de intentos e inhabilita si alcanza el limite
 CREATE Procedure GITAR_HEROES.errorLogin (@username char(15))	
 AS
 	BEGIN
@@ -823,13 +824,17 @@ AS
 	END
 	
 GO
-/*
+
+-- Reinicia la cantidad de intentos
 CREATE Procedure GITAR_HEROES.limpiarLogin (@username char(15))	
 AS
 	BEGIN
-	
+		UPDATE GITAR_HEROES.Usuario
+		SET cant_intentos = 0
+		WHERE username = @username
 	END
-*/	
+
+GO
 
 -- ////////////////////// ABM USUARIO //////////////////////
 
@@ -1752,6 +1757,7 @@ AS
 		DROP Table GITAR_HEROES.Hotel
 		
 	-- BORRADO DE PROCEDIMIENTOS ALMACENADOS	
+		DROP Procedure GITAR_HEROES.limpiarLogin
 		DROP Procedure GITAR_HEROES.errorLogin
 		DROP Procedure GITAR_HEROES.obtenerMeses
 		DROP Procedure GITAR_HEROES.generarListado
