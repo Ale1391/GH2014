@@ -107,14 +107,16 @@ AS
 		SET nombre = 'Galvan'
 		WHERE codigo = 16
 		
-		UPDATE GITAR_HEROES.Hotel
-		SET nombre = 'Scalabrini Ortiz'
-		WHERE codigo = 17		
-		
-		UPDATE GITAR_HEROES.Hotel
-		SET nombre = 'La Rabida'
-		WHERE codigo = 18
-
+		IF EXISTS (SELECT 1 FROM GITAR_HEROES.Hotel WHERE codigo IN (17, 18)) 
+		BEGIN
+			UPDATE GITAR_HEROES.Hotel
+			SET nombre = 'Scalabrini Ortiz'
+			WHERE codigo = 17		
+			
+			UPDATE GITAR_HEROES.Hotel
+			SET nombre = 'La Rabida'
+			WHERE codigo = 18
+		END
 
 	-- //////////////////// TIPODOCUMENTO ////////////////////
 
@@ -615,7 +617,7 @@ AS
 		CREATE Table GITAR_HEROES.ConsumibleAdquirido
 			(codigo_consumible int,
 			codigo_reserva int,
-			cantidad int NOT NULL,
+			cantidad int,
 			leyenda varchar(32),
 			PRIMARY KEY (codigo_consumible, codigo_reserva),
 			FOREIGN KEY (codigo_consumible) REFERENCES GITAR_HEROES.TipoConsumible,
