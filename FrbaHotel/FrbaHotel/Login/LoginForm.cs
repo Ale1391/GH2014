@@ -65,7 +65,7 @@ namespace FrbaHotel.Login
                         Variables.usuario = usuario;
                     }
 
-                    command = new SqlCommand("select domicilio_calle,codigo from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.UsuarioHotel.username = '"+usuario+"'");
+                    command = new SqlCommand("select nombre,codigo from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.UsuarioHotel.username = '"+usuario+"'");
                     adapter = new SqlDataAdapter(command);
                     dataTable = new DataTable();
                     command.Connection = connection;
@@ -77,7 +77,7 @@ namespace FrbaHotel.Login
                         foreach (DataRow row in dataTable.Rows)
                         {
                             lista_codigos.Add(Convert.ToInt32(row["codigo"]));
-                            lista_hoteles.Add(row["domicilio_calle"].ToString());
+                            lista_hoteles.Add(row["nombre"].ToString());
                         }
                         this.Hide();
                         HotelSelect hoteles = new HotelSelect();

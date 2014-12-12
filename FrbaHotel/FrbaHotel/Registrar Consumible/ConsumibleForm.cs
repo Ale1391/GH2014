@@ -76,7 +76,6 @@ namespace FrbaHotel.Registrar_Consumible
                 try
                 {
                     registrarConsumible();
-                    MessageBox.Show("Se ingreso exitosamente el consumible.");
                 }
                 catch (Exception exc)
                 {
@@ -117,6 +116,8 @@ namespace FrbaHotel.Registrar_Consumible
 
                         con.Open();
                         cmd.ExecuteNonQuery();
+
+                        MessageBox.Show("Se finalizo exitosamente el ingreso de consumibles.");
                     }
                 }
             }
@@ -134,6 +135,8 @@ namespace FrbaHotel.Registrar_Consumible
 
                         con.Open();
                         cmd.ExecuteNonQuery();
+
+                        MessageBox.Show("Se ingreso exitosamente el consumible.");
                     }
                 }
             }

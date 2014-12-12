@@ -134,9 +134,9 @@ namespace FrbaHotel.Generar_Modificar_Reserva
 
             foreach (DataRow row in dataTable.Rows)
             {
-                comboBoxHotel.Items.Add(row["domicilio_calle"].ToString());
+                comboBoxHotel.Items.Add(row["nombre"].ToString());
                 lista_codigos_hoteles.Add(Convert.ToInt32(row["codigo"]));
-                lista_nombres_hoteles.Add(row["domicilio_calle"].ToString());
+                lista_nombres_hoteles.Add(row["nombre"].ToString());
             }
         }
 

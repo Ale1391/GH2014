@@ -118,7 +118,7 @@ namespace FrbaHotel.ABM_de_Usuario
             {
                 connection.ConnectionString = Variables.connectionStr;
                 connection.Open();
-                string query = "select domicilio_calle,codigo from GITAR_HEROES.Hotel";
+                string query = "select nombre,codigo from GITAR_HEROES.Hotel";
                 command = new SqlCommand(query);
                 command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
@@ -127,9 +127,9 @@ namespace FrbaHotel.ABM_de_Usuario
 
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    hotelesChecklist.Items.Add(row["domicilio_calle"].ToString(), false);
+                    hotelesChecklist.Items.Add(row["nombre"].ToString(), false);
                     lista_codigos_hoteles.Add(Convert.ToInt32(row["codigo"]));
-                    lista_nombres_hoteles.Add(row["domicilio_calle"].ToString());
+                    lista_nombres_hoteles.Add(row["nombre"].ToString());
                 }
             }
             catch (Exception exc)
@@ -140,7 +140,7 @@ namespace FrbaHotel.ABM_de_Usuario
 
         private void tildarCheckedlistEdicion()
         {
-            string query = "select domicilio_calle from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.UsuarioHotel.username = '" + nombre_usuario + "'";
+            string query = "select nombre from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.UsuarioHotel.username = '" + nombre_usuario + "'";
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
@@ -152,7 +152,7 @@ namespace FrbaHotel.ABM_de_Usuario
                 for (int i = 0;i<hotelesChecklist.Items.Count;i++)
                 {
                     object hotel = hotelesChecklist.Items[i];
-                    if (hotel.ToString() == row["domicilio_calle"].ToString())
+                    if (hotel.ToString() == row["nombre"].ToString())
                     {
                         hotelesChecklist.SetItemChecked(i, true);
                     }
