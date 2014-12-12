@@ -808,7 +808,7 @@ CREATE Procedure GITAR_HEROES.errorLogin (@username char(15))
 AS
 	BEGIN
 		DECLARE @cant_anterior smallint
-		SET @cant_anterior = (SELECT cant_intentos FROM GITAR_HEROES.Usuario)
+		SET @cant_anterior = (SELECT cant_intentos FROM GITAR_HEROES.Usuario WHERE username = @username)
 		
 		UPDATE GITAR_HEROES.Usuario
 		SET cant_intentos = @cant_anterior + 1
