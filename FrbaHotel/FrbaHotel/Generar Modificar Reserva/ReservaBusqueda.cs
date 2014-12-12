@@ -103,7 +103,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.finalizarReservasPerdidas", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
+                    //
                     string currentDate = DateTime.Now.ToString("dd-MM-yyyy");
                     DateTime dt = DateTime.Parse(currentDate);
                     cmd.Parameters.Add("@fecha", System.Data.SqlDbType.DateTime).Value = dt;
