@@ -51,6 +51,7 @@
             this.numero_reserva.Name = "numero_reserva";
             this.numero_reserva.Size = new System.Drawing.Size(231, 20);
             this.numero_reserva.TabIndex = 1;
+            this.numero_reserva.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // label2
             // 
@@ -103,6 +104,7 @@
             this.Controls.Add(this.label1);
             this.Name = "CancelarReserva";
             this.Text = "Cancelar Reserva";
+            this.Load += new System.EventHandler(this.CancelarReserva_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

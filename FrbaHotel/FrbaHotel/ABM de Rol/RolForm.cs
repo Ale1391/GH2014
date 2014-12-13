@@ -123,33 +123,50 @@ namespace FrbaHotel.ABM_de_Rol
             pantalla_rol.Show();
         }
 
+        private int validarCampos()
+        {
+            if (textBoxRol.Text.Length == 0)
+            {
+                MessageBox.Show("Error, campos que faltan completar: "
+                    + (textBoxRol.Text.Length == 0 ? " Rol" : "")
+
+                );
+                return 1;
+            }
+            return 0;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            if (nombre_rol.Length > 0)
+            int resultado = validarCampos();
+            if (resultado == 0)
             {
-                try
+                if (nombre_rol.Length > 0)
                 {
-                    realizarUpdateRol();
-                    eliminarFuncionalidades();
-                    agregarFuncionalidades();
-                    MessageBox.Show("Rol editado exitosamente.");
+                    try
+                    {
+                        realizarUpdateRol();
+                        eliminarFuncionalidades();
+                        agregarFuncionalidades();
+                        MessageBox.Show("Rol editado exitosamente.");
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("No se pudo realizar la edicion del rol. Error: " + exc);
+                    }
                 }
-                catch (Exception exc)
+                else
                 {
-                    MessageBox.Show("No se pudo realizar la edicion del rol. Error: " + exc);
-                }
-            }
-            else
-            {
-                try
-                {
-                    insertarRol();
-                    agregarFuncionalidades();
-                    MessageBox.Show("Rol creado exitosamente.");
-                }
-                catch (Exception exc)
-                {
-                    MessageBox.Show("No se pudo crear el nuevo rol. Error: " + exc);
+                    try
+                    {
+                        insertarRol();
+                        agregarFuncionalidades();
+                        MessageBox.Show("Rol creado exitosamente.");
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("No se pudo crear el nuevo rol. Error: " + exc);
+                    }
                 }
             }
         }

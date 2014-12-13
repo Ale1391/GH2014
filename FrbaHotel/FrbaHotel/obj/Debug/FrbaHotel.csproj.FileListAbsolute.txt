@@ -1,20 +1,41 @@
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP Hotel Frba 1.0 - 2C 2014\Aplicacion Desktop\FrbaHotel\FrbaHotel\bin\Debug\FrbaHotel.exe
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP Hotel Frba 1.0 - 2C 2014\Aplicacion Desktop\FrbaHotel\FrbaHotel\bin\Debug\FrbaHotel.pdb
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP Hotel Frba 1.0 - 2C 2014\Aplicacion Desktop\FrbaHotel\FrbaHotel\obj\Debug\ResolveAssemblyReference.cache
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP Hotel Frba 1.0 - 2C 2014\Aplicacion Desktop\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Properties.Resources.resources
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP Hotel Frba 1.0 - 2C 2014\Aplicacion Desktop\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.csproj.GenerateResource.Cache
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP Hotel Frba 1.0 - 2C 2014\Aplicacion Desktop\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.exe
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP Hotel Frba 1.0 - 2C 2014\Aplicacion Desktop\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.pdb
-<<<<<<< HEAD
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.exe
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.pdb
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GD\FrbaHotel\FrbaHotel\bin\Debug\FrbaHotel.exe
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GD\FrbaHotel\FrbaHotel\bin\Debug\FrbaHotel.pdb
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GD\FrbaHotel\FrbaHotel\obj\Debug\ResolveAssemblyReference.cache
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Principal.resources
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Properties.Resources.resources
-C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.csproj.GenerateResource.Cache
-=======
-C:\Users\Papa Frita\git\GH2014\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.exe
-C:\Users\Papa Frita\git\GH2014\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.pdb
->>>>>>> origin/master
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\bin\Debug\app.config
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\bin\Debug\FrbaHotel.exe.config
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\bin\Debug\FrbaHotel.exe
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\bin\Debug\FrbaHotel.pdb
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Cliente.Cliente.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Cliente.ClienteBusqueda.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Cliente.ClienteForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Habitacion.Habitacion.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Habitacion.HabitacionForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Hotel.Hotel.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Hotel.HotelBusqueda.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Hotel.HotelForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Rol.Rol.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Rol.RolForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Usuario.Usuario.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.ABM_de_Usuario.UsuarioForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Cancelar_Reserva.CancelarReserva.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Facturar_Estadia.FacturarEstadia.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.Reserva.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.ReservaBusqueda.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.ReservaCliente.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.ReservaClienteBusqueda.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.ReservaClienteForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Listado_Estadistico.ListadoEstadistico.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Listado_Funcionalidades.Funcionalidades.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Login.HotelSelect.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Login.LoginForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Login.SeleccionRol.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Principal.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Properties.Resources.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Registrar_Consumible.Consumible.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Registrar_Consumible.ConsumibleForm.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Registrar_Estadia.RegistrarEstadia.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.csproj.GenerateResource.Cache
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.exe
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.pdb
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.EditarHabitaciones.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.EditarReserva.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.EditarReservaCampos.resources
+C:\Documents and Settings\UsuarioAdmin\Escritorio\TP_GDD\FrbaHotel\FrbaHotel\obj\Debug\FrbaHotel.Generar_Modificar_Reserva.EditarHabitacionForm.resources

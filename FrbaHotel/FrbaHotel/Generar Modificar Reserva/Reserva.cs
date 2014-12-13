@@ -52,6 +52,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             }
             else if (comboBoxReserva.Text == "Generar Reserva")
             {
+                //CREAR RESERVA
                 this.Hide();
                 ReservaBusqueda busqueda_reserva = new ReservaBusqueda();
                 if (Variables.tipo_usuario == "Guest")
@@ -62,11 +63,13 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 {
                     busqueda_reserva.hotel_id = Variables.hotel_id.ToString();
                 }
+                busqueda_reserva.codigo_reserva = "";
                 busqueda_reserva.StartPosition = FormStartPosition.CenterScreen;
                 busqueda_reserva.ShowDialog();
             }
             else
             {
+                //EDITAR RESERVA
                 try
                 {
                     string query = "select * from GITAR_HEROES.Reserva where codigo = " + textBoxCodigoReserva.Text;
@@ -78,11 +81,12 @@ namespace FrbaHotel.Generar_Modificar_Reserva
 
                     if (dataTable.Rows.Count > 0)
                     {
-                        /*this.Hide();
-                        HabitacionForm abm_habitacion = new HabitacionForm();
-                        abm_habitacion.numero_habitacion = textBoxCodigoReserva.Text;
-                        abm_habitacion.StartPosition = FormStartPosition.CenterScreen;
-                        abm_habitacion.ShowDialog();*/
+                        this.Hide();
+                        EditarReserva editar_reserva = new EditarReserva();
+                        editar_reserva.codigo_reserva = textBoxCodigoReserva.Text;
+                        editar_reserva.hotel_id = dataTable.Rows[0]["codigo_hotel"].ToString();
+                        editar_reserva.StartPosition = FormStartPosition.CenterScreen;
+                        editar_reserva.ShowDialog();
                     }
                     else
                     {

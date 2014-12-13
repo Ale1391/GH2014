@@ -73,11 +73,14 @@ namespace FrbaHotel.ABM_de_Cliente
 
         private void dataGridViewClientes_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            this.Hide();
-            ClienteForm cliente_form = new ClienteForm();
-            cliente_form.mail = lista_mails[e.RowIndex].ToString();
-            cliente_form.StartPosition = FormStartPosition.CenterScreen;
-            cliente_form.ShowDialog();
+            if (e.ColumnIndex == 15)
+            {
+                this.Hide();
+                ClienteForm cliente_form = new ClienteForm();
+                cliente_form.mail = lista_mails[e.RowIndex].ToString();
+                cliente_form.StartPosition = FormStartPosition.CenterScreen;
+                cliente_form.ShowDialog();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -87,27 +90,27 @@ namespace FrbaHotel.ABM_de_Cliente
             string query = "";
             if (textBoxApellido.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where apellido = '" + textBoxApellido.Text + "'" + (textBoxNombre.Text.Length > 0 ? " and nombre = '" + textBoxNombre.Text + "'" : "") + (textBoxNumeroDocumento.Text.Length > 0 ? " and nro_doc = " + textBoxNumeroDocumento.Text : "") + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
+                query = "select c.*,'Doble click' as Seleccionar from GITAR_HEROES.Cliente c where apellido = '" + textBoxApellido.Text + "'" + (textBoxNombre.Text.Length > 0 ? " and nombre = '" + textBoxNombre.Text + "'" : "") + (textBoxNumeroDocumento.Text.Length > 0 ? " and nro_doc = " + textBoxNumeroDocumento.Text : "") + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
             }
             else if (textBoxNombre.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where nombre = '" + textBoxNombre.Text + "'" + (textBoxNumeroDocumento.Text.Length > 0 ? " and nro_doc = " + textBoxNumeroDocumento.Text : "") + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
+                query = "select c.*,'Doble click' as Seleccionar from GITAR_HEROES.Cliente c where nombre = '" + textBoxNombre.Text + "'" + (textBoxNumeroDocumento.Text.Length > 0 ? " and nro_doc = " + textBoxNumeroDocumento.Text : "") + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
             }
             else if (textBoxNumeroDocumento.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where nro_doc = " + textBoxNumeroDocumento.Text + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
+                query = "select c.*,'Doble click' as Seleccionar from GITAR_HEROES.Cliente c where nro_doc = " + textBoxNumeroDocumento.Text + (comboBoxTipoDocumento.Text.Length > 0 ? " and tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] : "") + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
             }
             else if (comboBoxTipoDocumento.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
+                query = "select c.*,'Doble click' as Seleccionar from GITAR_HEROES.Cliente c where tipo_doc = " + lista_codigos_dni[comboBoxTipoDocumento.SelectedIndex] + (textBoxEmail.Text.Length > 0 ? " and mail = '" + textBoxEmail.Text + "'" : "");
             }
             else if (textBoxEmail.Text.Length > 0)
             {
-                query = "select * from GITAR_HEROES.Cliente where mail = '" + textBoxEmail.Text + "'";
+                query = "select c.*,'Doble click' as Seleccionar from GITAR_HEROES.Cliente c where mail = '" + textBoxEmail.Text + "'";
             }
             else
-            {          
-                query = "select * from GITAR_HEROES.Cliente";
+            {
+                query = "select c.*,'Doble click' as Seleccionar from GITAR_HEROES.Cliente c";
             }
             command = new SqlCommand(query);
             command.Connection = connection;

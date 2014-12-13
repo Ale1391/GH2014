@@ -66,6 +66,7 @@ namespace FrbaHotel.Listado_Estadistico
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         // Se pasa el hotel logueado y la reserva como primeros parametros
+                        cmd.Parameters.Add("@fecha_actual", SqlDbType.Date).Value = Convert.ToDateTime(Variables.fecha_sistema);
                         cmd.Parameters.Add("@anio", SqlDbType.Int).Value = Convert.ToInt32(textBoxAnio.Text);
                         cmd.Parameters.Add("@trimestre", SqlDbType.SmallInt).Value = Convert.ToInt32(textBoxTrimestre.Text);
                         cmd.Parameters.Add("@codigo_listado", SqlDbType.SmallInt).Value = codigo_listado;

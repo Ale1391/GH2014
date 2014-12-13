@@ -37,12 +37,12 @@ namespace FrbaHotel.Login
             {
                 hashstring += string.Format("{0:x2}", x);
             }
-            connection = new System.Data.SqlClient.SqlConnection();
             try
             {
+                connection = new System.Data.SqlClient.SqlConnection();
                 connection.ConnectionString = Variables.connectionStr;
                 connection.Open();
-                string query = "select username from GITAR_HEROES.Usuario where username = '" + usuario + "' and password = '" + hashstring + "'";
+                string query = "select username,estado_sistema,estado from GITAR_HEROES.Usuario where username = '" + usuario + "' and password = '" + hashstring + "'";
                 command = new SqlCommand(query);
                 command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
@@ -53,60 +53,107 @@ namespace FrbaHotel.Login
                 {
                     //LOGIN SUCCESS
 
-                    command = new SqlCommand("select GITAR_HEROES.Rol.descripcion from GITAR_HEROES.RolUsuario inner join GITAR_HEROES.Rol on GITAR_HEROES.Rol.codigo = GITAR_HEROES.RolUsuario.codigo_rol where username = '"+usuario+"'");
-                    adapter = new SqlDataAdapter(command);
-                    dataTable = new DataTable();
-                    command.Connection = connection;
-                    adapter.Fill(dataTable);
-                    foreach (DataRow row in dataTable.Rows)
+                    if (dataTable.Rows[0]["estado"].ToString() == "0")
                     {
-                        string descrip_rol = row["descripcion"].ToString();
-                        Variables.tipo_usuario = descrip_rol;
-                        Variables.usuario = usuario;
+                        MessageBox.Show("El usuario se encuentra bloqueado por el sistema.");
                     }
-
-                    command = new SqlCommand("select nombre,codigo from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.UsuarioHotel.username = '"+usuario+"'");
-                    adapter = new SqlDataAdapter(command);
-                    dataTable = new DataTable();
-                    command.Connection = connection;
-                    adapter.Fill(dataTable);
-                    if (dataTable.Rows.Count > 1)
+                    else
                     {
-                        List<string> lista_hoteles = new List<string>();
-                        List<int> lista_codigos = new List<int>();
-                        foreach (DataRow row in dataTable.Rows)
+
+                        if (dataTable.Rows[0]["estado_sistema"].ToString() == "0")
                         {
-                            lista_codigos.Add(Convert.ToInt32(row["codigo"]));
-                            lista_hoteles.Add(row["nombre"].ToString());
+                            MessageBox.Show("El usuario se encuentra bloqueado por superar la cantidad de intentos fallidos. Contactese con su administrador.");
                         }
-                        this.Hide();
-                        HotelSelect hoteles = new HotelSelect();
-                        hoteles.lista_codigos_hoteles = lista_codigos;
-                        hoteles.lista_nombres_hoteles = lista_hoteles;
-                        hoteles.StartPosition = FormStartPosition.CenterScreen;
-                        hoteles.ShowDialog();
-                    }
-                    else if (dataTable.Rows.Count == 1)
-                    {
-                        Variables.hotel_id = Convert.ToInt32(dataTable.Rows[0]["codigo"].ToString());
-                        this.Hide();
-                        Funcionalidades func = new Funcionalidades();
-                        func.StartPosition = FormStartPosition.CenterScreen;
-                        func.ShowDialog();
-                    }
+                        else
+                        {
+                            inicializarContadorFallidos();
 
-                    //
-                    
+                            command = new SqlCommand("select GITAR_HEROES.Rol.descripcion from GITAR_HEROES.RolUsuario inner join GITAR_HEROES.Rol on GITAR_HEROES.Rol.codigo = GITAR_HEROES.RolUsuario.codigo_rol where username = '" + usuario + "'");
+                            adapter = new SqlDataAdapter(command);
+                            dataTable = new DataTable();
+                            command.Connection = connection;
+                            adapter.Fill(dataTable);
+                            foreach (DataRow row in dataTable.Rows)
+                            {
+                                string descrip_rol = row["descripcion"].ToString();
+                                Variables.tipo_usuario = descrip_rol;
+                                Variables.usuario = usuario;
+                            }
+
+                            command = new SqlCommand("select nombre,codigo from GITAR_HEROES.Hotel inner join GITAR_HEROES.UsuarioHotel on GITAR_HEROES.UsuarioHotel.codigo_hotel = GITAR_HEROES.Hotel.codigo where GITAR_HEROES.Hotel.estado = 1 and GITAR_HEROES.UsuarioHotel.username = '" + usuario + "'");
+                            adapter = new SqlDataAdapter(command);
+                            dataTable = new DataTable();
+                            command.Connection = connection;
+                            adapter.Fill(dataTable);
+                            if (dataTable.Rows.Count > 1)
+                            {
+                                List<string> lista_hoteles = new List<string>();
+                                List<int> lista_codigos = new List<int>();
+                                foreach (DataRow row in dataTable.Rows)
+                                {
+                                    lista_codigos.Add(Convert.ToInt32(row["codigo"]));
+                                    lista_hoteles.Add(row["nombre"].ToString());
+                                }
+                                this.Hide();
+                                HotelSelect hoteles = new HotelSelect();
+                                hoteles.lista_codigos_hoteles = lista_codigos;
+                                hoteles.lista_nombres_hoteles = lista_hoteles;
+                                hoteles.StartPosition = FormStartPosition.CenterScreen;
+                                hoteles.ShowDialog();
+                            }
+                            else if (dataTable.Rows.Count == 1)
+                            {
+                                Variables.hotel_id = Convert.ToInt32(dataTable.Rows[0]["codigo"].ToString());
+                                this.Hide();
+                                Funcionalidades func = new Funcionalidades();
+                                func.StartPosition = FormStartPosition.CenterScreen;
+                                func.ShowDialog();
+                            }
+                        }
+                    }
                 }
                 else 
                 {
                     //LOGIN FAILURE
+                    incrementarContadorFallidos();
                     MessageBox.Show("Usuario y/oContraseña incorrecta");
                 }
             }
             catch (Exception exc)
             {
                 MessageBox.Show("Error: " + exc);
+            }
+        }
+
+        private void incrementarContadorFallidos()
+        {
+            using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+            {
+                using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.errorLogin", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@username", SqlDbType.VarChar).Value = usuarioTextbox.Text;
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void inicializarContadorFallidos()
+        {
+            using (SqlConnection con = new SqlConnection(Variables.connectionStr))
+            {
+                using (SqlCommand cmd = new SqlCommand("GITAR_HEROES.limpiarLogin", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@username", SqlDbType.VarChar).Value = usuarioTextbox.Text;
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 

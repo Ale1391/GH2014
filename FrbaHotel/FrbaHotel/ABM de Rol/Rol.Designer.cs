@@ -47,6 +47,7 @@
             // 
             // comboBoxFuncionalidad
             // 
+            this.comboBoxFuncionalidad.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxFuncionalidad.FormattingEnabled = true;
             this.comboBoxFuncionalidad.Location = new System.Drawing.Point(46, 66);
             this.comboBoxFuncionalidad.Name = "comboBoxFuncionalidad";
@@ -86,6 +87,7 @@
             // 
             // comboBoxRoles
             // 
+            this.comboBoxRoles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxRoles.FormattingEnabled = true;
             this.comboBoxRoles.Location = new System.Drawing.Point(46, 137);
             this.comboBoxRoles.Name = "comboBoxRoles";

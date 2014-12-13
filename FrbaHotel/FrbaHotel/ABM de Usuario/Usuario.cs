@@ -42,6 +42,7 @@ namespace FrbaHotel.ABM_de_Usuario
             else if (comboBoxFuncionalidad.Text == "Crear Usuario Nuevo")
             {
                 textBoxUsuario.Enabled = false;
+                textBoxUsuario.Text = "";
             }
         }
 
@@ -78,7 +79,8 @@ namespace FrbaHotel.ABM_de_Usuario
                     dataTable = new DataTable();
                     adapter.Fill(dataTable);
 
-                    if (dataTable.Rows.Count > 0)
+                    // validar usuario valido
+                    if (dataTable.Rows.Count > 0 && textBoxUsuario.Text != "guest" && textBoxUsuario.Text != "Guest")
                     {
                         this.Hide();
                         UsuarioForm abm_usuario = new UsuarioForm();
@@ -98,6 +100,11 @@ namespace FrbaHotel.ABM_de_Usuario
 
                 
             }
+        }
+
+        private void Usuario_Load(object sender, EventArgs e)
+        {
+            textBoxUsuario.Enabled = false;
         }
     }
 }

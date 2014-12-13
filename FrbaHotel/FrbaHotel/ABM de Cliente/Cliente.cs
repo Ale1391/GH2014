@@ -15,6 +15,7 @@ namespace FrbaHotel.ABM_de_Cliente
 
         public Cliente()
         {
+            //
             InitializeComponent();
             comboBoxCliente.Items.Add("Editar Cliente Existente");
             comboBoxCliente.Items.Add("Crear Cliente Nuevo");

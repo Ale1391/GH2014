@@ -55,6 +55,7 @@
             // 
             // comboBoxHabitacion
             // 
+            this.comboBoxHabitacion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxHabitacion.FormattingEnabled = true;
             this.comboBoxHabitacion.Location = new System.Drawing.Point(46, 66);
             this.comboBoxHabitacion.Name = "comboBoxHabitacion";
@@ -92,7 +93,7 @@
             this.linkLabel1.Text = "Volver";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // Usuario
+            // Habitacion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -103,7 +104,7 @@
             this.Controls.Add(this.comboBoxHabitacion);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxNumeroHabitacion);
-            this.Name = "Usuario";
+            this.Name = "Habitacion";
             this.Text = "ABM Habitación";
             this.Load += new System.EventHandler(this.Usuario_Load);
             this.ResumeLayout(false);

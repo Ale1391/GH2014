@@ -139,6 +139,30 @@
     <Compile Include="Facturar Estadia\FacturarEstadia.Designer.cs">
       <DependentUpon>FacturarEstadia.cs</DependentUpon>
     </Compile>
+    <Compile Include="Generar Modificar Reserva\EditarHabitaciones.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\EditarHabitaciones.Designer.cs">
+      <DependentUpon>EditarHabitaciones.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\EditarHabitacionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\EditarHabitacionForm.Designer.cs">
+      <DependentUpon>EditarHabitacionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\EditarReserva.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\EditarReserva.Designer.cs">
+      <DependentUpon>EditarReserva.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\EditarReservaCampos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generar Modificar Reserva\EditarReservaCampos.Designer.cs">
+      <DependentUpon>EditarReservaCampos.cs</DependentUpon>
+    </Compile>
     <Compile Include="Generar Modificar Reserva\Reserva.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -262,6 +286,18 @@
     <EmbeddedResource Include="Facturar Estadia\FacturarEstadia.resx">
       <DependentUpon>FacturarEstadia.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generar Modificar Reserva\EditarHabitaciones.resx">
+      <DependentUpon>EditarHabitaciones.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generar Modificar Reserva\EditarHabitacionForm.resx">
+      <DependentUpon>EditarHabitacionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generar Modificar Reserva\EditarReserva.resx">
+      <DependentUpon>EditarReserva.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generar Modificar Reserva\EditarReservaCampos.resx">
+      <DependentUpon>EditarReservaCampos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Generar Modificar Reserva\Reserva.resx">
       <DependentUpon>Reserva.cs</DependentUpon>

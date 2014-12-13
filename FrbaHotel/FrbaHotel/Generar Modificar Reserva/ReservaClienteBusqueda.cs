@@ -20,12 +20,12 @@ namespace FrbaHotel.Generar_Modificar_Reserva
         private SqlDataAdapter adapter;
         private DataTable dataTable;
 
+        public string nro_habitacion;
         public string fecha_inicio;
         public string fecha_fin;
         public string codigo_hotel;
         public string codigo_regimen;
         public string codigo_tipo_habitacion;
-        public string costo_habitacion;
 
         public ReservaClienteBusqueda()
         {
@@ -79,6 +79,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             reserva_cliente.codigo_hotel = codigo_hotel;
             reserva_cliente.codigo_tipo_habitacion = codigo_tipo_habitacion;
             reserva_cliente.codigo_regimen = codigo_regimen;
+            reserva_cliente.nro_habitacion = nro_habitacion;
             reserva_cliente.StartPosition = FormStartPosition.CenterScreen;
             reserva_cliente.Show();
         }
@@ -126,7 +127,6 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 try
                 {
                     generarReserva(e.RowIndex);
-                    MessageBox.Show("Cliente y reserva generada exitosamente.");
                 }
                 catch (Exception exc)
                 {
@@ -161,7 +161,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 id_codigo = dataTable.Rows[0]["id"].ToString();
             }
 
-            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo, fecha_reserva, fecha_inicio,fecha_fin,codigo_hotel,codigo_regimen,tipo_doc_cliente,nro_doc_cliente,costo_base,codigo_estado) VALUES ("+id_codigo+",GETDATE(),'" + fecha_inicio + " 00:00:00','" + fecha_fin + " 00:00:00'," + codigo_hotel + "," + codigo_regimen + "," + tipo_documento + "," + numero_documento + ",GITAR_HEROES.precioHabitacion(" + codigo_regimen + "," + codigo_hotel + "," + codigo_tipo_habitacion + ")*" + cant_dias.ToString() + ",1)";
+            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo, fecha_reserva, fecha_inicio,fecha_fin,codigo_hotel,codigo_regimen,tipo_doc_cliente,nro_doc_cliente,costo_base,codigo_estado) VALUES ("+id_codigo+",'"+Variables.fecha_sistema+" 00:00:00','" + fecha_inicio + " 00:00:00','" + fecha_fin + " 00:00:00'," + codigo_hotel + "," + codigo_regimen + "," + tipo_documento + "," + numero_documento + ",GITAR_HEROES.precioHabitacion(" + codigo_regimen + "," + codigo_hotel + "," + codigo_tipo_habitacion + ")*" + cant_dias.ToString() + ",1)";
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
@@ -181,6 +181,22 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 adapter = new SqlDataAdapter(command);
                 dataTable = new DataTable();
                 adapter.Fill(dataTable);
+
+                if (!dataTable.HasErrors)
+                {
+                    string query3;
+                    query3 = "insert into GITAR_HEROES.ReservaHabitacion (codigo_reserva,codigo_hotel,numero_habitacion) values (" + id_codigo + "," + codigo_hotel + "," + nro_habitacion + ")";
+                    command = new SqlCommand(query3);
+                    command.Connection = connection;
+                    adapter = new SqlDataAdapter(command);
+                    dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    if (!dataTable.HasErrors)
+                    {
+                        MessageBox.Show("Cliente y reserva generada exitosamente. Su código de reserva es " + id_codigo);
+                    }
+                }
             }
         }
     }

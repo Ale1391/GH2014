@@ -79,6 +79,7 @@
             // 
             // comboBoxReserva
             // 
+            this.comboBoxReserva.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxReserva.FormattingEnabled = true;
             this.comboBoxReserva.Location = new System.Drawing.Point(46, 70);
             this.comboBoxReserva.Name = "comboBoxReserva";
@@ -95,6 +96,7 @@
             // 
             // comboBoxHotel
             // 
+            this.comboBoxHotel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxHotel.FormattingEnabled = true;
             this.comboBoxHotel.Location = new System.Drawing.Point(46, 194);
             this.comboBoxHotel.Name = "comboBoxHotel";

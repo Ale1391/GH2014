@@ -77,6 +77,7 @@
             this.textBoxEstrellas.Name = "textBoxEstrellas";
             this.textBoxEstrellas.Size = new System.Drawing.Size(68, 20);
             this.textBoxEstrellas.TabIndex = 1;
+            this.textBoxEstrellas.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // textBoxTelefono
             // 
@@ -84,6 +85,7 @@
             this.textBoxTelefono.Name = "textBoxTelefono";
             this.textBoxTelefono.Size = new System.Drawing.Size(132, 20);
             this.textBoxTelefono.TabIndex = 1;
+            this.textBoxTelefono.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // textBoxMail
             // 

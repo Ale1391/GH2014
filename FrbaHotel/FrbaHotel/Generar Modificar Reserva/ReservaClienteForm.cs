@@ -20,12 +20,12 @@ namespace FrbaHotel.Generar_Modificar_Reserva
         private SqlDataAdapter adapter;
         private DataTable dataTable;
 
+        public string nro_habitacion;
         public string fecha_inicio;
         public string fecha_fin;
         public string codigo_hotel;
         public string codigo_regimen;
         public string codigo_tipo_habitacion;
-        public string costo_habitacion;
 
         public ReservaClienteForm()
         {
@@ -36,6 +36,21 @@ namespace FrbaHotel.Generar_Modificar_Reserva
         {
             iniciarConexion();
             llenarComboBoxTipoDocumento();
+        }
+
+        private void textBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+        (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+
+            // only allow one decimal point
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+            {
+                e.Handled = true;
+            }
         }
 
         private void iniciarConexion()
@@ -78,21 +93,49 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             reserva_cliente.codigo_hotel = codigo_hotel;
             reserva_cliente.codigo_tipo_habitacion = codigo_tipo_habitacion;
             reserva_cliente.codigo_regimen = codigo_regimen;
+            reserva_cliente.nro_habitacion = nro_habitacion;
             reserva_cliente.StartPosition = FormStartPosition.CenterScreen;
             reserva_cliente.Show();
         }
 
+        private int validarCampos()
+        {
+            if (textBoxApellido.Text.Length == 0 || textBoxNombre.Text.Length == 0 ||
+                comboBoxTipoDocumento.Text.Length == 0 || textBoxMail.Text.Length == 0 ||
+                textBoxDocumento.Text.Length == 0 || textBoxTelefono.Text.Length == 0 ||
+                textBoxDireccion.Text.Length == 0 || textBoxLocalidad.Text.Length == 0 ||
+                textBoxPais.Text.Length == 0)
+            {
+                MessageBox.Show("Error, campos que faltan completar: "
+                    + (textBoxApellido.Text.Length == 0 ? " Apellido" : "")
+                    + (textBoxNombre.Text.Length == 0 ? ", Nombre" : "")
+                    + (comboBoxTipoDocumento.Text.Length == 0 ? ", Tipo de Documento" : "")
+                    + (textBoxMail.Text.Length == 0 ? ", Email" : "")
+                    + (textBoxDocumento.Text.Length == 0 ? ", Numero de Documento" : "")
+                    + (textBoxTelefono.Text.Length == 0 ? ", Telefono" : "")
+                    + (textBoxDireccion.Text.Length == 0 ? ", Direccion" : "")
+                    + (textBoxLocalidad.Text.Length == 0 ? ", Localidad" : "")
+                    + (textBoxPais.Text.Length == 0 ? ", Pais" : "")
+                );
+                return 1;
+            }
+            return 0;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            try
+            int resultado = validarCampos();
+            if (resultado == 0)
             {
-                insertarCliente();
-                generarReserva();
-                MessageBox.Show("Cliente y reserva generada exitosamente.");
-            }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Error en el proceso de generar el cliente y reserva. Error: " + exc);
+                try
+                {
+                    insertarCliente();
+                    generarReserva();
+                }
+                catch (Exception exc)
+                {
+                    MessageBox.Show("Error en el proceso de generar el cliente y reserva. Error: " + exc);
+                }
             }
         }
 
@@ -134,7 +177,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 id_codigo = dataTable.Rows[0]["id"].ToString();
             }
 
-            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo, fecha_reserva, fecha_inicio,fecha_fin,codigo_hotel,codigo_regimen,tipo_doc_cliente,nro_doc_cliente,costo_base,codigo_estado) VALUES (" + id_codigo + ",GETDATE(),'" + fecha_inicio + " 00:00:00','" + fecha_fin + " 00:00:00'," + codigo_hotel + "," + codigo_regimen + "," + lista_codigos_tipo_documento[comboBoxTipoDocumento.SelectedIndex] + "," + textBoxDocumento.Text + ",GITAR_HEROES.precioHabitacion(" + codigo_regimen + "," + codigo_hotel + "," + codigo_tipo_habitacion + ")*" + cant_dias.ToString() + ",1)";
+            string query = "INSERT INTO GITAR_HEROES.Reserva (codigo, fecha_reserva, fecha_inicio,fecha_fin,codigo_hotel,codigo_regimen,tipo_doc_cliente,nro_doc_cliente,costo_base,codigo_estado) VALUES (" + id_codigo + ",'"+Variables.fecha_sistema+" 00:00:00','" + fecha_inicio + " 00:00:00','" + fecha_fin + " 00:00:00'," + codigo_hotel + "," + codigo_regimen + "," + lista_codigos_tipo_documento[comboBoxTipoDocumento.SelectedIndex] + "," + textBoxDocumento.Text + ",GITAR_HEROES.precioHabitacion(" + codigo_regimen + "," + codigo_hotel + "," + codigo_tipo_habitacion + ")*" + cant_dias.ToString() + ",1)";
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
@@ -154,6 +197,23 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                 adapter = new SqlDataAdapter(command);
                 dataTable = new DataTable();
                 adapter.Fill(dataTable);
+
+                if (!dataTable.HasErrors)
+                {
+                    string query3;
+                    query3 = "insert into GITAR_HEROES.ReservaHabitacion (codigo_reserva,codigo_hotel,numero_habitacion) values ("+id_codigo+","+codigo_hotel+","+nro_habitacion+")";
+                    command = new SqlCommand(query3);
+                    command.Connection = connection;
+                    adapter = new SqlDataAdapter(command);
+                    dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    if (!dataTable.HasErrors)
+                    {
+                        MessageBox.Show("Cliente y reserva generada exitosamente. Su código de reserva es " + id_codigo);
+                    }
+                }
+                
             }
         }
     }

@@ -94,6 +94,7 @@
             // 
             // comboBoxFormaPago
             // 
+            this.comboBoxFormaPago.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxFormaPago.FormattingEnabled = true;
             this.comboBoxFormaPago.Location = new System.Drawing.Point(160, 62);
             this.comboBoxFormaPago.Name = "comboBoxFormaPago";

@@ -92,6 +92,7 @@
             this.textBoxEstrellas.Name = "textBoxEstrellas";
             this.textBoxEstrellas.Size = new System.Drawing.Size(283, 20);
             this.textBoxEstrellas.TabIndex = 3;
+            this.textBoxEstrellas.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // label2
             // 

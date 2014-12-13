@@ -11,6 +11,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
 {
     public partial class ReservaCliente : Form
     {
+        public string nro_habitacion;
         public string fecha_inicio;
         public string fecha_fin;
         public string codigo_hotel;
@@ -31,6 +32,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
         {
             this.Hide();
             ReservaBusqueda reserva_busqueda = new ReservaBusqueda();
+            reserva_busqueda.codigo_reserva = "";
             reserva_busqueda.hotel_id = codigo_hotel;
             reserva_busqueda.StartPosition = FormStartPosition.CenterScreen;
             reserva_busqueda.Show();
@@ -46,6 +48,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             reserva_cliente_busqueda.codigo_hotel = codigo_hotel;
             reserva_cliente_busqueda.codigo_tipo_habitacion = codigo_tipo_habitacion;
             reserva_cliente_busqueda.codigo_regimen = codigo_regimen;
+            reserva_cliente_busqueda.nro_habitacion = nro_habitacion;
             reserva_cliente_busqueda.StartPosition = FormStartPosition.CenterScreen;
             reserva_cliente_busqueda.Show();
         }
@@ -60,6 +63,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             reserva_cliente_nuevo.codigo_hotel = codigo_hotel;
             reserva_cliente_nuevo.codigo_tipo_habitacion = codigo_tipo_habitacion;
             reserva_cliente_nuevo.codigo_regimen = codigo_regimen;
+            reserva_cliente_nuevo.nro_habitacion = nro_habitacion;
             reserva_cliente_nuevo.StartPosition = FormStartPosition.CenterScreen;
             reserva_cliente_nuevo.Show();
         }

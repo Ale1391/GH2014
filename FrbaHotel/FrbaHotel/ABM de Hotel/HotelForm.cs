@@ -35,33 +35,61 @@ namespace FrbaHotel.ABM_de_Hotel
             pantalla_hotel.Show();
         }
 
+        private int validarCampos()
+        {
+            if (textBoxNombre.Text.Length == 0 || textBoxMail.Text.Length == 0 ||
+                textBoxEstrellas.Text.Length == 0 || textBoxCiudad.Text.Length == 0 ||
+                textBoxTelefono.Text.Length == 0 || textBoxDireccion.Text.Length == 0 ||
+                textBoxPais.Text.Length == 0 || textBoxFechaCreacion.Text.Length == 0
+                )
+            {
+                MessageBox.Show("Error, campos que faltan completar: "
+                    + (textBoxNombre.Text.Length == 0 ? " Nombre" : "")
+                    + (textBoxMail.Text.Length == 0 ? ", Mail" : "")
+                    + (textBoxEstrellas.Text.Length == 0 ? ", Estrellas" : "")
+                    + (textBoxCiudad.Text.Length == 0 ? ", Ciudad" : "")
+                    + (textBoxTelefono.Text.Length == 0 ? ", Telefono" : "")
+                    + (textBoxDireccion.Text.Length == 0 ? ", Direccion" : "")
+                    + (textBoxPais.Text.Length == 0 ? ", Pais" : "")
+                    + (textBoxFechaCreacion.Text.Length == 0 ? ", Fecha creacion" : "")
+                    
+                );
+                return 1;
+            }
+            return 0;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            if (hotel_id.Length>0)
+            int resultado = validarCampos();
+            if (resultado == 0)
             {
-                try
+                if (hotel_id.Length > 0)
                 {
-                    editarHotel();
-                    borrarRegimenes();
-                    agregarRegimenes();
-                    MessageBox.Show("Hotel editado exitosamente.");
+                    try
+                    {
+                        editarHotel();
+                        borrarRegimenes();
+                        agregarRegimenes();
+                        MessageBox.Show("Hotel editado exitosamente.");
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("No se pudo editar el hotel. Error: " + exc);
+                    }
                 }
-                catch (Exception exc)
+                else
                 {
-                    MessageBox.Show("No se pudo editar el hotel. Error: " + exc);
-                }
-            }
-            else
-            {
-                try
-                {
-                    insertarHotel();
-                    agregarRegimenes();
-                    MessageBox.Show("Hotel creado exitosamente.");
-                }
-                catch (Exception exc)
-                {
-                    MessageBox.Show("No se pudo crear el nuevo hotel. Error: " + exc);
+                    try
+                    {
+                        insertarHotel();
+                        agregarRegimenes();
+                        MessageBox.Show("Hotel creado exitosamente.");
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("No se pudo crear el nuevo hotel. Error: " + exc);
+                    }
                 }
             }
         }
@@ -190,7 +218,7 @@ namespace FrbaHotel.ABM_de_Hotel
 
         private void bajaHotel()
         {
-            string query = "insert into GITAR_HEROES.HotelInhabilitado (codigo_hotel,fecha_inicio,descripcion) values ("+hotel_id+",GETDATE(),'"+textBoxDescripcion.Text+"')";
+            string query = "insert into GITAR_HEROES.HotelInhabilitado (codigo_hotel,fecha_inicio,descripcion) values ("+hotel_id+",'"+Variables.fecha_sistema+" 00:00:00','"+textBoxDescripcion.Text+"')";
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
@@ -205,7 +233,7 @@ namespace FrbaHotel.ABM_de_Hotel
 
         private void altaHotel()
         {
-            string query = "update GITAR_HEROES.HotelInhabilitado set fecha_fin = GETDATE() where codigo_hotel = " + hotel_id + "and fecha_fin is null";
+            string query = "update GITAR_HEROES.HotelInhabilitado set fecha_fin = '"+Variables.fecha_sistema+" 00:00:00' where codigo_hotel = " + hotel_id + "and fecha_fin is null";
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
@@ -229,6 +257,21 @@ namespace FrbaHotel.ABM_de_Hotel
             catch (Exception exc)
             {
                 MessageBox.Show("Error: " + exc);
+            }
+        }
+
+        private void textBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+        (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+
+            // only allow one decimal point
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+            {
+                e.Handled = true;
             }
         }
 

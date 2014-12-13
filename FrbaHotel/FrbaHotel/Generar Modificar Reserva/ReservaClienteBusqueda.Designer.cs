@@ -55,6 +55,7 @@
             // 
             // comboBoxTipoDocumento
             // 
+            this.comboBoxTipoDocumento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTipoDocumento.FormattingEnabled = true;
             this.comboBoxTipoDocumento.Location = new System.Drawing.Point(16, 59);
             this.comboBoxTipoDocumento.Name = "comboBoxTipoDocumento";

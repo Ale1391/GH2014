@@ -57,7 +57,7 @@ namespace FrbaHotel.ABM_de_Usuario
                 textBoxDireccion.Text = dataTable.Rows[0]["domicilio"].ToString();
                 DateTime dt = DateTime.Parse(dataTable.Rows[0]["fecha_nacimiento"].ToString());
                 textBoxFechaNac.Text = (dt.Day.ToString().Length==1?"0":"")+dt.Day.ToString() + "-" + (dt.Month.ToString().Length==1?"0":"")+ dt.Month.ToString() + "-" + dt.Year.ToString();
-                if (dataTable.Rows[0]["estado_sistema"].ToString() == "1")
+                if (dataTable.Rows[0]["estado"].ToString() == "1")
                 {
                     checkBoxUsuarioActivo.Checked = true;
                 }
@@ -168,6 +168,21 @@ namespace FrbaHotel.ABM_de_Usuario
             funcionalidadesForm.Show();
         }
 
+        private void textBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+        (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+
+            // only allow one decimal point
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+            {
+                e.Handled = true;
+            }
+        }
+
         private void UsuarioForm_Load(object sender, EventArgs e)
         {
             if (nombre_usuario.Length > 0)
@@ -196,7 +211,7 @@ namespace FrbaHotel.ABM_de_Usuario
             {
                 connection.ConnectionString = Variables.connectionStr;
                 connection.Open();
-                string query = "select * from GITAR_HEROES.Rol";
+                string query = "select * from GITAR_HEROES.Rol where estado = 1";
                 command = new SqlCommand(query);
                 command.Connection = connection;
                 adapter = new SqlDataAdapter(command);
@@ -232,7 +247,7 @@ namespace FrbaHotel.ABM_de_Usuario
 
         private void llenarCombos()
         {
-            string query = "select * from GITAR_HEROES.Rol";
+            string query = "select * from GITAR_HEROES.Rol where estado = 1";
             command = new SqlCommand(query);
             command.Connection = connection;
             adapter = new SqlDataAdapter(command);
@@ -262,27 +277,72 @@ namespace FrbaHotel.ABM_de_Usuario
             }
         }
 
+        private int validarCampos()
+        {
+            if (textBoxUsuario.Text.Length == 0 || textBoxClave.Text.Length == 0 ||
+                comboBoxRol.Text.Length == 0 || textBoxNombre.Text.Length == 0 ||
+                textBoxApellido.Text.Length == 0 || comboBoxTipodni.Text.Length == 0 ||
+                textBoxDni.Text.Length == 0 || textBoxMail.Text.Length == 0 ||
+                textBoxTelefono.Text.Length == 0 || textBoxDireccion.Text.Length == 0 ||
+                textBoxFechaNac.Text.Length == 0)
+            {
+                MessageBox.Show("Error, campos que faltan completar: "
+                    + (textBoxUsuario.Text.Length == 0 ? " Usuario" : "")
+                    + (textBoxClave.Text.Length == 0 ? ", Contraseña" : "")
+                    + (comboBoxRol.Text.Length == 0 ? ", Rol" : "")
+                    + (textBoxNombre.Text.Length == 0 ? ", Nombre" : "")
+                    + (textBoxApellido.Text.Length == 0 ? ", Apellido" : "")
+                    + (comboBoxTipodni.Text.Length == 0 ? ", Tipo de Documento" : "")
+                    + (textBoxDni.Text.Length == 0 ? ", Numero de Documento" : "")
+                    + (textBoxMail.Text.Length == 0 ? ", Mail" : "")
+                    + (textBoxTelefono.Text.Length == 0 ? ", Telefono" : "")
+                    + (textBoxDireccion.Text.Length == 0 ? ", Direccion" : "")
+                    + (textBoxFechaNac.Text.Length == 0 ? ", Fecha de nacimiento" : "")
+                );
+                return 1;
+            }
+            return 0;
+        }
+
         private void buttonFinalizar_Click(object sender, EventArgs e)
         {
-            if (nombre_usuario.Length > 0)
+            int resultado = validarCampos();
+            if (resultado == 0)
             {
-                editarUsuario();
-            }
-            else
-            {
-                try
+                if (nombre_usuario.Length > 0)
                 {
-                    crearUsuario();
-                    foreach (int index_checked in hotelesChecklist.CheckedIndices)
-                    {
-                        crearUsuarioHotel(lista_codigos_hoteles[index_checked]);
-                    }
-                
-                    MessageBox.Show("Usuario creado exitosamente");
+                    editarUsuario();
                 }
-                catch (Exception exc)
+                else
                 {
-                    MessageBox.Show("Error: " + exc);
+                    try
+                    {
+                        string query2 = "select * from GITAR_HEROES.usuario where username = '" + textBoxUsuario.Text + "'";
+                        command = new SqlCommand(query2);
+                        command.Connection = connection;
+                        adapter = new SqlDataAdapter(command);
+                        dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+
+                        if (dataTable.Rows.Count > 0)
+                        {
+                            MessageBox.Show("Error: Ya existe un usuario con ese username.");
+                        }
+                        else
+                        {
+                            crearUsuario();
+                            foreach (int index_checked in hotelesChecklist.CheckedIndices)
+                            {
+                                crearUsuarioHotel(lista_codigos_hoteles[index_checked]);
+                            }
+
+                            MessageBox.Show("Usuario creado exitosamente");
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("Error: " + exc);
+                    }
                 }
             }
         }

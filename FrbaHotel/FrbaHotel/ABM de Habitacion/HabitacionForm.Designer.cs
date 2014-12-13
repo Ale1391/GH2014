@@ -60,6 +60,7 @@
             this.textBoxNumeroHabitacion.Name = "textBoxNumeroHabitacion";
             this.textBoxNumeroHabitacion.Size = new System.Drawing.Size(97, 20);
             this.textBoxNumeroHabitacion.TabIndex = 1;
+            this.textBoxNumeroHabitacion.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // label1
             // 
@@ -90,6 +91,7 @@
             // 
             // comboBoxTipoHabitacion
             // 
+            this.comboBoxTipoHabitacion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTipoHabitacion.FormattingEnabled = true;
             this.comboBoxTipoHabitacion.Location = new System.Drawing.Point(16, 105);
             this.comboBoxTipoHabitacion.Name = "comboBoxTipoHabitacion";
@@ -102,6 +104,7 @@
             this.textBoxPiso.Name = "textBoxPiso";
             this.textBoxPiso.Size = new System.Drawing.Size(122, 20);
             this.textBoxPiso.TabIndex = 4;
+            this.textBoxPiso.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // label5
             // 

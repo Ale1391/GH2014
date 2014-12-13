@@ -35,6 +35,7 @@
             // 
             // comboBoxRoles
             // 
+            this.comboBoxRoles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxRoles.FormattingEnabled = true;
             this.comboBoxRoles.Location = new System.Drawing.Point(78, 99);
             this.comboBoxRoles.Name = "comboBoxRoles";

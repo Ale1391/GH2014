@@ -111,6 +111,7 @@
             // 
             // comboBoxRol
             // 
+            this.comboBoxRol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxRol.FormattingEnabled = true;
             this.comboBoxRol.Location = new System.Drawing.Point(16, 95);
             this.comboBoxRol.Name = "comboBoxRol";
@@ -151,6 +152,7 @@
             // 
             // comboBoxTipodni
             // 
+            this.comboBoxTipodni.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTipodni.FormattingEnabled = true;
             this.comboBoxTipodni.Location = new System.Drawing.Point(16, 188);
             this.comboBoxTipodni.Name = "comboBoxTipodni";
@@ -163,6 +165,7 @@
             this.textBoxDni.Name = "textBoxDni";
             this.textBoxDni.Size = new System.Drawing.Size(157, 20);
             this.textBoxDni.TabIndex = 5;
+            this.textBoxDni.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // textBoxMail
             // 
@@ -222,6 +225,7 @@
             this.textBoxTelefono.Name = "textBoxTelefono";
             this.textBoxTelefono.Size = new System.Drawing.Size(253, 20);
             this.textBoxTelefono.TabIndex = 4;
+            this.textBoxTelefono.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // textBoxDireccion
             // 

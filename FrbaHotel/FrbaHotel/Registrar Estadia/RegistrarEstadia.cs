@@ -63,17 +63,12 @@ namespace FrbaHotel.Registrar_Estadia
             {
                 MessageBox.Show("Falta especificar Codigo de Reserva.");
             }
-            else if (textBoxFecha.Text.Length == 0)
-            {
-                MessageBox.Show("Falta especificar fecha.");
-            }
             else
             {
                 ingresoEgresoEstadia();
                
                 // Se borran los datos ingresados para un nuevo registro de estadia
                 this.textBoxCodReserva.Text = "";
-                this.textBoxFecha.Text = "";
             }
             
         }
@@ -92,7 +87,7 @@ namespace FrbaHotel.Registrar_Estadia
                         // Se pasa el hotel logueado y la reserva como primeros parametros
                         cmd.Parameters.Add("@codigo_hotel", SqlDbType.Int).Value = Variables.hotel_id;
                         cmd.Parameters.Add("@codigo_reserva", SqlDbType.Int).Value = Convert.ToInt32(textBoxCodReserva.Text);
-                        cmd.Parameters.Add("@fecha", SqlDbType.Date).Value = Convert.ToDateTime(textBoxFecha.Text);
+                        cmd.Parameters.Add("@fecha", SqlDbType.Date).Value = Convert.ToDateTime(Variables.fecha_sistema);
                         cmd.Parameters.Add("@username", SqlDbType.Char).Value = Variables.usuario;
                         
                         var returnParameter = cmd.Parameters.Add("@estado_registro", SqlDbType.Int);

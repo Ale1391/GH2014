@@ -75,30 +75,52 @@ namespace FrbaHotel.ABM_de_Habitacion
             }
         }
 
+        private int validarCampos()
+        {
+            if (textBoxNumeroHabitacion.Text.Length == 0 || textBoxPiso.Text.Length == 0 ||
+                textBoxUbicacion.Text.Length == 0 || comboBoxTipoHabitacion.Text.Length == 0 ||
+                textBoxDescripcion.Text.Length == 0)
+            {
+                MessageBox.Show("Error, campos que faltan completar: "
+                    + (textBoxNumeroHabitacion.Text.Length == 0 ? " Numero de habitacion" : "")
+                    + (textBoxPiso.Text.Length == 0 ? ", Piso" : "")
+                    + (textBoxUbicacion.Text.Length == 0 ? ", Ubicacion" : "")
+                    + (comboBoxTipoHabitacion.Text.Length == 0 ? ", Tipo de habitacion" : "")
+                    + (textBoxDescripcion.Text.Length == 0 ? ", Descripcion" : "")
+                );
+                return 1;
+            }
+            return 0;
+        }
+
         private void buttonFinalizar_Click(object sender, EventArgs e)
         {
-            if (numero_habitacion.Length > 0)
+            int resultado = validarCampos();
+            if (resultado == 0)
             {
-                try
+                if (numero_habitacion.Length > 0)
                 {
-                    editarHabitacion();
-                    MessageBox.Show("Habitación editada exitosamente");
+                    try
+                    {
+                        editarHabitacion();
+                        MessageBox.Show("Habitación editada exitosamente");
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("Error: " + exc);
+                    }
                 }
-                catch (Exception exc)
+                else
                 {
-                    MessageBox.Show("Error: " + exc);
-                }
-            }
-            else
-            {
-                try
-                {
-                    crearHabitacion();
-                    MessageBox.Show("Habitación creada exitosamente");
-                }
-                catch (Exception exc)
-                {
-                    MessageBox.Show("Error: " + exc);
+                    try
+                    {
+                        crearHabitacion();
+                        MessageBox.Show("Habitación creada exitosamente");
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("Error: " + exc);
+                    }
                 }
             }
         }
@@ -130,6 +152,21 @@ namespace FrbaHotel.ABM_de_Habitacion
             if (dataTable.HasErrors)
             {
                 MessageBox.Show("Error al editar la habitación");
+            }
+        }
+
+        private void textBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+        (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+
+            // only allow one decimal point
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+            {
+                e.Handled = true;
             }
         }
 

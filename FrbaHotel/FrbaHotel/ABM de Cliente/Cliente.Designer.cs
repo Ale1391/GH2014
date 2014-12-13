@@ -36,6 +36,7 @@
             // 
             // comboBoxCliente
             // 
+            this.comboBoxCliente.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxCliente.FormattingEnabled = true;
             this.comboBoxCliente.Location = new System.Drawing.Point(46, 81);
             this.comboBoxCliente.Name = "comboBoxCliente";
@@ -91,9 +92,9 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox comboBoxCliente;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.ComboBox comboBoxCliente;
     }
 }

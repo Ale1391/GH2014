@@ -14,10 +14,14 @@ namespace FrbaHotel.Generar_Modificar_Reserva
     {
         public string hotel_id;
 
+        private int numero_habitacion_disponible;
+
         private List<int> lista_codigos_regimenes = new List<int>();
         private List<string> lista_nombres_regimenes = new List<string>();
 
         private int cantidad_dias_reserva;
+
+        public string codigo_reserva;
 
         private List<int> lista_codigos_tipo_habitacion = new List<int>();
         private List<string> lista_nombres_tipo_habitacion = new List<string>();
@@ -89,7 +93,6 @@ namespace FrbaHotel.Generar_Modificar_Reserva
 
             foreach (DataRow row in dataTable.Rows)
             {
-
                 comboBoxTipoRegimen.Items.Add(row["descripcion"].ToString());
                 lista_codigos_regimenes.Add(Convert.ToInt32(row["codigo"]));
                 lista_nombres_regimenes.Add(row["descripcion"].ToString());
@@ -138,7 +141,7 @@ namespace FrbaHotel.Generar_Modificar_Reserva
                     con.Open();
                     cmd.ExecuteNonQuery();
 
-                    int numero_habitacion_disponible = (int)returnParameter.Value;
+                    numero_habitacion_disponible = (int)returnParameter.Value;
 
                     if (numero_habitacion_disponible == -1)
                     {
@@ -163,14 +166,56 @@ namespace FrbaHotel.Generar_Modificar_Reserva
             if (e.ColumnIndex == 3)
             {
                 this.Hide();
-                ReservaCliente reserva_cliente = new ReservaCliente();
-                reserva_cliente.fecha_fin = textBoxFechaHasta.Text;
-                reserva_cliente.fecha_inicio = textBoxFechaDesde.Text;
-                reserva_cliente.codigo_hotel = hotel_id;
-                reserva_cliente.codigo_tipo_habitacion = lista_codigos_tipo_habitacion[comboBoxTipoHabitacion.SelectedIndex].ToString();
-                reserva_cliente.codigo_regimen = lista_codigos_regimenes[e.RowIndex].ToString();
-                reserva_cliente.StartPosition = FormStartPosition.CenterScreen;
-                reserva_cliente.Show();
+                if (codigo_reserva.Length > 0)
+                {
+                    editarReserva();
+                }
+                else
+                {
+                    ReservaCliente reserva_cliente = new ReservaCliente();
+                    reserva_cliente.nro_habitacion = numero_habitacion_disponible.ToString();
+                    reserva_cliente.fecha_fin = textBoxFechaHasta.Text;
+                    reserva_cliente.fecha_inicio = textBoxFechaDesde.Text;
+                    reserva_cliente.codigo_hotel = hotel_id;
+                    reserva_cliente.codigo_tipo_habitacion = lista_codigos_tipo_habitacion[comboBoxTipoHabitacion.SelectedIndex].ToString();
+                    reserva_cliente.codigo_regimen = lista_codigos_regimenes[e.RowIndex].ToString();
+                    reserva_cliente.StartPosition = FormStartPosition.CenterScreen;
+                    reserva_cliente.Show();
+                }
+            }
+        }
+
+        private void editarReserva()
+        {
+            string codigo_regimen = lista_codigos_regimenes[comboBoxTipoRegimen.SelectedIndex].ToString();
+            string codigo_tipo_habitacion = lista_codigos_tipo_habitacion[comboBoxTipoHabitacion.SelectedIndex].ToString();
+
+            string string_fechaDesde = textBoxFechaDesde.Text;
+            DateTime dt_desde = DateTime.Parse(string_fechaDesde);
+
+            string string_fechaHasta = textBoxFechaHasta.Text;
+            DateTime dt_hasta = DateTime.Parse(string_fechaHasta);
+
+            int cant_dias = (int)(dt_hasta - dt_desde).TotalDays;
+
+            string query = "update GITAR_HEROES.Reserva set fecha_inicio = '" + textBoxFechaDesde.Text + " 00:00:00',fecha_fin = '" + textBoxFechaHasta.Text + " 00:00:00',codigo_regimen = " + lista_codigos_regimenes[comboBoxTipoRegimen.SelectedIndex] + ",costo_base = " + ",GITAR_HEROES.precioHabitacion(" + codigo_regimen + "," + hotel_id + "," + codigo_tipo_habitacion + ")*" + cant_dias.ToString() + ",codigo_estado = 2 where codigo = " + codigo_reserva;
+            command = new SqlCommand(query);
+            command.Connection = connection;
+            adapter = new SqlDataAdapter(command);
+            dataTable = new DataTable();
+            adapter.Fill(dataTable);
+            if (!dataTable.HasErrors)
+            {
+                string query2 = "update GITAR_HEROES.Reserva set fecha_inicio = '" + textBoxFechaDesde.Text + " 00:00:00',fecha_fin = '" + textBoxFechaHasta.Text + " 00:00:00',codigo_regimen = " + lista_codigos_regimenes[comboBoxTipoRegimen.SelectedIndex] + ",costo_base = " + ",GITAR_HEROES.precioHabitacion(" + codigo_regimen + "," + hotel_id + "," + codigo_tipo_habitacion + ")*" + cant_dias.ToString() + ",codigo_estado = 2 where codigo = " + codigo_reserva;
+                command = new SqlCommand(query2);
+                command.Connection = connection;
+                adapter = new SqlDataAdapter(command);
+                dataTable = new DataTable();
+                adapter.Fill(dataTable);
+                if (!dataTable.HasErrors)
+                {
+                    MessageBox.Show("La reserva se editó correctamente.");
+                }
             }
         }
     }

@@ -52,6 +52,7 @@
             // 
             // comboBoxTipoDocumento
             // 
+            this.comboBoxTipoDocumento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTipoDocumento.FormattingEnabled = true;
             this.comboBoxTipoDocumento.Location = new System.Drawing.Point(40, 122);
             this.comboBoxTipoDocumento.Name = "comboBoxTipoDocumento";
@@ -155,6 +156,7 @@
             this.textBoxDocumento.Name = "textBoxDocumento";
             this.textBoxDocumento.Size = new System.Drawing.Size(119, 20);
             this.textBoxDocumento.TabIndex = 15;
+            this.textBoxDocumento.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // textBoxMail
             // 
@@ -190,6 +192,7 @@
             this.textBoxTelefono.Name = "textBoxTelefono";
             this.textBoxTelefono.Size = new System.Drawing.Size(110, 20);
             this.textBoxTelefono.TabIndex = 21;
+            this.textBoxTelefono.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress);
             // 
             // textBoxNombre
             // 

@@ -47,6 +47,7 @@
             // 
             // comboBoxFuncionalidad
             // 
+            this.comboBoxFuncionalidad.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxFuncionalidad.FormattingEnabled = true;
             this.comboBoxFuncionalidad.Location = new System.Drawing.Point(46, 66);
             this.comboBoxFuncionalidad.Name = "comboBoxFuncionalidad";
@@ -104,6 +105,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Usuario";
             this.Text = "ABM Usuario";
+            this.Load += new System.EventHandler(this.Usuario_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

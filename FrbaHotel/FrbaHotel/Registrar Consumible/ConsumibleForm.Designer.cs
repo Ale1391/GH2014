@@ -76,6 +76,7 @@
             // 
             // comboBoxConsumible
             // 
+            this.comboBoxConsumible.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxConsumible.FormattingEnabled = true;
             this.comboBoxConsumible.Location = new System.Drawing.Point(19, 131);
             this.comboBoxConsumible.Name = "comboBoxConsumible";

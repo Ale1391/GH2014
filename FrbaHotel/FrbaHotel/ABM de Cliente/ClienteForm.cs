@@ -34,30 +34,89 @@ namespace FrbaHotel.ABM_de_Cliente
             pantalla_cliente.Show();
         }
 
+        private int validarCampos()
+        {
+            if (textBoxApellido.Text.Length == 0 || textBoxNombre.Text.Length == 0 ||
+                comboBoxTipoDocumento.Text.Length == 0 || textBoxMail.Text.Length == 0 ||
+                textBoxDocumento.Text.Length == 0 || textBoxTelefono.Text.Length == 0 ||
+                textBoxDireccion.Text.Length == 0 || textBoxLocalidad.Text.Length == 0 ||
+                textBoxPais.Text.Length == 0 || textBoxNacionalidad.Text.Length == 0 ||
+                textBox1FechaNacimiento.Text.Length == 0)
+            {
+                MessageBox.Show("Error, campos que faltan completar: "
+                    + (textBoxApellido.Text.Length == 0 ? " Apellido" : "")
+                    + (textBoxNombre.Text.Length == 0 ? ", Nombre" : "")
+                    + (comboBoxTipoDocumento.Text.Length == 0 ? ", Tipo de Documento" : "")
+                    + (textBoxMail.Text.Length == 0 ? ", Email" : "")
+                    + (textBoxDocumento.Text.Length == 0 ? ", Numero de Documento" : "")
+                    + (textBoxTelefono.Text.Length == 0 ? ", Telefono" : "")
+                    + (textBoxDireccion.Text.Length == 0 ? ", Direccion" : "")
+                    + (textBoxLocalidad.Text.Length == 0 ? ", Localidad" : "")
+                    + (textBoxPais.Text.Length == 0 ? ", Pais" : "")
+                    + (textBoxNacionalidad.Text.Length == 0 ? ", Nacionalidad" : "")
+                    + (textBox1FechaNacimiento.Text.Length == 0 ? ", Fecha de nacimiento" : "")
+                );
+                return 1;
+            }
+            return 0;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            if (mail.Length>0)
+            int resultado = validarCampos();
+            if (resultado == 0)
             {
-                try
+                if (mail.Length>0)
                 {
-                    editarCliente();
-                    MessageBox.Show("Cliente editado exitosamente.");
+                    try
+                    {
+                        editarCliente();
+                        MessageBox.Show("Cliente editado exitosamente.");
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("No se pudo editar el cliente. Error: " + exc);
+                    }
                 }
-                catch (Exception exc)
+                else
                 {
-                    MessageBox.Show("No se pudo editar el cliente. Error: " + exc);
-                }
-            }
-            else
-            {
-                try
-                {
-                    insertarCliente();
-                    MessageBox.Show("Cliente creado exitosamente.");
-                }
-                catch (Exception exc)
-                {
-                    MessageBox.Show("No se pudo crear el nuevo cliente. Error: " + exc);
+                    string query2 = "select * from GITAR_HEROES.Cliente where mail = '"+textBoxMail.Text+"'";
+                    command = new SqlCommand(query2);
+                    command.Connection = connection;
+                    adapter = new SqlDataAdapter(command);
+                    dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    if (dataTable.Rows.Count > 0)
+                    {
+                        MessageBox.Show("Error: Ya existe un usuario con ese mail.");
+                    }
+                    else
+                    {
+                        string query3 = "select * from GITAR_HEROES.Cliente where tipo_doc = "+lista_codigos_tipo_documento[comboBoxTipoDocumento.SelectedIndex]+" and nro_doc = "+textBoxDocumento.Text;
+                        command = new SqlCommand(query3);
+                        command.Connection = connection;
+                        adapter = new SqlDataAdapter(command);
+                        dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+
+                        if (dataTable.Rows.Count > 0)
+                        {
+                            MessageBox.Show("Error: Ya existe un usuario con ese número y tipo de documento.");
+                        }
+                        else
+                        {
+                            try
+                            {
+                                insertarCliente();
+                                MessageBox.Show("Cliente creado exitosamente.");
+                            }
+                            catch (Exception exc)
+                            {
+                                MessageBox.Show("No se pudo crear el nuevo cliente. Error: " + exc);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -163,6 +222,21 @@ namespace FrbaHotel.ABM_de_Cliente
             catch (Exception exc)
             {
                 MessageBox.Show("Error: " + exc);
+            }
+        }
+
+        private void textBoxDocumento_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+        (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+
+            // only allow one decimal point
+            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+            {
+                e.Handled = true;
             }
         }
     }

@@ -88,6 +88,7 @@
             // 
             // comboBoxTipoHabitacion
             // 
+            this.comboBoxTipoHabitacion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTipoHabitacion.FormattingEnabled = true;
             this.comboBoxTipoHabitacion.Location = new System.Drawing.Point(38, 112);
             this.comboBoxTipoHabitacion.Name = "comboBoxTipoHabitacion";
@@ -96,6 +97,7 @@
             // 
             // comboBoxTipoRegimen
             // 
+            this.comboBoxTipoRegimen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTipoRegimen.FormattingEnabled = true;
             this.comboBoxTipoRegimen.Location = new System.Drawing.Point(224, 112);
             this.comboBoxTipoRegimen.Name = "comboBoxTipoRegimen";

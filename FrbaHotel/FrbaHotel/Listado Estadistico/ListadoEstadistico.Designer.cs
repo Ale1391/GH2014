@@ -51,6 +51,7 @@
             // 
             // comboBoxListado
             // 
+            this.comboBoxListado.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxListado.FormattingEnabled = true;
             this.comboBoxListado.Location = new System.Drawing.Point(114, 44);
             this.comboBoxListado.Name = "comboBoxListado";
